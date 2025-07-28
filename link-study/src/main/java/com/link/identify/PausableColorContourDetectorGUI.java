@@ -14,9 +14,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -81,13 +81,18 @@ public class PausableColorContourDetectorGUI extends JFrame {
     private BufferedImage contourImage;
     private int targetScreenIndex = 0; // 默认主屏幕
 
-
+    /**
+     * 测试添加的请求头
+     *
+     * @author ZhouBinBin
+     * @since 2025/7/28 14:53
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             PausableColorContourDetectorGUI app = new PausableColorContourDetectorGUI();
 //            if (ifHide) {
             // changeTest
-                app.setVisible(true);
+            app.setVisible(true);
 //            }
             System.out.println("应用程序已启动");
             System.out.println("按 Shift+F7 暂停，按 Shift+F8 继续");
