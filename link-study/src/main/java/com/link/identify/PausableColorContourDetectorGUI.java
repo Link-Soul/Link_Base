@@ -86,6 +86,7 @@ public class PausableColorContourDetectorGUI extends JFrame {
         SwingUtilities.invokeLater(() -> {
             PausableColorContourDetectorGUI app = new PausableColorContourDetectorGUI();
 //            if (ifHide) {
+            // changeTest
                 app.setVisible(true);
 //            }
             System.out.println("应用程序已启动");
