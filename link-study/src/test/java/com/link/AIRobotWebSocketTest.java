@@ -2,7 +2,6 @@ package com.link;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.link.ai.NlpEnum;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -22,7 +21,7 @@ import java.util.*;
  */
 public class AIRobotWebSocketTest {
     private static final String WS_URL = "ws://localhost:8998/ai/ws/ai-robot/stream"; // 替换为实际的 WebSocket 地址
-//    private static final String WS_URL = "ws://v2.alpha.kaerplatform.com/ai/ws/ai-robot/stream"; // 替换为实际的 WebSocket 地址
+    //    private static final String WS_URL = "ws://v2.alpha.kaerplatform.com/ai/ws/ai-robot/stream"; // 替换为实际的 WebSocket 地址
 //    private static final String WS_URL = "ws://tree.kaerplatform.com/ai/ws/ai-robot/stream"; // 替换为实际的 WebSocket 地址
     private static final String TEST_OUTPUT_DIR = "D:\\FFOutput\\test_voices";
     private static final String token = "955c990ddb1f4559887095223eefd326";
@@ -30,14 +29,13 @@ public class AIRobotWebSocketTest {
     private static final String req_id = UUID.randomUUID().toString().replace("-", "");
     private static final int BUFFER_SIZE = 1024 * 64; // 每次读取的块大小，可根据需要调整
     private static final String nlp = "poem"; // 使用的模型能力
-//    String file = "D:\\FFOutput\\标准录音 18.mp3";
+    //    String file = "D:\\FFOutput\\标准录音 18.mp3";
 //    String file = "D:\\FFOutput\\为什么会有天气变化.mp3";
     String file = "D:\\FFOutput\\描述春天的古诗词(1).wav";
-//    String file = "D:\\FFOutput\\AI智能体测试.wav";
+    //    String file = "D:\\FFOutput\\AI智能体测试.wav";
 //    String file = "D:\\FFOutput\\标准录音 17~1.wav";        // 游戏推荐
     String model = "turing";
     private static final String format = "wav"; // 发送的音频类型
-
 
 
     private static Map<String, ByteBuffer> bufferedReaderMap = new HashMap<>();
@@ -57,7 +55,34 @@ public class AIRobotWebSocketTest {
     }
 
     /**
+     * ByteBuffer数据追加方法
+     *
+     * @param original
+     * @param newData
+     * @return
+     */
+    public static ByteBuffer append(ByteBuffer original, byte[] newData) {
+        // 确保新容量足够容纳原数据和新数据
+        int newCapacity = original.capacity() + newData.length;
+        // 创建新的ByteBuffer
+        ByteBuffer newBuffer = ByteBuffer.allocate(newCapacity);
+        // 保存原Buffer的position和limit
+        int oldPosition = original.position();
+        original.rewind(); // 将position重置为0以便复制
+        // 复制原数据到新Buffer
+        newBuffer.put(original);
+        // 追加新数据
+        newBuffer.put(newData);
+        // 恢复原Buffer的position（可选）
+        original.position(oldPosition);
+        // 设置新Buffer的position为数据末尾，准备读取
+        newBuffer.flip();
+        return newBuffer;
+    }
+
+    /**
      * 建立WebSocket链接
+     *
      * @throws URISyntaxException
      */
     public void connectWebSocket() throws URISyntaxException {
@@ -109,8 +134,8 @@ public class AIRobotWebSocketTest {
                         }
                         String jsonBody = JSON.toJSONString(reqBody);
                         send(jsonBody);
-                        if (reqBody.containsKey("audio_stream")){
-                            reqBody.put("audio_stream","audio_stream");
+                        if (reqBody.containsKey("audio_stream")) {
+                            reqBody.put("audio_stream", "audio_stream");
                         }
                         // 示例输出
                         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm.ss.SSS")) + " 【4】发送请求：=" + reqBody);
@@ -173,13 +198,13 @@ public class AIRobotWebSocketTest {
                     // 出现错误，输出错误信息
                     System.out.println("出现错误，异常结果为： " + jsonObject);
                 }
-                if (jsonObject!=null){
-                    if (jsonObject.containsKey("audio")){
-                        jsonObject.put("audio","audio");
+                if (jsonObject != null) {
+                    if (jsonObject.containsKey("audio")) {
+                        jsonObject.put("audio", "audio");
                     }
-                    if (jsonObject.containsKey("is_end")&&jsonObject.getBoolean("is_end")){
+                    if (jsonObject.containsKey("is_end") && jsonObject.getBoolean("is_end")) {
                         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm.ss.SSS")) + " 【8】接收到服务端的断开连接消息 = " + jsonObject);
-                    }else {
+                    } else {
                         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm.ss.SSS")) + " 【6】接收到服务端的消息 = " + jsonObject);
                     }
                 }
@@ -197,7 +222,7 @@ public class AIRobotWebSocketTest {
              */
             @Override
             public void onClose(int code, String reason, boolean remote) {
-                System.out.println("连接关闭：Code: " + code + ", Reason: " + reason+ ", 是否服务器自动关闭: " + remote);
+                System.out.println("连接关闭：Code: " + code + ", Reason: " + reason + ", 是否服务器自动关闭: " + remote);
             }
 
             /**
@@ -213,30 +238,5 @@ public class AIRobotWebSocketTest {
         client.addHeader("IMEI", imei);
         client.addHeader("Authorization", token);
         client.connect();
-    }
-
-    /**
-     * ByteBuffer数据追加方法
-     * @param original
-     * @param newData
-     * @return
-     */
-    public static ByteBuffer append(ByteBuffer original, byte[] newData) {
-        // 确保新容量足够容纳原数据和新数据
-        int newCapacity = original.capacity() + newData.length;
-        // 创建新的ByteBuffer
-        ByteBuffer newBuffer = ByteBuffer.allocate(newCapacity);
-        // 保存原Buffer的position和limit
-        int oldPosition = original.position();
-        original.rewind(); // 将position重置为0以便复制
-        // 复制原数据到新Buffer
-        newBuffer.put(original);
-        // 追加新数据
-        newBuffer.put(newData);
-        // 恢复原Buffer的position（可选）
-        original.position(oldPosition);
-        // 设置新Buffer的position为数据末尾，准备读取
-        newBuffer.flip();
-        return newBuffer;
     }
 }

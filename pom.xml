@@ -9,6 +9,9 @@
     <packaging>pom</packaging>
     <name>link-base</name>
     <description>link-base</description>
+    <modules>
+        <module>Arknights</module>
+    </modules>
 
     <properties>
         <java.version>1.8</java.version>

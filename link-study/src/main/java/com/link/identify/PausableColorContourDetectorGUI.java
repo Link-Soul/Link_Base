@@ -14,9 +14,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -733,7 +733,9 @@ public class PausableColorContourDetectorGUI extends JFrame {
     // 基于区域查找轮廓
     private static List<Point> findContour(Set<Point> region) {
         List<Point> contour = new ArrayList<>();
-        if (region.isEmpty()) return contour;
+        if (region.isEmpty()) {
+            return contour;
+        }
 
         // 找到最左边的点作为起点
         Point start = region.stream()
