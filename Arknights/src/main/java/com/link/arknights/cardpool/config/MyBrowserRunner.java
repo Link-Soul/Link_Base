@@ -28,12 +28,22 @@ public class MyBrowserRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (isOpen) {
-            Runtime run = Runtime.getRuntime();
-            try {
-                // 获取默认浏览器，有点吊
-                run.exec("rundll32 url.dll,FileProtocolHandler " + loginUrl);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            // 只在Windows系统下执行自动打开浏览器的操作
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")) {
+                // Windows系统下使用rundll32
+                Runtime run = Runtime.getRuntime();
+                try {
+                    // 获取默认浏览器，有点吊
+                    run.exec("rundll32 url.dll,FileProtocolHandler " + loginUrl);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // 可选：在Linux系统下可以使用xdg-open（如果容器中有图形环境）
+                // 或者直接注释掉，不在Linux环境下自动打开浏览器
+                System.out.println("Linux环境下不自动打开浏览器");
             }
         }
     }
