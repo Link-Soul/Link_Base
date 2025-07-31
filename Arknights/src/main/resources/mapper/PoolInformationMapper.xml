@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.link.arknights.cardpool.mapper.PoolInformationMapper">
+
+    <insert id="savePool" parameterType="com.link.arknights.cardpool.entity.PoolInformation">
+        insert into poolinformation (poolName, up1, up2, up1Page, up2Page, startTime, stopTime)
+            VALUE (#{poolName},#{up1},#{up2},#{up1Page},#{up2Page},#{startTime},#{stopTime})
+    </insert>
+
+</mapper>
