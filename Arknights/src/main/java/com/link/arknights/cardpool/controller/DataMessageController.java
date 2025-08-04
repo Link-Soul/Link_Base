@@ -59,7 +59,7 @@ public class DataMessageController {
             }
         }
         long stopTime = new Date().getTime();
-        System.out.println("共消耗时间 " + (stopTime - startTime) + " ms");
+        System.out.println(uid + " 通过uid获取抽卡信息 共消耗时间 " + (stopTime - startTime) + " ms");
         return JSON.toJSONString(cardMsgByPoolList);
     }
 

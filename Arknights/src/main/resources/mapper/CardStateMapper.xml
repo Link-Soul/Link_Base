@@ -46,19 +46,20 @@
         from poolinformation
                  LEFT JOIN
                  (select pool, COUNT(*) sum from cardstate GROUP BY pool) sum
-        on sum.pool = poolinformation.poolName
-            LEFT JOIN
-            (select pool , COUNT(*) six from cardstate where rarity=6 GROUP BY pool) six
-            on six.pool = poolinformation.poolName
-            LEFT JOIN
-            (select pool , COUNT(*) five from cardstate where rarity=5 GROUP BY pool) five
-            on five.pool = poolinformation.poolName
-            LEFT JOIN
-            (select pool , COUNT(*) four from cardstate where rarity=4 GROUP BY pool) four
-            on four.pool = poolinformation.poolName
-            LEFT JOIN
-            (select pool , COUNT(*) three from cardstate where rarity=3 GROUP BY pool) three
-            on three.pool = poolinformation.poolName;
+                 on sum.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) six from cardstate where rarity = 6 GROUP BY pool) six
+             on six.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) five from cardstate where rarity = 5 GROUP BY pool) five
+             on five.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) four from cardstate where rarity = 4 GROUP BY pool) four
+             on four.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) three from cardstate where rarity = 3 GROUP BY pool) three
+             on three.pool = poolinformation.poolName
+        order by poolinformation.id asc
     </select>
     <select id="getNumByPool" resultType="com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity">
         select cardstate.pool, count(cardstate.pool) sumCard, t2.num sixNum
@@ -68,9 +69,11 @@
              on t2.pool = cardstate.pool
         GROUP BY cardstate.pool;
     </select>
-    <select id="getPoolFromCards" resultType="java.lang.String">
-        select DISTINCT pool
-        from cardstate;
+    <select id="getPoolFromCards" resultType="com.link.arknights.cardpool.entity.getFromArk.Pool">
+        select pool poolName , MIN(createTime) startTime, MAX(createTime) stopTime
+        from cardstate
+        GROUP BY pool
+        ORDER BY MIN(createTime)
     </select>
     <select id="getPool" resultType="java.lang.String">
         select DISTINCT poolName

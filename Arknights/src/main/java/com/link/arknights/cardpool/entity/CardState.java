@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.io.Serializable;
  */
 @Component
 @TableName("cardState")
+@Data
 public class CardState implements Serializable {
 
     /**
@@ -65,7 +67,7 @@ public class CardState implements Serializable {
      */
     @NotNull(message = "[角色uid，用于区分]不能为空")
     @ApiModelProperty("角色uid，用于区分")
-    private Long uid;
+    private Integer uid;
 
     @Override
     public String toString() {
@@ -81,67 +83,5 @@ public class CardState implements Serializable {
                 '}';
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getPool() {
-        return pool;
-    }
-
-    public void setPool(String pool) {
-        this.pool = pool;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getRarity() {
-        return rarity;
-    }
-
-    public void setRarity(Integer rarity) {
-        this.rarity = rarity;
-    }
-
-    public Integer getIsNew() {
-        return isNew;
-    }
-
-    public void setIsNew(Integer isnew) {
-        this.isNew = isnew;
-    }
-
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getIfTen() {
-        return ifTen;
-    }
-
-    public void setIfTen(Integer ifTen) {
-        this.ifTen = ifTen;
-    }
-
-    public Long getUid() {
-        return uid;
-    }
-
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
 }

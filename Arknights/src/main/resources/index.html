@@ -34,6 +34,10 @@
         <button hidden="hidden" id="getNumByPoolChartChangeF" onclick="change(false)">点击切换为总抽数</button>
         <button id="resetTotalMessageTable" onclick="changeTotalMessageTable()">重置数据</button>
         <button onclick="submitJSON()">更新数据</button>
+
+        <input id="jsonFileUrl" placeholder="请输入小黑盒数据地址">
+        <button onclick="getData()">点击获取数据</button>
+
         <div id="message">
             <table id="messageTable">
                 <tr style="width: 200px">
@@ -76,7 +80,6 @@
     submitJSON = function () {
         showMask();
         $.get({
-
             url: "insert",
             param: {
                 // phone:'13287845587',
@@ -91,6 +94,35 @@
                 console.log(error);
             }
         }, 'json');
+    }
+    getData = function () {
+
+        // 1. 获取 input 中的值
+        const urlInput = document.getElementById("jsonFileUrl");
+        const inputValue = urlInput.value.trim(); // 去除前后空格
+
+        // 2. 简单验证：如果输入为空，提示用户
+        if (!inputValue) {
+            alert("请输入数据地址！");
+            return; // 终止函数
+        }
+        console.log("inputValue = " + inputValue)
+        showMask();
+        $.post({
+            url: "insertFromXhhWeb",
+            dataType: "text",
+            data: {
+                "fileUrl": inputValue
+            },
+            success: function (response) {
+                hideMask();
+                console.log("数据更新结果 " + response);
+                onLoad()
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
     }
     change = function (TF) {
         if (TF) {

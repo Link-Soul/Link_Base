@@ -13,15 +13,25 @@ import com.link.arknights.cardpool.mapper.CardStateMapper;
 import com.link.arknights.cardpool.service.CardStateService;
 import com.link.arknights.cardpool.util.Admin;
 import com.link.arknights.cardpool.util.HttpClientExample;
+import com.link.arknights.cardpool.util.RespUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 @ResponseBody
 public class CardStatController {
@@ -48,7 +58,7 @@ public class CardStatController {
         String formatToken = token.replace("+", "%2B");
         HttpClientExample httpClient = new HttpClientExample();
         String Total = httpClient.GetHttpTotal(1, formatToken, 1);
-        com.link.arknights.cardpool.entity.getFromArk.Total parse = JSON.parseObject(Total, Total.class);
+        Total parse = JSON.parseObject(Total, Total.class);
         // 总页数 73 => 8
 //        int total = (parse.getData().getPagination().getTotal() / 10 ) + 1;
         int total = parse.getData().getPagination().getTotal() % 10 == 0 ?
@@ -94,7 +104,7 @@ public class CardStatController {
         }
         admin.logOut(token);
         Collections.reverse(cardStateList);
-        boolean i = insertMessage(cardStateList, infoTotal.getData().getUid());
+        boolean i = insertMessage(cardStateList, Long.valueOf(infoTotal.getData().getUid()));
         long time2 = new Date().getTime();
         System.out.println("更新数据共耗时 " + (time2 - time1) + " ms");
         return cardStateList.size();
@@ -103,16 +113,19 @@ public class CardStatController {
     @GetMapping("/insertPool")
     public void insertPool() {
         System.out.println("insertPool执行");
-        List<String> list = cardStateMapper.getPoolFromCards();
+        List<Pool> poolListFromCards = cardStateMapper.getPoolFromCards();
+        List<String> list = poolListFromCards.stream().map(Pool::getPoolName).collect(Collectors.toList());
         List<String> poolList = cardStateMapper.getPool();
 
         // 获取非交集的部分
         List<String> nonIntersection = new ArrayList<>(list);
-        nonIntersection.addAll(poolList);  // 将两个列表合并
+        // 将两个列表合并
+        nonIntersection.addAll(poolList);
         // 获取交集部分
         List<String> intersection = new ArrayList<>(list);
         intersection.retainAll(poolList);
-        nonIntersection.removeAll(intersection);  // 去除交集部分，剩下的即为非交集的部分
+        // 去除交集部分，剩下的即为非交集的部分
+        nonIntersection.removeAll(intersection);
         nonIntersection.removeIf(s -> s.equals(""));
         // 输出非交集的部分
         if (nonIntersection.size() != 0) {
@@ -122,19 +135,103 @@ public class CardStatController {
                 pool.setPoolName(s);
                 pools.add(pool);
             }
-            cardStateMapper.insertPoolName(pools);
+            for (Pool pool : pools) {
+                for (Pool one : poolListFromCards) {
+                    if (pool.getPoolName().equals(one.getPoolName())){
+                        pool.setStartTime(one.getStartTime());
+                        pool.setStopTime(one.getStopTime());
+                    }
+                }
+            }
+            List<Pool> collect = pools.stream().sorted(Comparator.comparing(Pool::getStartTime)).collect(Collectors.toList());
+            cardStateMapper.insertPoolName(collect);
         }
     }
 
     /**
-     * 通过那个奇怪的json添加  暂时废弃
+     * 小黑盒导入抽卡数据
+     *
+     * @param fileUrl 传入的文件url
+     * @return 是否成功
+     * @throws JsonProcessingException
+     */
+    @PostMapping("/insertFromXhhWeb")
+    public Map<String, Object> insertFromXhhWeb(String fileUrl) {
+        log.info("insertFromXhhWeb执行,输入url：{}", fileUrl);
+        StringBuilder content = new StringBuilder();
+        HttpURLConnection connection = null;
+        // 一、下载文件
+        try {
+            // 1. 创建URL连接
+            URL url = new URL(fileUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            // 连接超时时间
+            connection.setConnectTimeout(5000);
+            // 读取超时时间
+            connection.setReadTimeout(5000);
+
+            // 2. 检查响应状态（200表示成功）
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // 3. 获取输入流并读取内容
+                try (InputStream is = connection.getInputStream();
+                     BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+
+                    content = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        content.append(line).append("\n");
+                    }
+                }
+            } else {
+                log.error("下载失败，响应码：" + connection.getResponseCode());
+                return RespUtils.resp("false", "下载失败", null);
+            }
+
+        } catch (Exception e) {
+            log.error("文件下载失败：{}", e.getMessage());
+            return RespUtils.resp("false", "文件下载失败", null);
+        } finally {
+            if (connection != null) {
+                connection.disconnect(); // 关闭连接
+            }
+        }
+        // 二、转json
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = JSONObject.parseObject(content.toString());
+        } catch (Exception e) {
+            log.error("json转换错误", e);
+            return RespUtils.resp("false", "json转换错误", null);
+        }
+        if (jsonObject != null && jsonObject.containsKey("data") && jsonObject.containsKey("info")) {
+            String data = jsonObject.getString("data");
+            JSONObject info = jsonObject.getJSONObject("info");
+            Integer uid = info.getInteger("uid");
+            try {
+                log.info("执行数据入库操作。用户id:{}，导入文件url：{}", uid, fileUrl);
+                int count = getFromJSON(data, uid);
+                return RespUtils.resp("true", "导入成功", "影响行数=" + count);
+            } catch (Exception e) {
+                log.error("文件入库失败", e);
+                return RespUtils.resp("false", "文件入库失败", null);
+            }
+        } else {
+            return RespUtils.resp("false", "文件解析失败", null);
+        }
+    }
+
+
+    /**
+     * 通过那个奇怪的json添加
      *
      * @param json 传入的json
      * @return 是否成功
      * @throws JsonProcessingException
      */
-    @PostMapping("/insertFromJSON")
-    public int getFromJSON(@RequestBody String json) throws JsonProcessingException {
+//    @PostMapping("/insertFromJSON")
+    public int getFromJSON(@RequestBody String json, Integer uid) throws JsonProcessingException {
         Map<String, MyEntity> entityMap = JSONObject.parseObject(json, new TypeReference<Map<String, MyEntity>>() {
         });
         List<CardState> list = new ArrayList<>();
@@ -154,7 +251,7 @@ public class CardStatController {
                 cardState.setIsNew(Integer.valueOf(isNew));
                 cardState.setCreateTime(Long.valueOf(key));
                 cardState.setIfTen(1);
-                cardState.setUid(86670999L);
+                cardState.setUid(uid);
                 list.add(cardState);
             } else if (c.size() == 10) {
                 for (List<String> strings : c) {
@@ -168,13 +265,26 @@ public class CardStatController {
                     cardState.setIsNew(Integer.valueOf(isNew));
                     cardState.setCreateTime(Long.valueOf(key));
                     cardState.setIfTen(10);
-                    cardState.setUid(86670999L);
+                    cardState.setUid(uid);
                     list.add(cardState);
                 }
             }
         }
-        int i = insertNoRepeat(list);
-        insertPool();
+        List<CardState> collect = list.stream().sorted(Comparator.comparing(CardState::getCreateTime)).collect(Collectors.toList());
+        List<CardState> collectList = new ArrayList<>(collect);
+        int i;
+        System.out.println("collect.size() = " + collect.size());
+        synchronized (this){
+            i = insertNoRepeat(collect);
+            insertPool();
+        }
+        System.out.println("collectList.size() = " + collectList.size());
+        try {
+            formatCardMsgByPoolList(collectList, Long.valueOf(uid));
+        } catch (Exception e) {
+            log.error("数据处理错误", e);
+        }
+
         return i;
     }
 
@@ -274,6 +384,8 @@ public class CardStatController {
                 Collections.reverse(six);
                 cardMsg.setSix(six);
             }
+            cardMsg.setStartTime(cardStateList.get(0).getCreateTime());
+            cardMsg.setStopTime(cardStateList.get(cardStateList.size() - 1).getCreateTime());
             cardMsgByPoolList.add(cardMsg);
         }
         // 反转顺序
@@ -339,26 +451,21 @@ public class CardStatController {
                     int i = cardStateMapper.insertCards(cardStateListFormat);
                     System.out.println("受影响的行数 = " + i);
                 } finally {
-//                    System.out.println("解锁1");
                     lock.unlock();
                 }
 
                 lock.lock();
                 try {
-//                    System.out.println("获取锁6");
                     insertPool();
 
                 } finally {
-//                    System.out.println("解锁6");
                     lock.unlock();
                 }
 
                 lock.lock();
                 try {
-//                    System.out.println("获取锁2");
                     boolean b = formatCardMsgByPoolList(cardMessageByUid, uid);
                 } finally {
-//                    System.out.println("解锁2");
                     lock.unlock();
                 }
 
@@ -373,29 +480,23 @@ public class CardStatController {
 
             lock.lock();
             try {
-                System.out.println("获取锁3");
                 int i = cardStateMapper.insertCards(cardStateListFormat);
                 System.out.println("受影响的行数 = " + i);
             } finally {
-                System.out.println("解锁3");
                 lock.unlock();
             }
 
             lock.lock();
             try {
-                System.out.println("获取锁5");
                 insertPool();
             } finally {
-                System.out.println("解锁5");
                 lock.unlock();
             }
 
             lock.lock();
             try {
-                System.out.println("获取锁4");
                 boolean b = formatCardMsgByPoolList(cardStateList, uid);
             } finally {
-                System.out.println("解锁4");
                 lock.unlock();
             }
 

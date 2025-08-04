@@ -28,6 +28,9 @@ public class HttpClientExample {
         // 基本格式：https://ak.hypergryph.com/user/api/inquiry/gacha?page=1&token=***=1
 //        String baseurl = "https://ak.hypergryph.com/user/api/inquiry/gacha";
         String baseurl = "https://as.hypergryph.com/user/auth/v1/token_by_phone_password";
+        // 三个池子：anniver_fest 、
+        // https://ak.hypergryph.com/user/api/inquiry/gacha/history?uid=86670999&category=anniver_fest&size=10
+        // https://ak.hypergryph.com/user/api/inquiry/gacha/history?uid=86670999&category=anniver_fest&pos=0&gachaTs=1746405097807&size=10
         String url = baseurl + "?page=" + page + "&token=" + token + "&channelId=" + channelId;
         return HttpGet(url);
     }

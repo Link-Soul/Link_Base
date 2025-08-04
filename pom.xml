@@ -11,6 +11,7 @@
     <description>link-base</description>
     <modules>
         <module>Arknights</module>
+        <module>link-study</module>
     </modules>
 
     <properties>

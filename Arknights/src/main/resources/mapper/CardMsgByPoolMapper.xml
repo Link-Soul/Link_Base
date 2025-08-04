@@ -25,5 +25,7 @@
         select *
         from cardmsgbypool
         where uid = #{uid}
+        order by startTime
+
     </select>
 </mapper>

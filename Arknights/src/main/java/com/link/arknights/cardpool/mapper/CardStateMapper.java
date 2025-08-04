@@ -29,7 +29,7 @@ public interface CardStateMapper extends BaseMapper<CardState> {
 
     List<getNumByPoolEntity> getNumByPool();
 
-    List<String> getPoolFromCards();
+    List<Pool> getPoolFromCards();
 
     List<String> getPool();
 

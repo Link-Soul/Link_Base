@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>抽卡数据统计2</title>
-    <script src="js/echarts.js"></script>
-    <script src="js/jquery-3.7.1.js"></script>
+    <title>抽卡数据统计</title>
+    <script src="static/js/echarts.js"></script>
+    <script src="static/js/jquery-3.7.1.js"></script>
 
     <style type="text/css">
         #mask {
             position: fixed;
+            c
             top: 5%;
             left: 40%;
             width: 20%;
@@ -33,6 +34,10 @@
         <button hidden="hidden" id="getNumByPoolChartChangeF" onclick="change(false)">点击切换为总抽数</button>
         <button id="resetTotalMessageTable" onclick="changeTotalMessageTable()">重置数据</button>
         <button onclick="submitJSON()">更新数据</button>
+
+        <input id="jsonFileUrl" placeholder="请输入小黑盒数据地址">
+        <button onclick="getData()">点击获取数据</button>
+
         <div id="message">
             <table id="messageTable">
                 <tr style="width: 200px">
@@ -75,7 +80,6 @@
     submitJSON = function () {
         showMask();
         $.get({
-
             url: "insert",
             param: {
                 // phone:'13287845587',
@@ -83,6 +87,35 @@
             },
             success: function (response) {
                 console.log("共更新数据 " + response + " 条");
+                hideMask();
+                onLoad()
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        }, 'json');
+    }
+    getData = function () {
+
+        // 1. 获取 input 中的值
+        const urlInput = document.getElementById("jsonFileUrl");
+        const inputValue = urlInput.value.trim(); // 去除前后空格
+
+        // 2. 简单验证：如果输入为空，提示用户
+        if (!inputValue) {
+            alert("请输入数据地址！");
+            return; // 终止函数
+        }
+
+
+        showMask();
+        $.get({
+            url: "insertFromXhhWeb",
+            param: {
+                fileUrl: fileUrl
+            },
+            success: function (response) {
+                console.log("数据更新 " + response.success());
                 hideMask();
                 onLoad()
             },
