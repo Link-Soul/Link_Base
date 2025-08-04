@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.link.arknights.cardpool.mapper.CardStateMapper">
+
+
+    <insert id="insertCards" parameterType="com.link.arknights.cardpool.entity.CardState">
+        INSERT INTO cardstate (pool, name, rarity, isNew, createTime, ifTen, uid)
+        VALUES
+        <foreach collection="cardStates" item="cardState" separator=",">
+            (#{cardState.pool}, #{cardState.name}, #{cardState.rarity}, #{cardState.isNew}, #{cardState.createTime},
+            #{cardState.ifTen}, #{cardState.uid})
+        </foreach>
+    </insert>
+    <insert id="insertPoolName">
+        insert into poolinformation (poolName) values
+        <foreach collection="pools" item="pool" separator=",">
+            (#{pool.poolName})
+        </foreach>
+    </insert>
+
+
+    <select id="queryBiggestTime" resultType="java.lang.Long">
+        select max(createTime)
+        from cardstate
+    </select>
+    <select id="getCardMessageByUid" resultType="com.link.arknights.cardpool.entity.CardState">
+        select *
+        from cardstate
+        where uid = #{uid}
+        ORDER BY createTime, id
+    </select>
+    <select id="queryAllByCreateTimeLongList" resultType="java.lang.Long">
+        select distinct createTime
+        from cardstate
+    </select>
+    <select id="getPoolCount" resultType="com.link.arknights.cardpool.entity.cardMegForWeb.PoolCount">
+        select cardstate.pool, count(cardstate.pool) sumCard, t2.num sixNum
+        from cardstate
+                 LEFT JOIN
+             (select pool, COUNT(pool) num from cardstate t1 where rarity = 6 GROUP BY pool) t2
+             on t2.pool = cardstate.pool
+        GROUP BY cardstate.pool;
+    </select>
+    <select id="queryRespectiveNum" resultType="com.link.arknights.cardpool.entity.entityForMessage.RespectiveNum">
+        select poolinformation.poolName pool, sum.sum, six.six, five.five, four.four, three.three
+        from poolinformation
+                 LEFT JOIN
+                 (select pool, COUNT(*) sum from cardstate GROUP BY pool) sum
+                 on sum.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) six from cardstate where rarity = 6 GROUP BY pool) six
+             on six.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) five from cardstate where rarity = 5 GROUP BY pool) five
+             on five.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) four from cardstate where rarity = 4 GROUP BY pool) four
+             on four.pool = poolinformation.poolName
+                 LEFT JOIN
+             (select pool, COUNT(*) three from cardstate where rarity = 3 GROUP BY pool) three
+             on three.pool = poolinformation.poolName
+        order by poolinformation.id asc
+    </select>
+    <select id="getNumByPool" resultType="com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity">
+        select cardstate.pool, count(cardstate.pool) sumCard, t2.num sixNum
+        from cardstate
+                 LEFT JOIN
+             (select pool, COUNT(pool) num from cardstate t1 where rarity = 6 GROUP BY pool) t2
+             on t2.pool = cardstate.pool
+        GROUP BY cardstate.pool;
+    </select>
+    <select id="getPoolFromCards" resultType="com.link.arknights.cardpool.entity.getFromArk.Pool">
+        select pool poolName , MIN(createTime) startTime, MAX(createTime) stopTime
+        from cardstate
+        GROUP BY pool
+        ORDER BY MIN(createTime)
+    </select>
+    <select id="getPool" resultType="java.lang.String">
+        select DISTINCT poolName
+        from poolinformation;
+    </select>
+    <select id="getPoolInfo" resultType="com.link.arknights.cardpool.entity.getFromArk.Pool">
+        select *
+        from poolinformation
+    </select>
+
+
+</mapper>

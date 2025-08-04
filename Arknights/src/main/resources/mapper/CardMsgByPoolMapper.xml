@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.link.arknights.cardpool.mapper.CardMsgByPoolMapper">
+
+
+    <insert id="insertCardMsgByPool" parameterType="com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool">
+        insert into cardmsgbypool (poolName, upName1, upName2, upUrl1, upUrl2, totalSix, total, uid, startTime,
+        stopTime)
+        VALUES
+        <foreach collection="cardMsgByPoolList" item="one" separator=",">
+            (#{one.poolName},#{one.upName1},#{one.upName2},#{one.upUrl1},#{one.upUrl2},
+            #{one.totalSix},#{one.total},#{one.uid},#{one.startTime},#{one.stopTime})
+        </foreach>;
+    </insert>
+    <update id="updateCardMsgByPool" parameterType="com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool">
+
+        update cardmsgbypool
+        set totalSix = #{totalSix},
+            total=#{total}
+        where poolName = #{poolName}
+          and uid = #{uid}
+
+    </update>
+    <select id="selectByUid" resultType="com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool">
+        select *
+        from cardmsgbypool
+        where uid = #{uid}
+        order by startTime
+
+    </select>
+</mapper>

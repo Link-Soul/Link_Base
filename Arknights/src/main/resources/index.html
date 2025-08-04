@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>抽卡数据统计</title>
+    <script src="static/js/echarts.js"></script>
+    <script src="static/js/jquery-3.7.1.js"></script>
+
+    <style type="text/css">
+        #mask {
+            position: fixed;
+            c
+            top: 5%;
+            left: 40%;
+            width: 20%;
+            height: 4%;
+            background: rgba(0, 0, 0, 0);
+            z-index: 1000;
+            display: none;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body onload="onLoad()">
+<div align="center" id="mask">数据查询中，请稍后</div>
+
+
+<div id="app">
+
+
+    <div style="width: 70%;float: left">
+        <div id="getNumByPoolChart" style="height:400px;width: 100%"></div>
+        <button id="getNumByPoolChartChangeT" onclick="change(true) ">点击切换为各卡池细则</button>
+        <button hidden="hidden" id="getNumByPoolChartChangeF" onclick="change(false)">点击切换为总抽数</button>
+        <button id="resetTotalMessageTable" onclick="changeTotalMessageTable()">重置数据</button>
+        <button onclick="submitJSON()">更新数据</button>
+
+        <input id="jsonFileUrl" placeholder="请输入小黑盒数据地址">
+        <button onclick="getData()">点击获取数据</button>
+
+        <div id="message">
+            <table id="messageTable">
+                <tr style="width: 200px">
+                    <td id="messageTotal">总计 <span id="messageTotal1"></span> 抽 ，共消耗合成玉： <span
+                            id="messageTotal2"></span></td>
+                </tr>
+                <tr style="width: 300px">
+                    <td id="messageSix">六星共计 <span id="messageSix1"></span> 人，概率 <span id="messageSix2"></span>
+                        %，平均出货 <span id="messageSix3"></span> 抽
+                    </td>
+                    <td id="messageFour">四星共计 <span id="messageFour1"></span> 人，概率 <span
+                            id="messageFour2"></span> %
+                    </td>
+                </tr>
+                <tr style="width: 300px">
+                    <td id="messageFive">五星共计 <span id="messageFive1"></span> 人，概率 <span
+                            id="messageFive2"></span>%，平均出货 <span id="messageFive3"></span> 抽
+                    </td>
+                    <td id="messageThree">三星共计 <span id="messageThree1"></span> 人，概率 <span
+                            id="messageThree2"></span>%
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="RespectiveNumData" style="width: 450px;height:400px;"></div>
+    </div>
+    <div style="float: right;width: 30%">
+        <table id="cardMsgByPoolListTable"></table>
+    </div>
+</div>
+<script type="text/javascript">
+
+    let data = []
+    let getNumByPoolData = []
+    let RespectiveNumData = []
+    let selectNum = 0;
+    let selectedT = {'total': true, '六星': false, '五星': false, '四星': false, '三星': false}
+    let selectedF = {'total': false, '六星': true, '五星': true, '四星': true, '三星': true}
+
+    submitJSON = function () {
+        showMask();
+        $.get({
+            url: "insert",
+            param: {
+                // phone:'13287845587',
+                // password:'40580087',
+            },
+            success: function (response) {
+                console.log("共更新数据 " + response + " 条");
+                hideMask();
+                onLoad()
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        }, 'json');
+    }
+    getData = function () {
+
+        // 1. 获取 input 中的值
+        const urlInput = document.getElementById("jsonFileUrl");
+        const inputValue = urlInput.value.trim(); // 去除前后空格
+
+        // 2. 简单验证：如果输入为空，提示用户
+        if (!inputValue) {
+            alert("请输入数据地址！");
+            return; // 终止函数
+        }
+        console.log("inputValue = " + inputValue)
+        showMask();
+        $.post({
+            url: "insertFromXhhWeb",
+            dataType: "text",
+            data: {
+                "fileUrl": inputValue
+            },
+            success: function (response) {
+                hideMask();
+                console.log("数据更新结果 " + response);
+                onLoad()
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+    change = function (TF) {
+        if (TF) {
+            getNumByPoolOption.legend.selected = selectedF
+            $doc("getNumByPoolChartChangeT").setAttribute("hidden", "hidden")
+            $doc("getNumByPoolChartChangeF").removeAttribute("hidden")
+        } else {
+            getNumByPoolOption.legend.selected = selectedT
+            $doc("getNumByPoolChartChangeF").setAttribute("hidden", "hidden")
+            $doc("getNumByPoolChartChangeT").removeAttribute("hidden")
+        }
+        getNumByPoolChart.setOption(getNumByPoolOption);
+    }
+
+    function $doc(id) {
+        return document.getElementById(id)
+    }
+
+    // 基于准备好的dom，初始化echarts实例
+    let getNumByPoolChart = echarts.init(document.getElementById('getNumByPoolChart'));
+    let RespectiveNumDataChart = echarts.init(document.getElementById('RespectiveNumData'));
+
+    getNumByPoolChart.on('click', function (params) {
+        changeTotalMessageTable(params.name)
+
+    })
+
+    // 饼图option
+    let optionForRespectiveNumDataChart = {
+        series: [
+            {
+                type: 'pie',
+                data: [],
+            }
+        ]
+    }
+    // 柱状图option
+    let getNumByPoolOption = {
+        grid: {
+            left: '10%',  // 调整左边空白边距
+            right: '10%', // 调整右边空白边距
+        },
+        title: {
+            text: '各卡池寻访次数'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            data: ['total', '六星', '五星', '四星', '三星'],
+            selected: {
+                'total': true,  // 设置'total'为默认显示
+                '六星': false,
+                '五星': false,
+                '四星': false,
+                '三星': false
+            }
+        },
+        xAxis: {
+            data: [],
+            axisLabel: {
+                interval: 0,
+                rotate: -30  //倾斜的程度
+            },
+        },
+        yAxis: {},
+        series: [
+            {
+                name: 'total',
+                type: 'bar',
+                data: [],
+                // barWidth: 30,
+                label: {
+                    show: true, // 显示标签
+                    position: 'top', // 标签位置，可以设置为 'top', 'insideTop', 'inside', 'insideBottom', 'bottom'
+                    formatter: '{c}' // 标签内容格式器，这里显示柱子对应的值
+                },
+                itemStyle: {
+                    color: '#4A90E2'
+                },
+            },
+            {
+                name: '六星',
+                type: 'bar',
+                data: [],
+                // barWidth: 30,
+                label: {
+                    show: true, // 显示标签
+                    position: 'top', // 标签位置，可以设置为 'top', 'insideTop', 'inside', 'insideBottom', 'bottom'
+                    formatter: '{c}' // 标签内容格式器，这里显示柱子对应的值
+                },
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(
+                        //前四个参数用于配置渐变色的起止位置，这四个参数依次对应 右下左上 四个方位。也就是从右边开始顺时针方向。
+                        //通过修改前4个参数，可以实现不同的渐变方向
+                        /*第五个参数则是一个数组，用于配置颜色的渐变过程。
+                          每项为一个对象，包含offset和color两个参数
+                        */
+                        0, 0, 0, 1,
+                        [
+                            {//代表渐变色从正上方开始
+                                offset: 1, //offset范围是0~1，用于表示位置，0是指0%处的颜色
+                                color: '#ee7800'
+                            }, //柱图渐变色
+                            {
+                                offset: 0, //指100%处的颜色
+                                color: '#e80505'
+                            }
+                        ]
+                    ),
+
+                },
+            },
+            {
+                name: '五星',
+                type: 'bar',
+                data: [],
+                // barWidth: 30,
+                label: {
+                    show: true, // 显示标签
+                    position: 'top', // 标签位置，可以设置为 'top', 'insideTop', 'inside', 'insideBottom', 'bottom'
+                    formatter: '{c}' // 标签内容格式器，这里显示柱子对应的值
+                },
+                itemStyle: {
+                    color: '#f39800'
+                },
+            },
+            {
+                name: '四星',
+                type: 'bar',
+                data: [],
+                // barWidth: 30,
+                label: {
+                    show: true, // 显示标签
+                    position: 'top', // 标签位置，可以设置为 'top', 'insideTop', 'inside', 'insideBottom', 'bottom'
+                    formatter: '{c}' // 标签内容格式器，这里显示柱子对应的值
+                },
+                itemStyle: {
+                    color: '#a1a1bd'
+                },
+            },
+            {
+                name: '三星',
+                type: 'bar',
+                data: [],
+                // barWidth: 30,
+                label: {
+                    show: true, // 显示标签
+                    position: 'top', // 标签位置，可以设置为 'top', 'insideTop', 'inside', 'insideBottom', 'bottom'
+                    formatter: '{c}' // 标签内容格式器，这里显示柱子对应的值
+                },
+                itemStyle: {
+                    color: '#74aff8'
+                },
+            },
+
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    getNumByPoolChart.setOption(getNumByPoolOption);
+    RespectiveNumDataChart.setOption(optionForRespectiveNumDataChart)
+
+    //测试遮罩层
+    /*changeTotalMessageTable2 = function (){
+        showMask();
+    }
+    changeTotalMessageTable3 = function (){
+        hideMask();
+    }*/
+
+    // 点击柱状图映射让下面饼图和数据改变
+    changeTotalMessageTable = function (name = "total") {
+        let data = []
+        let optionData = optionForRespectiveNumDataChart.series[0].data;
+
+        RespectiveNumData.forEach(item => {
+            if (item.pool === name) {
+                data = item
+            }
+        })
+        // 数据
+        $doc("messageTotal1").innerText = data.sum
+        $doc("messageTotal2").innerText = data.sum * 600
+
+        $doc("messageSix1").innerText = data.six
+        $doc("messageFive1").innerText = data.five
+        $doc("messageFour1").innerText = data.four
+        $doc("messageThree1").innerText = data.three
+        $doc("messageSix2").innerText = (data.six * 100 / data.sum).toFixed(2)
+        $doc("messageFive2").innerText = (data.five * 100 / data.sum).toFixed(2)
+        $doc("messageFour2").innerText = (data.four * 100 / data.sum).toFixed(2)
+        $doc("messageThree2").innerText = (data.three * 100 / data.sum).toFixed(2)
+
+        $doc("messageSix3").innerText = (data.sum / data.six).toFixed(1)
+        $doc("messageFive3").innerText = (data.sum / data.five).toFixed(1)
+
+        // 饼图
+        optionData.splice(0)
+        optionData.push({name: "六星", value: data.six})
+        optionData.push({name: "五星", value: data.five})
+        optionData.push({name: "四星", value: data.four})
+        optionData.push({name: "三星", value: data.three})
+        RespectiveNumDataChart.setOption(optionForRespectiveNumDataChart)
+    }
+    setNumByPoolChart = function (res) {
+        let ser = getNumByPoolOption.series
+        let xAxis = getNumByPoolOption.xAxis.data
+        xAxis.splice(0)
+        ser[0].data.splice(0)
+        ser[1].data.splice(0)
+        ser[2].data.splice(0)
+        ser[3].data.splice(0)
+        ser[4].data.splice(0)
+        for (let i = 0; i < res.length - 1; i++) {
+            xAxis.push(res[i].pool)
+            ser[0].data.push(res[i].sum)
+            ser[1].data.push(res[i].six)
+            ser[2].data.push(res[i].five)
+            ser[3].data.push(res[i].four)
+            ser[4].data.push(res[i].three)
+        }
+        getNumByPoolChart.setOption(getNumByPoolOption);
+    }
+    cardMsgByPoolListTable = function (res) {
+        let table = $doc("cardMsgByPoolListTable")
+        table.innerHTML = ''
+        table.style.width = "90%"
+        res.forEach(item => {
+            let tableOne = document.createElement("table")
+            tableOne.id = "tableOne"
+            tableOne.style.width = "90%"
+            tableOne.style.marginTop = "10px"
+            tableOne.style.marginBottom = "10px"
+
+            tableOne.style.background = "#bce672"
+            let trPool = document.createElement("tr")
+            // trPool.style.background="#7fecad"
+            let tdPoolName = document.createElement("td")
+            let tdPoolNum = document.createElement("td")
+            tdPoolName.style.width = "70%"
+            tdPoolNum.style.width = "30%"
+            tdPoolName.innerText = item.poolName
+            tdPoolNum.innerText = item.total
+            trPool.appendChild(tdPoolName)
+            trPool.appendChild(tdPoolNum)
+            tableOne.appendChild(trPool)
+            if (item.six !== undefined) {
+                item.six.forEach(card => {
+                    let trSix = document.createElement("tr")
+                    // trSix.style.background="#9ed900"
+                    let tdSixMsg = document.createElement("td")
+                    let tdSixNum = document.createElement("td")
+                    tdSixMsg.innerText = card.name
+                    tdSixNum.innerText = card.num
+                    trSix.appendChild(tdSixMsg)
+                    trSix.appendChild(tdSixNum)
+                    tableOne.appendChild(trSix)
+                })
+            } else {
+                let trNoSix = document.createElement("tr")
+                trNoSix.innerText = "该卡池暂无六星"
+                tableOne.appendChild(trNoSix)
+            }
+
+            table.appendChild(tableOne)
+        })
+
+    }
+
+    function showMask() {
+        document.getElementById('mask').style.display = 'block';
+    }
+
+    // 隐藏遮罩层
+    function hideMask() {
+        document.getElementById('mask').style.display = 'none';
+    }
+
+    onLoad = function () {
+        // 通过uid获取抽卡信息
+        $.get({
+            url: "getCardMessageById",
+            dataType: "text",
+            data: {
+                "uid": 86670999
+            },
+            success: function (response) {
+                let res = JSON.parse(response)
+                data.splice(0)
+                data = res
+                data.reverse()
+                data.forEach(item => {
+                    if (item.six !== undefined) {
+                        item.six.reverse()
+                    }
+                    // console.log(item.six)
+                })
+                cardMsgByPoolListTable(res)
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+            }
+        });
+        // 柱状图用数据
+        $.get({
+            url: "queryRespectiveNum",
+            dataType: "text",
+            success: function (response) {
+                let res = JSON.parse(response)
+                RespectiveNumData.splice(0)
+                RespectiveNumData = res
+
+                changeTotalMessageTable()
+                setNumByPoolChart(res)
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+            }
+        });
+    }
+
+</script>
+
+</body>
+
+</html>
