@@ -228,12 +228,10 @@ public class CardStatController {
      *
      * @param json 传入的json
      * @return 是否成功
-     * @throws JsonProcessingException
      */
 //    @PostMapping("/insertFromJSON")
-    public int getFromJSON(@RequestBody String json, Integer uid) throws JsonProcessingException {
-        Map<String, MyEntity> entityMap = JSONObject.parseObject(json, new TypeReference<Map<String, MyEntity>>() {
-        });
+    public int getFromJSON(@RequestBody String json, Integer uid) {
+        Map<String, MyEntity> entityMap = JSONObject.parseObject(json, new TypeReference<Map<String, MyEntity>>() {});
         List<CardState> list = new ArrayList<>();
         for (Map.Entry<String, MyEntity> entry : entityMap.entrySet()) {
             String key = entry.getKey();

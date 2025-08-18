@@ -1,20 +1,13 @@
 package com.link.turing;
 
 import com.alibaba.fastjson.JSONObject;
-import com.link.turing.utils.FileUtil;
-
-import org.apache.ibatis.javassist.bytecode.ByteArray;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -30,9 +23,9 @@ public class AsrWsDemo {
     public static final String deviceId = "ai11223344556677";
 
     public static boolean wsCloseFlag = false;
-    public static String uuid= UUID.randomUUID().toString().replaceAll("-","");
-//    public static String filePath= "D:\\FFOutput\\n4an0-wzggy.opus";
-    public static String filePath= "D:\\FFOutput\\标准录音 17.mp3";
+    public static String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+    //    public static String filePath= "D:\\FFOutput\\n4an0-wzggy.opus";
+    public static String filePath = "D:\\FFOutput\\标准录音 17.mp3";
     private static final int BUFFER_SIZE = 1024 * 16; // 每次读取的块大小，可根据需要调整
 
     public static void main(String[] args) throws Exception {
@@ -64,14 +57,14 @@ public class AsrWsDemo {
                 public void onMessage(String text) {
                     //服务器相应内容
                     System.out.println(text);
-                    JSONObject response=JSONObject.parseObject(text);
-                    if (response.getInteger("code")==200
-                            && response.getJSONObject("asrResponse").getString("binarysId").equals(uuid)){
+                    JSONObject response = JSONObject.parseObject(text);
+                    if (response.getInteger("code") == 200
+                            && response.getJSONObject("asrResponse").getString("binarysId").equals(uuid)) {
                         System.out.println("binarysId = " + response.getJSONObject("asrResponse").getString("binarysId"));
-                        String asrValue=response.getJSONObject("asrResponse").getString("value");
-                        System.out.println("asrValue---->"+asrValue);
+                        String asrValue = response.getJSONObject("asrResponse").getString("value");
+                        System.out.println("asrValue---->" + asrValue);
                     }
-                    if (response.getBoolean("done")){
+                    if (response.getBoolean("done")) {
                         // 关闭连接
                         close();
                     }
@@ -103,19 +96,19 @@ public class AsrWsDemo {
 
     //二进制数据传输开始标志
     public static String requestStart() {
-        System.out.println("uuid--->"+uuid);
+        System.out.println("uuid--->" + uuid);
         String requestJson = "{\n" +
-                "    \"key\": \""+apiKey+"\",\n" +
-                "    \"timestamp\": \""+System.currentTimeMillis()+"\",\n" +
+                "    \"key\": \"" + apiKey + "\",\n" +
+                "    \"timestamp\": \"" + System.currentTimeMillis() + "\",\n" +
                 "    \"data\": {\n" +
-                "        \"deviceId\": \""+deviceId+"\",\n" +
+                "        \"deviceId\": \"" + deviceId + "\",\n" +
                 "        \"requestType\": [\n" +
                 "            0\n" +
                 "        ],\n" +
                 "        \"nlpRequest\": {\n" +
                 "            \"content\": [\n" +
                 "                {\n" +
-                "                    \"data\": \""+uuid+"\",\n" +
+                "                    \"data\": \"" + uuid + "\",\n" +
                 "                    \"type\": 2\n" +
                 "                }\n" +
                 "            ]\n" +
@@ -128,7 +121,7 @@ public class AsrWsDemo {
                 "            \"enablePunctuation\": true\n" +
                 "        },\n" +
                 "        \"binarysState\": {\n" +
-                "            \"openBinarysId\": \""+uuid+"\"\n" +
+                "            \"openBinarysId\": \"" + uuid + "\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -146,12 +139,11 @@ public class AsrWsDemo {
             while ((bytesRead = fis.read(buffer)) != -1) {
                 baos.write(buffer, 0, bytesRead);
             }
-            jsonObject.put("openBinarysId",uuid);
-            jsonObject.put("apiKey",apiKey);
-            jsonObject.put("data",baos.toByteArray());
+            jsonObject.put("openBinarysId", uuid);
+            jsonObject.put("apiKey", apiKey);
+            jsonObject.put("data", baos.toByteArray());
             return jsonObject;
         }
-
 
 
         //        URL resourceUrl = AsrWsDemo.class.getClassLoader().getResource(filePath);
@@ -168,11 +160,11 @@ public class AsrWsDemo {
     //二进制数据传输结束
     public static String requestEnd() {
         String requestJson = "{" +
-                "    \"key\": \""+apiKey+"\"," +
-                "    \"timestamp\": \""+System.currentTimeMillis()+"\"," +
+                "    \"key\": \"" + apiKey + "\"," +
+                "    \"timestamp\": \"" + System.currentTimeMillis() + "\"," +
                 "    \"data\": {" +
                 "        \"binarysState\": {" +
-                "            \"completeBinarysId\": \""+uuid+"\"" +
+                "            \"completeBinarysId\": \"" + uuid + "\"" +
                 "        }" +
                 "    }" +
                 "}";
@@ -188,11 +180,11 @@ public class AsrWsDemo {
         String sendEndMessage;
 
         public MyThread(WebSocketClient webSocketClient, String sendStartMessage,
-                        byte [] sendByte,String sendEndMessage) {
+                        byte[] sendByte, String sendEndMessage) {
             this.webSocketClient = webSocketClient;
             this.sendStartMessage = sendStartMessage;
-            this.sendByte=sendByte;
-            this.sendEndMessage=sendEndMessage;
+            this.sendByte = sendByte;
+            this.sendEndMessage = sendEndMessage;
         }
 
         public void run() {
@@ -213,7 +205,6 @@ public class AsrWsDemo {
             }
         }
     }
-
 
 
 }

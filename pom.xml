@@ -12,6 +12,7 @@
     <modules>
         <module>Arknights</module>
         <module>link-study</module>
+        <module>link-core</module>
     </modules>
 
     <properties>
@@ -55,7 +56,7 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>3.4.0</version>
+                <version>3.5.4.1</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -66,11 +67,6 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>2.0.55</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.http</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.2</version>
             </dependency>
             <!--websocket-->
             <dependency>
@@ -87,32 +83,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-websocket</artifactId>
             </dependency>
-            <!--opencv，用于屏幕识别-->
-            <!-- https://mvnrepository.com/artifact/org.bytedeco/opencv -->
-
-
-                <!-- Spring WebFlux (包含 WebClient 和 BodyInserters) -->
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-webflux</artifactId>
-                    <version>3.4.2</version> <!-- 根据需要调整版本 -->
-                </dependency>
-
-                <!-- Reactor Core (包含 Flux) -->
-                <dependency>
-                    <groupId>io.projectreactor</groupId>
-                    <artifactId>reactor-core</artifactId>
-                    <version>3.7.2</version> <!-- 根据需要调整版本 -->
-                </dependency>
-
-                <!-- Reactor Netty (包含 HttpClient) -->
-                <dependency>
-                    <groupId>io.projectreactor.netty</groupId>
-                    <artifactId>reactor-netty</artifactId>
-                    <version>1.2.3</version> <!-- 根据需要调整版本 -->
-                </dependency>
-
-
 
 
         </dependencies>
@@ -170,31 +140,23 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-typehandlers-jsr310</artifactId>
         </dependency>
-        <!-- MyBatis-Plus 依赖 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
+
         <!-- RabbitMQ 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>2.2.13.RELEASE</version>
         </dependency>
-        <!-- FastJSON 依赖 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
         <!-- HttpClient 依赖 -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.http</groupId>-->
-<!--            <artifactId>httpclient</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

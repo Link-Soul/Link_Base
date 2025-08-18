@@ -12,7 +12,7 @@ import java.util.Collections;
 
 @EnableTransactionManagement
 @Configuration
-@MapperScan("com.link.arknight")
+@MapperScan("com.link.arknights")
 public class MybatisPlusConfig {
     /**
      * 分页插件 3.5.X
