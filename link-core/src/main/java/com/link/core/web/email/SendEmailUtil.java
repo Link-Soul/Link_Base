@@ -1,7 +1,6 @@
-package com.link.web.email;
+package com.link.core.web.email;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

@@ -1,4 +1,4 @@
-package com.link.web.email;
+package com.link.core.web.email;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-import static com.link.web.email.SendEmailUtil.sendMail;
 
 @RestController
 @RequestMapping("/")

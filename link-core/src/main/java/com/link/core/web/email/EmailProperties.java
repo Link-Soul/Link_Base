@@ -1,4 +1,4 @@
-package com.link.web.email;
+package com.link.core.web.email;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
