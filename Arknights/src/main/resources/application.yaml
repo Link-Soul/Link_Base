@@ -41,6 +41,10 @@ mybatis-plus:
     # 关闭 sql 日志
     # log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 
+ark:
+  userId:
+  password:
+
 email:
   active: qq
   qq:
@@ -52,6 +56,5 @@ email:
     username: 13287845587@163.com
     password: XYPU23f6JYx66UQg
 
-ark:
-  userId:
-  password:
+
+
