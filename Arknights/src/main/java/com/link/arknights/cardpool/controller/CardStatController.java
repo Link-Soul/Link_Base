@@ -15,6 +15,7 @@ import com.link.arknights.cardpool.util.Admin;
 import com.link.arknights.cardpool.util.HttpClientExample;
 import com.link.arknights.cardpool.util.RespUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,12 @@ public class CardStatController {
     @Resource
     private CardStateMapper cardStateMapper;
 
+    @Value(value = "${ark.userId}")
+    private String userId;
+    @Value(value = "${ark.password}")
+    private String password;
+
+
 
     /**
      * 从官网获取寻访数据并进行添加
@@ -51,8 +58,8 @@ public class CardStatController {
     public synchronized int insert(HttpServletResponse response) throws Exception {
         long time1 = new Date().getTime();
         TokenByPhonePasswordReq user = new TokenByPhonePasswordReq();
-        user.setPhone("13287845587");
-        user.setPassword("40580087");
+        user.setPhone(userId);
+        user.setPassword(password);
         Admin admin = new Admin();
         String token = admin.getToken(user);
         String formatToken = token.replace("+", "%2B");
