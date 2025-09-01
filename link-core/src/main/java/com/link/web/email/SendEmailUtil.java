@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -37,7 +38,7 @@ public class SendEmailUtil {
     }
 
 
-    @Autowired
+    @Resource
     private EmailProperties emailProperties;
 
     // 初始化时从配置中读取并赋值给静态变量
@@ -71,7 +72,7 @@ public class SendEmailUtil {
      *
      * @param subject   邮件主题
      * @param content   邮件内容
-     * @param personal  发件人昵称
+     * @param personal  发件人昵称 —— 显示在最上边的跟标题一样的东西
      * @param addressee 收件人邮箱
      * @throws MessagingException 邮件发送异常
      * @throws IOException        IO异常
@@ -81,6 +82,8 @@ public class SendEmailUtil {
         Properties props = new Properties();                // 用于连接邮件服务器的参数配置（发送邮件时才需要用到）
 
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
+        props.setProperty("mail.smtp.ssl.enable", "true");      // 启用SSL加密
+        props.setProperty("mail.smtp.port", "465");             // 启用加密后的端口为 465，而非默认的 25 端口
         props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
         props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
 
