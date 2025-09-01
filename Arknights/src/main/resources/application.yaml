@@ -40,3 +40,14 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 关闭 sql 日志
     # log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+email:
+  active: qq
+  qq:
+    host: smtp.qq.com
+    username: 1749449185@qq.com
+    password: iffhhzqvrddvdehd
+  wy163:
+    host: smtp.163.com
+    username: 13287845587@163.com
+    password: XYPU23f6JYx66UQg

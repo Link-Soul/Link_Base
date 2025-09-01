@@ -23,19 +23,6 @@ import java.util.Properties;
 @Slf4j
 @Component
 public class SendEmailUtil {
-    public static void main(String[] args) throws Exception {
-        try {
-            sendMail("This is a test email.", "Hello", "John Doe", "1749449185@qq.com");
-        } catch (MessagingException e) {
-            log.error("发送邮件信息内容错误", e);
-            return;
-        } catch (IOException e) {
-            log.error("发送邮件IO错误", e);
-            return;
-        }
-        System.out.println("发送成功");
-    }
-
 
     @Resource
     private EmailProperties emailProperties;
@@ -58,7 +45,7 @@ public class SendEmailUtil {
     // 发件人的 邮箱 和 密码（替换为自己的邮箱和密码）
     // PS: 某些邮箱服务器为了增加邮箱本身密码的安全性，给 SMTP 客户端设置了独立密码（有的邮箱称为“授权码”）,
     //     对于开启了独立密码的邮箱, 这里的邮箱密码必需使用这个独立密码（授权码）。
-    // 163的密码持续180天，byd得实时更新。预备存储到数据库中或者配置文件中，然后搭配生成的时间戳。
+    // 163的密码持续180天，byd得实时更新。
     private static String senderEmailAccount;
     private static String senderEmailPassword;
     private static String myEmailSMTPHost;

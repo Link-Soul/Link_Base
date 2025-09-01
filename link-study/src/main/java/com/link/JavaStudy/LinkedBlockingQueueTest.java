@@ -17,6 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * 队列的学习
  * @Author zhoubinbin
  * @Date 2025/4/14 09:59
  */

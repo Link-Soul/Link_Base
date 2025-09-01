@@ -62,17 +62,4 @@ public class EmailProperties {
 
     public void setWy163(MailConfig wy163) { this.wy163 = wy163; }
 
-    public static void main(String[] args) {
-
-/*
-        // 获取当前激活的邮箱配置（根据email.active自动切换）
-        EmailProperties.MailConfig currentConfig = emailProperties.getCurrentConfig();
-
-        // 使用配置发送邮件
-        String host = currentConfig.getHost();       // 如smtp.qq.com
-        String username = currentConfig.getUsername(); // 如123456789@qq.com
-        String password = currentConfig.getPassword(); // 如123456789
-        */
-
-    }
 }
