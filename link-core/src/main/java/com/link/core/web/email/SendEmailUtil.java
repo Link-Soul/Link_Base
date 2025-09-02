@@ -64,25 +64,37 @@ public class SendEmailUtil {
      * @throws IOException        IO异常
      */
     public static void sendMail(String subject, String content, String personal, String addressee) throws MessagingException, IOException {
+        // 1、初始化参数
+        Properties props = getProps();
+
+        // 2、根据参数配置，创建会话对象（为了发送邮件准备的）
+        Session session = Session.getInstance(props);
+        // 3、根据 Session 获取邮件传输对象
+        MimeMessage message = createMailMessage(subject, content, personal, addressee, session);
+
+        try {
+            // 4、发送邮件
+            sendMsg(session, message);
+        } catch (Exception e) {
+            log.error("发送邮件失败错误信息：{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 初始化邮件参数
+     *
+     * @author Link
+     * @since 2025/9/2 08:25
+     */
+    private static Properties getProps() {
         // 1. 创建一封邮件
         Properties props = new Properties();                // 用于连接邮件服务器的参数配置（发送邮件时才需要用到）
-
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
         props.setProperty("mail.smtp.ssl.enable", "true");      // 启用SSL加密
         props.setProperty("mail.smtp.port", "465");             // 启用加密后的端口为 465，而非默认的 25 端口
         props.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
         props.setProperty("mail.smtp.auth", "true");            // 需要请求认证
-
-        Session session = Session.getInstance(props);       // 根据参数配置，创建会话对象（为了发送邮件准备的）
-        // 4. 根据 Session 获取邮件传输对象
-        MimeMessage message = createMailMessage(subject, content, personal, addressee, session);
-
-
-        try {
-            sendMsg(session, message);
-        } catch (Exception e) {
-            log.error("发送邮件失败", e);
-        }
+        return props;
     }
 
     /**
@@ -95,7 +107,7 @@ public class SendEmailUtil {
     private static void sendMsg(Session session, MimeMessage message) throws MessagingException {
         Transport transport = session.getTransport();
 
-        // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
+        //    1、使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
         //
         //    PS_01: 如果连接服务器失败, 都会在控制台输出相应失败原因的log。
         //    仔细查看失败原因, 有些邮箱服务器会返回错误码或查看错误类型的链接,
@@ -104,16 +116,16 @@ public class SendEmailUtil {
         //    PS_02: 连接失败的原因通常为以下几点, 仔细检查代码:
         //           (1) 邮箱没有开启 SMTP 服务;
         //           (2) 邮箱密码错误, 例如某些邮箱开启了独立密码;
-        //           (3) 邮箱服务器要求必须使用 SSL 安全连接;
+        //           (3) 邮箱服务器要求必须使用 SSL 安全连接;  **
         //           (4) 请求过于频繁或其他原因, 被邮件服务器拒绝服务;
         //           (5) 如果以上几点都确定无误, 到邮件服务器网站查找帮助。
         //
         transport.connect(senderEmailAccount, senderEmailPassword);
 
-        // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
+        // 2、 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
         transport.sendMessage(message, message.getAllRecipients());
 
-        // 7. 关闭连接
+        // 3、 关闭连接
         transport.close();
     }
 
@@ -130,7 +142,8 @@ public class SendEmailUtil {
      * @throws UnsupportedEncodingException 编码错误
      */
     private static MimeMessage createMailMessage(String subject, String content, String personal, String addressee, Session session) throws MessagingException, UnsupportedEncodingException {
-        MimeMessage message = new MimeMessage(session);     // 创建邮件对象
+        // 1. 创建邮件对象
+        MimeMessage message = new MimeMessage(session);
         /*
          * 也可以根据已有的eml邮件文件创建 MimeMessage 对象。模板方式
          * MimeMessage message = new MimeMessage(session, new FileInputStream("myEmail.eml"));
