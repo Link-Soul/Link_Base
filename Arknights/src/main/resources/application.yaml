@@ -49,12 +49,12 @@ email:
   active: qq
   qq:
     host: smtp.qq.com
-    username: 1749449185@qq.com
-    password: iffhhzqvrddvdehd
+    username:
+    password:
   wy163:
     host: smtp.163.com
-    username: 13287845587@163.com
-    password: XYPU23f6JYx66UQg
+    username:
+    password:
 
 
 
