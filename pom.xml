@@ -38,7 +38,7 @@
         <mysql.version>8.0.33</mysql.version>
         <lombok.version>1.18.24</lombok.version>
         <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
-        <mybatis-spring-boot.version>2.2.2</mybatis-spring-boot.version>
+        <mybatis-spring-boot.version>2.3.2</mybatis-spring-boot.version>
         <mybatis-typehandlers.version>1.0.1</mybatis-typehandlers.version>
         <fastjson2.version>2.0.57</fastjson2.version>
         <httpclient5.version>5.4.4</httpclient5.version>
@@ -55,9 +55,20 @@
     <dependencyManagement>
         <dependencies>
             <!-- Spring Boot 相关依赖 -->
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
 
