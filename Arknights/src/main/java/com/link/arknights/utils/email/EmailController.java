@@ -25,7 +25,7 @@ public class EmailController {
             SendEmailUtil.sendMail("任务完成", "Maa任务完成", "Maa", email);
         } catch (Exception e) {
             log.error("发送邮件失败", e);
-            return "false";
+            return e.getMessage();
         }
         return "success";
     }

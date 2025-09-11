@@ -22,14 +22,11 @@ import java.io.Serializable;
 @Data
 public class CardState implements Serializable {
 
-    /**
-     *
-     */
-    @NotNull(message = "[]不能为空")
 
+    @NotNull(message = "[]不能为空")
     @ApiModelProperty("")
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
     /**
      *
      */

@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>抽卡数据统计</title>
-    <script src="static/js/echarts.js"></script>
-    <script src="static/js/jquery-3.7.1.js"></script>
+    <script src="/static/js/echarts.js"></script>
+    <script src="/static/js/jquery-3.7.1.js"></script>
 
     <style type="text/css">
         #mask {
             position: fixed;
-            c
             top: 5%;
             left: 40%;
             width: 20%;
@@ -81,10 +80,7 @@
         showMask();
         $.get({
             url: "insert",
-            param: {
-                // phone:'13287845587',
-                // password:'40580087',
-            },
+            param: {},
             success: function (response) {
                 console.log("共更新数据 " + response + " 条");
                 hideMask();

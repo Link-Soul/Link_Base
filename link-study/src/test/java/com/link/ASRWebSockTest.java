@@ -1,7 +1,5 @@
-package com.link; /**
- * @Author zhoubinbin
- * @Date 2025/4/23 11:17
- */
+package com.link;
+
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -19,15 +17,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * @Author zhoubinbin
+ * @Date 2025/4/23 11:17
+ */
 public class ASRWebSockTest {
     /**
-     * 卡尔服务-asr能力的 url
+     * asr能力的 url
      */
 //    private static final String WS_URL = "ws://v2.alpha.kaerplatform.com/ai/ws/asr/stream"; // 替换为实际的 WebSocket 地址
 //    private static final String WS_URL = "ws://tree.kaerplatform.com/ai/ws/asr/stream"; // 替换为实际的 WebSocket 地址
     private static final String WS_URL = "ws://localhost:8998/ai/ws/asr/stream"; // 替换为实际的 WebSocket 地址
     /**
-     * 卡尔服务-asr能力需要的token
+     * asr能力需要的token
      */
     private static final String token = "955c990ddb1f4559887095223eefd326";
     private static final String imei = "45678910";

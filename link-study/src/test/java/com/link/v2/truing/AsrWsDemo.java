@@ -1,6 +1,6 @@
 package com.link.v2.truing;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 
 import com.link.turing.utils.FileUtil;
 import org.java_websocket.WebSocket;

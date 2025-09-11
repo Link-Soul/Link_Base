@@ -1,6 +1,6 @@
 package com.link.arknights.cardpool.controller;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.link.arknights.cardpool.entity.PoolInformation;
 import com.link.arknights.cardpool.entity.cardMegForWeb.PoolCount;
 import com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool;
@@ -107,11 +107,6 @@ public class DataMessageController {
     @GetMapping("/getNumByPool")
     public List<getNumByPoolEntity> getNumByPool() {
         return cardStateMapper.getNumByPool();
-    }
-
-    @GetMapping("/getPoolCount")
-    public List<PoolCount> getPoolCount() {
-        return cardStateMapper.getPoolCount();
     }
 
 

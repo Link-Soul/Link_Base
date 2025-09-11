@@ -18,7 +18,6 @@ public class MyBrowserRunner implements CommandLineRunner {
     //框架自带的日志 打印信息到控制台
 //    private static Logger logger = LoggerFactory.getLogger(MyBrowserRunner.class);
 
-    //通过该注解@Value 利用spel表达式(${spring.web.loginurl})获取配置文件的值
     @Value("${spring.web.loginurl}")
     private String loginUrl;
 

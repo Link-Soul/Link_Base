@@ -1,6 +1,6 @@
 package com.link.arknights.cardpool.util;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.link.arknights.cardpool.entity.getFromArk.Login;
 import com.link.arknights.cardpool.entity.getFromArk.TokenByPhonePasswordReq;
@@ -137,8 +137,8 @@ public class HttpClientExample {
         basicHttpContext.setAttribute(HttpClientContext.COOKIE_STORE,cookieStore);*/
 
 /*        TokenByPhonePasswordReq requestObject = new TokenByPhonePasswordReq();
-        requestObject.setPhone("13287845587");
-        requestObject.setPassword("40580087");*/
+        requestObject.setPhone("");
+        requestObject.setPassword("");*/
 
         // 将对象转换为 JSON 字符串
         ObjectMapper objectMapper = new ObjectMapper();

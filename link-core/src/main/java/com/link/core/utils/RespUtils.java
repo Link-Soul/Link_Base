@@ -1,11 +1,11 @@
-package com.link.arknights.cardpool.util;
+package com.link.core.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author ZhouBinBin
- * @Description TODO
+ * @Description 响应的标准方法
  * @since 2025/8/4 14:32
  **/
 public class RespUtils {

@@ -1,20 +1,24 @@
 package com.link.arknights.cardpool.entity.entityForMessage;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@TableName("cardmsgbypool")
 public class CardMsgByPool {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
     private String poolName;
     private String upName1;
     private String upName2;
     private String upUrl1;
     private String upUrl2;
+    @TableField(exist = false)
     private List<Role> six;
     private String totalSix;
     private int total;

@@ -7,6 +7,7 @@ import com.link.arknights.cardpool.entity.entityForMessage.RespectiveNum;
 import com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity;
 import com.link.arknights.cardpool.entity.getFromArk.Pool;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,7 +15,9 @@ import java.util.List;
 @Mapper
 public interface CardStateMapper extends BaseMapper<CardState> {
 
-    int insertCards(List<CardState> cardStates);
+    int insertCards(@Param("cardStates") List<CardState> cardStates);
+
+    int insertPoolName(@Param("pools") List<Pool> pools);
 
     Long queryBiggestTime();
 
@@ -23,18 +26,13 @@ public interface CardStateMapper extends BaseMapper<CardState> {
     List<CardState> getCardMessageByUid(Long uid);
 
 
-    List<PoolCount> getPoolCount();
+    List<getNumByPoolEntity> getNumByPool();
 
     List<RespectiveNum> queryRespectiveNum();
-
-    List<getNumByPoolEntity> getNumByPool();
 
     List<Pool> getPoolFromCards();
 
     List<String> getPool();
-
-    int insertPoolName(List<Pool> pools);
-
 
     List<Pool> getPoolInfo();
 }

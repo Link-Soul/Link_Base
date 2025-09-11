@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class PoolInformation {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
     private String poolName;
     private String up1;
     private String up2;

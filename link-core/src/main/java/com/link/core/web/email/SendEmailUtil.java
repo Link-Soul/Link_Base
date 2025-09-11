@@ -87,6 +87,10 @@ public class SendEmailUtil {
      * @since 2025/9/2 08:25
      */
     private static Properties getProps() {
+        if (myEmailSMTPHost == null) {
+            log.error("请检查邮箱配置");
+            throw new RuntimeException("please init email config");
+        }
         // 1. 创建一封邮件
         Properties props = new Properties();                // 用于连接邮件服务器的参数配置（发送邮件时才需要用到）
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）

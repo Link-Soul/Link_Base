@@ -3,16 +3,16 @@
 <mapper namespace="com.link.arknights.cardpool.mapper.CardMsgByPoolMapper">
 
 
-    <insert id="insertCardMsgByPool" parameterType="com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool">
+    <insert id="insertCardMsgByPool">
         insert into cardmsgbypool (poolName, upName1, upName2, upUrl1, upUrl2, totalSix, total, uid, startTime,
         stopTime)
         VALUES
-        <foreach collection="cardMsgByPoolList" item="one" separator=",">
+        <foreach collection="list" item="one" separator=",">
             (#{one.poolName},#{one.upName1},#{one.upName2},#{one.upUrl1},#{one.upUrl2},
             #{one.totalSix},#{one.total},#{one.uid},#{one.startTime},#{one.stopTime})
         </foreach>;
     </insert>
-    <update id="updateCardMsgByPool" parameterType="com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool">
+    <update id="updateCardMsgByPool">
 
         update cardmsgbypool
         set totalSix = #{totalSix},
@@ -26,6 +26,5 @@
         from cardmsgbypool
         where uid = #{uid}
         order by startTime
-
     </select>
 </mapper>

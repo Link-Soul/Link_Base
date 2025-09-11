@@ -21,11 +21,11 @@ import java.util.*;
 
 public class ASRWebSockTest {
     /**
-     * 卡尔服务-asr能力的 url
+     * asr能力的 url
      */
     private static final String WS_URL = "ws://v2.alpha.kaerplatform.com/ai/ws/asr/stream";
     /**
-     * 卡尔服务-asr能力需要的token
+     * asr能力需要的token
      */
     private static final String token = "52b811e1026242e5939c23b97e2f00bf";
     private static final String imei = "86178207000055022";

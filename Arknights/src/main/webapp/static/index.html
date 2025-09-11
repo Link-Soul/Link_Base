@@ -1,15 +1,11 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>抽卡数据统计</title>
-    <script src="../../static/js/echarts.js"></script>
-    <script src="../../static/js/jquery-3.7.1.js"></script>
-    <link rel="card" type="text/css" href="<c:url value="/static/css/card.css"/>">
-    <%--    没用上--%>
+    <script src="/static/js/echarts.js"></script>
+    <script src="/static/js/jquery-3.7.1.js"></script>
+
     <style type="text/css">
         #mask {
             position: fixed;
@@ -24,9 +20,8 @@
         }
     </style>
 </head>
-
 <body onload="onLoad()">
-<div id="mask" align="center">数据查询中，请稍后</div>
+<div align="center" id="mask">数据查询中，请稍后</div>
 
 
 <div id="app">
@@ -35,11 +30,13 @@
     <div style="width: 70%;float: left">
         <div id="getNumByPoolChart" style="height:400px;width: 100%"></div>
         <button id="getNumByPoolChartChangeT" onclick="change(true) ">点击切换为各卡池细则</button>
-        <button id="getNumByPoolChartChangeF" onclick="change(false)" hidden="hidden">点击切换为总抽数</button>
+        <button hidden="hidden" id="getNumByPoolChartChangeF" onclick="change(false)">点击切换为总抽数</button>
         <button id="resetTotalMessageTable" onclick="changeTotalMessageTable()">重置数据</button>
-        <%--    <button id="resetTotalMessageTable2" onclick="changeTotalMessageTable2()">测试遮罩层</button>
-            <button id="resetTotalMessageTable3" onclick="changeTotalMessageTable3()">测试遮罩层</button>--%>
         <button onclick="submitJSON()">更新数据</button>
+
+        <input id="jsonFileUrl" placeholder="请输入小黑盒数据地址">
+        <button onclick="getData()">点击获取数据</button>
+
         <div id="message">
             <table id="messageTable">
                 <tr style="width: 200px">
@@ -83,10 +80,7 @@
         showMask();
         $.get({
             url: "insert",
-            param: {
-                phone: '13287845587',
-                password: '40580087',
-            },
+            param: {},
             success: function (response) {
                 console.log("共更新数据 " + response + " 条");
                 hideMask();
@@ -95,7 +89,36 @@
             error: function (xhr, status, error) {
                 console.log(error);
             }
-        });
+        }, 'json');
+    }
+    getData = function () {
+
+        // 1. 获取 input 中的值
+        const urlInput = document.getElementById("jsonFileUrl");
+        const inputValue = urlInput.value.trim(); // 去除前后空格
+
+        // 2. 简单验证：如果输入为空，提示用户
+        if (!inputValue) {
+            alert("请输入数据地址！");
+            return; // 终止函数
+        }
+
+
+        showMask();
+        $.get({
+            url: "insertFromXhhWeb",
+            param: {
+                fileUrl: fileUrl
+            },
+            success: function (response) {
+                console.log("数据更新 " + response.success());
+                hideMask();
+                onLoad()
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        }, 'json');
     }
     change = function (TF) {
         if (TF) {

@@ -3,7 +3,7 @@
 <mapper namespace="com.link.arknights.cardpool.mapper.CardStateMapper">
 
 
-    <insert id="insertCards" parameterType="com.link.arknights.cardpool.entity.CardState">
+    <insert id="insertCards">
         INSERT INTO cardstate (pool, name, rarity, isNew, createTime, ifTen, uid)
         VALUES
         <foreach collection="cardStates" item="cardState" separator=",">
@@ -33,7 +33,7 @@
         select distinct createTime
         from cardstate
     </select>
-    <select id="getPoolCount" resultType="com.link.arknights.cardpool.entity.cardMegForWeb.PoolCount">
+    <select id="getNumByPool" resultType="com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity">
         select cardstate.pool, count(cardstate.pool) sumCard, t2.num sixNum
         from cardstate
                  LEFT JOIN
@@ -60,14 +60,6 @@
              (select pool, COUNT(*) three from cardstate where rarity = 3 GROUP BY pool) three
              on three.pool = poolinformation.poolName
         order by poolinformation.id asc
-    </select>
-    <select id="getNumByPool" resultType="com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity">
-        select cardstate.pool, count(cardstate.pool) sumCard, t2.num sixNum
-        from cardstate
-                 LEFT JOIN
-             (select pool, COUNT(pool) num from cardstate t1 where rarity = 6 GROUP BY pool) t2
-             on t2.pool = cardstate.pool
-        GROUP BY cardstate.pool;
     </select>
     <select id="getPoolFromCards" resultType="com.link.arknights.cardpool.entity.getFromArk.Pool">
         select pool poolName , MIN(createTime) startTime, MAX(createTime) stopTime

@@ -12,4 +12,12 @@ public interface CardStateService extends IService<CardState> {
     List<CardState> getCardMessageByUid(Long uid);
 
     boolean saveOrUpdateCardMsgByPool(List<CardMsgByPool> cardMsgByPoolList);
+
+    int insertNoRepeat(List<CardState> cardStateList);
+
+    boolean formatCardMsgByPoolList(List<CardState> cardMessageByUid, Long uid);
+
+    boolean insertMessage(List<CardState> cardStateList, Long uid);
+
+    void insertPool();
 }
