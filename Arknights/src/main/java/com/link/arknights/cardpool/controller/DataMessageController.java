@@ -2,7 +2,6 @@ package com.link.arknights.cardpool.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.link.arknights.cardpool.entity.PoolInformation;
-import com.link.arknights.cardpool.entity.cardMegForWeb.PoolCount;
 import com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool;
 import com.link.arknights.cardpool.entity.entityForMessage.RespectiveNum;
 import com.link.arknights.cardpool.entity.entityForMessage.Role;
@@ -10,6 +9,7 @@ import com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity;
 import com.link.arknights.cardpool.mapper.CardMsgByPoolMapper;
 import com.link.arknights.cardpool.mapper.CardStateMapper;
 import com.link.arknights.cardpool.mapper.PoolInformationMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +21,7 @@ import java.util.Objects;
 
 @Controller
 @ResponseBody
+@Slf4j
 public class DataMessageController {
 
     @Resource
@@ -59,7 +60,7 @@ public class DataMessageController {
             }
         }
         long stopTime = new Date().getTime();
-        System.out.println(uid + " 通过uid获取抽卡信息 共消耗时间 " + (stopTime - startTime) + " ms");
+        log.info("用户uid:{} 查询获取抽卡信息 共消耗时间 {} ms", uid, (stopTime - startTime));
         return JSON.toJSONString(cardMsgByPoolList);
     }
 
@@ -90,7 +91,7 @@ public class DataMessageController {
             respectiveNum.setThree(three);
             respectiveNums.add(respectiveNum);
             long time2 = new Date().getTime();
-            System.out.println("查询柱状图用数据消耗时间" + (time2 - time) + "ms");
+            log.info("查询柱状图用数据消耗时间:{} ms",(time2 - time));
             return respectiveNums;
         } else {
             return null;

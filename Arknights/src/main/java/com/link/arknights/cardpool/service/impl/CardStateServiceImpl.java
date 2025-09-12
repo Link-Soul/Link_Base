@@ -25,8 +25,6 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
     CardStateMapper cardStateMapper;
     @Resource
     CardMsgByPoolMapper cardMsgByPoolMapper;
-    @Resource
-    private CardStateService cardStateService;
 
     @Override
     public List<CardState> getCardMessageByUid(Long uid) {
@@ -106,10 +104,10 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
             }
             if (cardStateList.size() != 0) {
                 int i = cardStateMapper.insertCards(cardStateList);
-                System.out.println("影响的行数为 " + i + "行");
+                log.info("影响的行数为 {} 行", i);
                 return i;
             } else {
-                System.out.println("影响的行数为 0 行");
+                log.info("影响的行数为 0 行");
                 return 0;
             }
         }
@@ -215,8 +213,10 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
         }
 
         // 最终得到的结果。
-        System.out.println("将数据格式化为按卡池分类的抽卡信息 处理所需时间为 " + (stopTime - startTime) + " ms");
-        return cardStateService.saveOrUpdateCardMsgByPool(cardMsgByPoolList);
+        if (log.isInfoEnabled()) {
+            log.info("用户uid:{}，将数据格式化为按卡池分类的抽卡信息 处理所需时间为 {} ms", uid, (stopTime - startTime));
+        }
+        return saveOrUpdateCardMsgByPool(cardMsgByPoolList);
 
     }
 
@@ -262,14 +262,14 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
 
                 lock.lock();
                 try {
-                    boolean b = cardStateService.formatCardMsgByPoolList(cardMessageByUid, uid);
+                    boolean b = formatCardMsgByPoolList(cardMessageByUid, uid);
                 } finally {
                     lock.unlock();
                 }
 
                 return true;
             } else { // 无可添加数据则重新处理一下已有的数据。
-                cardStateService.formatCardMsgByPoolList(cardMessageByUid, uid);
+                formatCardMsgByPoolList(cardMessageByUid, uid);
                 return false;
             }
         } else {  // date为空则是需要全部插入，没有对应的数据。
@@ -293,7 +293,7 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
 
             lock.lock();
             try {
-                boolean b = cardStateService.formatCardMsgByPoolList(cardStateList, uid);
+                boolean b = formatCardMsgByPoolList(cardStateList, uid);
             } finally {
                 lock.unlock();
             }
@@ -308,7 +308,6 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
     }
 
     public void insertPool() {
-        System.out.println("insertPool执行");
         List<Pool> poolListFromCards = cardStateMapper.getPoolFromCards();
         List<String> list = poolListFromCards.stream().map(Pool::getPoolName).collect(Collectors.toList());
         List<String> poolList = cardStateMapper.getPool();
@@ -333,7 +332,7 @@ public class CardStateServiceImpl extends ServiceImpl<CardStateMapper, CardState
             }
             for (Pool pool : pools) {
                 for (Pool one : poolListFromCards) {
-                    if (pool.getPoolName().equals(one.getPoolName())){
+                    if (pool.getPoolName().equals(one.getPoolName())) {
                         pool.setStartTime(one.getStartTime());
                         pool.setStopTime(one.getStopTime());
                     }

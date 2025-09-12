@@ -128,7 +128,7 @@ public class CardStatController {
      */
     @PostMapping("/insertFromXhhWeb")
     public Map<String, Object> insertFromXhhWeb(String fileUrl) {
-        log.info("insertFromXhhWeb执行,输入url：{}", fileUrl);
+        log.info("从小黑盒导入抽卡数据,输入url：{}", fileUrl);
         StringBuilder content = new StringBuilder();
         HttpURLConnection connection = null;
         // 一、下载文件
@@ -141,7 +141,6 @@ public class CardStatController {
             connection.setConnectTimeout(5000);
             // 读取超时时间
             connection.setReadTimeout(5000);
-
             // 2. 检查响应状态（200表示成功）
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 // 3. 获取输入流并读取内容
@@ -180,7 +179,7 @@ public class CardStatController {
             JSONObject info = jsonObject.getJSONObject("info");
             Integer uid = info.getInteger("uid");
             try {
-                log.info("执行数据入库操作。用户id:{}，导入文件url：{}", uid, fileUrl);
+                log.info("用户uid:{}，执行数据入库操作。导入文件url：{}", uid, fileUrl);
                 int count = getFromJSON(data, uid);
                 return RespUtils.resp("true", "导入成功", "影响行数=" + count);
             } catch (Exception e) {
@@ -241,10 +240,10 @@ public class CardStatController {
         List<CardState> collect = list.stream().sorted(Comparator.comparing(CardState::getCreateTime)).collect(Collectors.toList());
         List<CardState> collectList = new ArrayList<>(collect);
         int i;
-//        synchronized (this){
+        synchronized (this){
             i = cardStateService.insertNoRepeat(collect);
             cardStateService.insertPool();
-//        }
+        }
         try {
             cardStateService.formatCardMsgByPoolList(collectList, Long.valueOf(uid));
         } catch (Exception e) {
@@ -253,10 +252,5 @@ public class CardStatController {
 
         return i;
     }
-
-
-
-
-
 
 }
