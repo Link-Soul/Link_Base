@@ -5,11 +5,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.link.arknights.cardpool.entity.CardState;
-import com.link.arknights.cardpool.entity.entityForMessage.CardMsgByPool;
-import com.link.arknights.cardpool.entity.entityForMessage.Role;
 import com.link.arknights.cardpool.entity.getFromArk.*;
 import com.link.arknights.cardpool.entity.getFromJSON.MyEntity;
-import com.link.arknights.cardpool.mapper.CardStateMapper;
 import com.link.arknights.cardpool.service.CardStateService;
 import com.link.arknights.cardpool.util.Admin;
 import com.link.arknights.cardpool.util.HttpClientExample;
@@ -29,8 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,16 +33,14 @@ import java.util.stream.Collectors;
 @ResponseBody
 public class CardStatController {
 
-    @Autowired
-    private CardStateService cardStateService;
     @Resource
-    private CardStateMapper cardStateMapper;
+    private CardStateService cardStateService;
+
 
     @Value(value = "${ark.userId}")
     private String userId;
     @Value(value = "${ark.password}")
     private String password;
-
 
 
     /**
@@ -115,7 +108,7 @@ public class CardStatController {
         Collections.reverse(cardStateList);
         boolean i = cardStateService.insertMessage(cardStateList, Long.valueOf(infoTotal.getData().getUid()));
         long time2 = new Date().getTime();
-        System.out.println("更新 "+i+" 条数据，共耗时 " + (time2 - time1) + " ms");
+        System.out.println("更新 " + i + " 条数据，共耗时 " + (time2 - time1) + " ms");
         return cardStateList.size();
     }
 
@@ -200,7 +193,8 @@ public class CardStatController {
      */
 //    @PostMapping("/insertFromJSON")
     public int getFromJSON(@RequestBody String json, Integer uid) {
-        Map<String, MyEntity> entityMap = JSONObject.parseObject(json, new TypeReference<Map<String, MyEntity>>() {});
+        Map<String, MyEntity> entityMap = JSONObject.parseObject(json, new TypeReference<Map<String, MyEntity>>() {
+        });
         List<CardState> list = new ArrayList<>();
         for (Map.Entry<String, MyEntity> entry : entityMap.entrySet()) {
             String key = entry.getKey();
@@ -240,7 +234,7 @@ public class CardStatController {
         List<CardState> collect = list.stream().sorted(Comparator.comparing(CardState::getCreateTime)).collect(Collectors.toList());
         List<CardState> collectList = new ArrayList<>(collect);
         int i;
-        synchronized (this){
+        synchronized (this) {
             i = cardStateService.insertNoRepeat(collect);
             cardStateService.insertPool();
         }
