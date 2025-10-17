@@ -7,7 +7,7 @@ import java.util.Stack;
 
 /**
  *@Description 运算的一个工具类
- *@author ZhouBinBin
+ *@author Link
  *@since 2025/10/13 15:40
  **/
 

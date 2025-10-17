@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 队列的学习
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/4/14 09:59
  */
 @RestController

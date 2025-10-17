@@ -204,6 +204,22 @@ public abstract class ToolString {
     public final static String encoding = "UTF-8";
 
     /**
+     * 判断字符是否为空 或"null"
+     *
+     * @param s
+     *            字符
+     * @return true：为空，false：有值
+     */
+    public static boolean isEmpty(Object s) {
+        if (s != null) {
+            String stu = String.valueOf(s);
+            return stu == null || stu.length() <= 0 || stu.equals("null") || stu.equals("[]");
+        }
+
+        return true;
+    }
+
+    /**
      * 验证字符串是否匹配指定正则表达式
      *
      * @param content
@@ -376,7 +392,7 @@ public abstract class ToolString {
      * @param strLength 目标字符串长度
      * @param appendStr 用于补位的字符串
      * @return a
-     * @author ZhouBinBin
+     * @author Link
      * @since 2025/9/11 14:32
      */
     public static String addZeroForNum(String str, int strLength, String appendStr) {

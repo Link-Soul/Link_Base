@@ -1,7 +1,7 @@
 package com.link.JavaStudy.thread;
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/4/8 19:52
  */
 public class ThreadTest {

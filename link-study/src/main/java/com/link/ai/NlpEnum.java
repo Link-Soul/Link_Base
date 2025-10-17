@@ -2,7 +2,7 @@ package com.link.ai;
 
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/5/14 15:19
  */
 public enum NlpEnum {

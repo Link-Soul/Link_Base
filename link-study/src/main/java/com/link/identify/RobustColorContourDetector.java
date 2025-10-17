@@ -2,7 +2,7 @@ package com.link.identify;
 
 /**
  * DeepSeek V3
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/6/26 16:48
  */
 import java.awt.*;

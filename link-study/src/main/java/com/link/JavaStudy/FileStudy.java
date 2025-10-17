@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/3/15 12:59
  */
 public class FileStudy {

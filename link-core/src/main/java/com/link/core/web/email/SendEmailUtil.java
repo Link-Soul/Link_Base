@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * @author ZhouBinBin
+ * @author Link
  * @Description 发送邮件工具类
  * @since 2025/8/18 08:53
  **/

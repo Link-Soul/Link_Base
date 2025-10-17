@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author ZhouBinBin
+ * @author Link
  * @Description 线程池练习
  * @since 2025/8/15 16:43
  **/

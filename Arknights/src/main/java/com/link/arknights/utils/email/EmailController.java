@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author ZhouBinBin
+ * @author Link
  * @Description 邮件发送控制类
  * @since 2025/9/1 15:12
  **/

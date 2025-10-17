@@ -12,7 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/6/26 17:02
  */
 public class PausableColorContourDetector {

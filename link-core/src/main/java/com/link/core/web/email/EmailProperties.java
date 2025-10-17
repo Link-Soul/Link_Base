@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author ZhouBinBin
+ * @author Link
  * @Description 配置方法获取邮箱配置
  * @since 2025/8/18 09:59
  **/

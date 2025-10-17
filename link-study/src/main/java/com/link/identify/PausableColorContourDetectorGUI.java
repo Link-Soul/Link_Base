@@ -20,7 +20,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/6/27 09:05
  */
 public class PausableColorContourDetectorGUI extends JFrame {
@@ -84,7 +84,7 @@ public class PausableColorContourDetectorGUI extends JFrame {
     /**
      * 测试添加的请求头
      *
-     * @author ZhouBinBin
+     * @author Link
      * @since 2025/7/28 14:53
      */
     public static void main(String[] args) {

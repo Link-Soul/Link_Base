@@ -1,7 +1,7 @@
 package com.link.identify;
 
 /**
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/6/26 16:28
  */
 import java.awt.*;
