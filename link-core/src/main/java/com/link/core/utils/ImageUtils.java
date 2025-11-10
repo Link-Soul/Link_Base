@@ -48,7 +48,7 @@ public class ImageUtils {
     }
 
     public static void main(String[] args) {
-        String url = "C:\\Users\\ty\\Desktop\\学习文档\\Image_1760477767956.jpg";
+        String url = "C:\\Users\\ty\\Desktop\\kal.jpg";
         ImgToPixels(new Url(url), 16);
     }
 
