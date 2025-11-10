@@ -49,6 +49,8 @@
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <jackson-databind.version>2.13.5</jackson-databind.version>
         <commons-codec.version>1.15</commons-codec.version>
+        <hutools.version>5.8.15</hutools.version>
+        <commons.io.version>2.5</commons.io.version>
     </properties>
 
     <!-- 仅做版本管理，不实际引入依赖 -->
@@ -198,7 +200,17 @@
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
             </dependency>
-
+            <!-- 新增：Hutool工具库（包含日期时间、加密解密、文件操作等） -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
