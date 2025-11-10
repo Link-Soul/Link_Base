@@ -49,7 +49,7 @@ public class ImageUtils {
 
     public static void main(String[] args) {
         String url = "C:\\Users\\ty\\Desktop\\kal.jpg";
-        ImgToPixels(new Url(url), 16);
+        ImgToPixels(new Url(url), 32);
     }
 
 }
