@@ -75,6 +75,11 @@
         select *
         from poolinformation
     </select>
+    <select id="getTotalTime" resultType="java.util.Map">
+        select
+            MAX(createTime) as startTime, MIN(createTime) as endTime
+        from cardstate;
+    </select>
 
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.link.core.entity;
 
+import com.link.core.utils.ToolString;
 import lombok.Data;
 
 /**

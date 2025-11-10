@@ -22,15 +22,15 @@ public class ImageUtils {
      *@author Link
      *@since 2025/10/17 11:11
      **/
-    public static void ImgToPixels(Url url){
+    public static void ImgToPixels(Url url, int zoom){
         BufferedImage originalImage = null; // 声明一个BufferedImage对象
         try {
             originalImage = ImageIO.read(new File(url.getTotalUrl())); // 加载图像
         } catch (IOException e) {
             e.printStackTrace(); // 处理异常
         }
-        int scaledWidth = originalImage.getWidth() / 16; // 计算缩放后的宽度
-        int scaledHeight = originalImage.getHeight() / 16; // 计算缩放后的高度
+        int scaledWidth = originalImage.getWidth() / zoom; // 计算缩放后的宽度
+        int scaledHeight = originalImage.getHeight() / zoom; // 计算缩放后的高度
         BufferedImage scaledImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB); // 创建新的图像
         scaledImage
                 .getGraphics()
@@ -49,7 +49,7 @@ public class ImageUtils {
 
     public static void main(String[] args) {
         String url = "C:\\Users\\ty\\Desktop\\学习文档\\Image_1760477767956.jpg";
-        ImgToPixels(new Url(url));
+        ImgToPixels(new Url(url), 16);
     }
 
 }

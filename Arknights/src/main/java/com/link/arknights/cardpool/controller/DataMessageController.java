@@ -9,15 +9,14 @@ import com.link.arknights.cardpool.entity.entityForMessage.getNumByPoolEntity;
 import com.link.arknights.cardpool.mapper.CardMsgByPoolMapper;
 import com.link.arknights.cardpool.mapper.CardStateMapper;
 import com.link.arknights.cardpool.mapper.PoolInformationMapper;
+import com.link.core.entity.DateMsg;
+import com.link.core.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @ResponseBody
@@ -40,7 +39,6 @@ public class DataMessageController {
     @RequestMapping(value = "/getCardMessageById", method = RequestMethod.GET)
     public String getCardMessageById(Long uid) {
         long startTime = new Date().getTime();
-
         List<CardMsgByPool> cardMsgByPoolList = cardMsgByPoolMapper.selectByUid(uid);
         for (CardMsgByPool cardMsgByPool : cardMsgByPoolList) {
             String totalSix = cardMsgByPool.getTotalSix();
@@ -110,5 +108,15 @@ public class DataMessageController {
         return cardStateMapper.getNumByPool();
     }
 
+
+
+    @GetMapping("/getTotalTime")
+    public String getTotalTime() {
+        Map<String, Long> startAndEnd = cardStateMapper.getTotalTime();
+        long startTime = startAndEnd.get("startTime");
+        long endTime = startAndEnd.get("endTime");
+        DateMsg dateMsg = TimeUtils.TimeDifferenceCalculator(endTime, startTime);
+        return String.format("%d 年 %d 月 %d 天", dateMsg.getYear(), dateMsg.getMonth(), dateMsg.getDay());
+    }
 
 }

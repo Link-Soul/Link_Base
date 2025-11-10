@@ -1,5 +1,8 @@
 package com.link.arknights.cardpool.entity.entityForMessage;
 
+import lombok.Data;
+
+@Data
 public class RespectiveNum {
     private String pool;
     private int sum;
@@ -20,51 +23,4 @@ public class RespectiveNum {
                 '}';
     }
 
-    public String getPool() {
-        return pool;
-    }
-
-    public void setPool(String pool) {
-        this.pool = pool;
-    }
-
-    public int getSum() {
-        return sum;
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
-    }
-
-    public int getSix() {
-        return six;
-    }
-
-    public void setSix(int six) {
-        this.six = six;
-    }
-
-    public int getFive() {
-        return five;
-    }
-
-    public void setFive(int five) {
-        this.five = five;
-    }
-
-    public int getFour() {
-        return four;
-    }
-
-    public void setFour(int four) {
-        this.four = four;
-    }
-
-    public int getThree() {
-        return three;
-    }
-
-    public void setThree(int three) {
-        this.three = three;
-    }
 }

@@ -40,6 +40,9 @@
         <div id="message">
             <table id="messageTable">
                 <tr style="width: 200px">
+                    <td>至今为止已过去 <span id="totalTime"></span></td>
+                </tr>
+                <tr style="width: 200px">
                     <td id="messageTotal">总计 <span id="messageTotal1"></span> 抽 ，共消耗合成玉： <span
                             id="messageTotal2"></span></td>
                 </tr>
@@ -434,6 +437,19 @@
 
                 changeTotalMessageTable()
                 setNumByPoolChart(res)
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+            }
+        });
+        // 时间跨度
+        $.get({
+            url: "getTotalTime",
+            dataType: "text",
+            success: function (response) {
+                debugger
+                let res = JSON.parse(response)
+                $doc("totalTime").innerText = res
             },
             error: function (xhr, status, error) {
                 console.log(error)

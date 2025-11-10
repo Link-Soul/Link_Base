@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Mapper
@@ -35,4 +36,6 @@ public interface CardStateMapper extends BaseMapper<CardState> {
     List<String> getPool();
 
     List<Pool> getPoolInfo();
+
+    Map<String, Long> getTotalTime();
 }

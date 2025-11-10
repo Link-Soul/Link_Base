@@ -1,7 +1,6 @@
-package com.link.core.entity;
+package com.link.core.utils;
 
 
-import com.link.core.utils.DataValidateUtils;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
