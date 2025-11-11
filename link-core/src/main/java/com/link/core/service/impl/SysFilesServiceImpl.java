@@ -26,8 +26,7 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Throwable.class)
 public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEntity> implements SysFilesService {
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
+
     @Value("${file.path}")
     private String filePath;
     @Value("${rb.default.saas.baseOrganRelation:0001}")
@@ -51,7 +50,7 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
             //id与filename保持一直，删除文件
             String fileNameNew = IdUtil.getSnowflakeNextIdStr() + getFileType(fileName);
             String newFilePathName = newPath + fileNameNew;
-            String url = (contextPath + File.separator + "files" + File.separator + createTime + File.separator + fileNameNew).replaceAll("/+", "/");
+            String url = (File.separator + "files" + File.separator + createTime + File.separator + fileNameNew).replaceAll("/+", "/");
             //创建输出文件对象
             File outFile = new File(newFilePathName);
             //拷贝文件到输出文件对象

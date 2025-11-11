@@ -1,5 +1,7 @@
 package com.link.JavaStudy;
 
+import lombok.Data;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -108,6 +110,7 @@ public class streamStudy {
         System.out.println(actors);
     }
 
+    @Data
     static class Actor{
         String name;
         int age;
@@ -124,30 +127,6 @@ public class streamStudy {
                     ", age=" + age +
                     ", sex='" + sex + '\'' +
                     '}';
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public String getSex() {
-            return sex;
-        }
-
-        public void setSex(String sex) {
-            this.sex = sex;
         }
     }
 

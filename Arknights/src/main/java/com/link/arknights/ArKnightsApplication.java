@@ -14,7 +14,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
-@MapperScan("com.link.arknights.cardpool.mapper")
+@MapperScan("com.link.arknights.cardpool.mapper,com.link.core.mapper")
 // 扫描core包。core包里引用注解的部分，在执行的这个项目也可以配置对应的配置文件来覆盖
 @ComponentScan("com.link")
 @Slf4j

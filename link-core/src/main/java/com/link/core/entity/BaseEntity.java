@@ -3,14 +3,16 @@ package com.link.core.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
 
 import java.util.Date;
 
 /**
- *@Description TODO
+ *@Description 基础实体类
  *@author Link
  *@since 2025/11/10 17:53
  **/
+@Data
 public class BaseEntity {
 
     @TableId
