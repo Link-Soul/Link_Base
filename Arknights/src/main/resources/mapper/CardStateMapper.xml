@@ -42,24 +42,28 @@
         GROUP BY cardstate.pool;
     </select>
     <select id="queryRespectiveNum" resultType="com.link.arknights.cardpool.entity.entityForMessage.RespectiveNum">
-        select poolinformation.poolName pool, sum.sum, six.six, five.five, four.four, three.three
-        from poolinformation
-                 LEFT JOIN
-                 (select pool, COUNT(*) sum from cardstate GROUP BY pool) sum
-                 on sum.pool = poolinformation.poolName
-                 LEFT JOIN
-             (select pool, COUNT(*) six from cardstate where rarity = 6 GROUP BY pool) six
-             on six.pool = poolinformation.poolName
-                 LEFT JOIN
-             (select pool, COUNT(*) five from cardstate where rarity = 5 GROUP BY pool) five
-             on five.pool = poolinformation.poolName
-                 LEFT JOIN
-             (select pool, COUNT(*) four from cardstate where rarity = 4 GROUP BY pool) four
-             on four.pool = poolinformation.poolName
-                 LEFT JOIN
-             (select pool, COUNT(*) three from cardstate where rarity = 3 GROUP BY pool) three
-             on three.pool = poolinformation.poolName
-        order by poolinformation.id asc
+        SELECT
+            p.poolName AS pool,
+            SUM(stat.total) AS sum,
+            SUM(stat.six) AS six,
+            SUM(stat.five) AS five,
+            SUM(stat.four) AS four,
+            SUM(stat.three) AS three
+        FROM
+            poolinformation p
+                LEFT JOIN (
+                SELECT
+                    pool,
+                    COUNT(*) AS total,
+                    COUNT(CASE WHEN rarity = 6 THEN 1 END) AS six,
+                    COUNT(CASE WHEN rarity = 5 THEN 1 END) AS five,
+                    COUNT(CASE WHEN rarity = 4 THEN 1 END) AS four,
+                    COUNT(CASE WHEN rarity = 3 THEN 1 END) AS three
+                FROM cardstate
+                GROUP BY pool
+            ) stat ON stat.pool = p.poolName
+        GROUP BY p.poolName, p.id  -- 添加这行，包含所有非聚合字段
+        ORDER BY p.id ASC;
     </select>
     <select id="getPoolFromCards" resultType="com.link.arknights.cardpool.entity.getFromArk.Pool">
         select pool poolName , MIN(createTime) startTime, MAX(createTime) stopTime

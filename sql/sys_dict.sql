@@ -5,7 +5,7 @@
  Source Server Type    : MySQL
  Source Server Version : 50725
  Source Host           : 192.168.1.135:3306
- Source Schema         : sntl-system
+ Source Schema         : link
 
  Target Server Type    : MySQL
  Target Server Version : 50725

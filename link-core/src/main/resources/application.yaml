@@ -1,5 +1,16 @@
-
-
+spring:
+  application:
+    name: link-core
+  mvc:
+    throw-exception-if-no-handler-found: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  # 文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 email:
   active: wy163
   qq:

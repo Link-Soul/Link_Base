@@ -15,13 +15,17 @@ spring:
     password: 123456
   web:
     loginurl: http://localhost:8096/index.html
+  application:
+    name: arknights
 
 
 
 logging:
   level:
+    # 这个是优先的日志等级，会覆盖 logback-spring.xml 中的配置，无需在里面配置。
     root: info
-    com.sofwin: debug
+    # 这个是对单个包精细控制。
+    com.link.arknights.cardpool: debug
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   typeAliasesPackage: com.link.arknights.*
@@ -37,9 +41,9 @@ mybatis-plus:
     # 查询结果中包含空值的列，在映射的时候，不会映射这个字段
     call-setters-on-nulls: true
     # 开启 sql 日志
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 关闭 sql 日志
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 
 file:
   #文件上传目录 绝对路径 末尾不需要加 /
@@ -50,7 +54,7 @@ rb:
     password: '123456'
     saas:
       # saas模式下，这些数据应该取对应租户的数据，角色这里暂时没想法，或许是在角色表加个标识，区分个人用户和公司用户的角色？
-      # 基础组织关系编码,即SNTL的
+      # 基础组织关系编码
       baseOrganRelation: 'user'
 
 

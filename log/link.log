@@ -1,0 +1,715 @@
+2025-11-11 11:22:10.961  INFO 23372 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 23372 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:22:10.961  INFO 23372 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:22:11.757  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:22:11.757  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:22:11.800  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:22:11.996  INFO 23372 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:22:11.997  INFO 23372 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:22:11.997  INFO 23372 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:22:12.169  INFO 23372 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:22:12.172  INFO 23372 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:22:12.172  INFO 23372 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1205 ms
+2025-11-11 11:22:12.225  INFO 23372 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:22:12.265  INFO 23372 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} inited
+2025-11-11 11:22:12.449  WARN 23372 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sysDictDetailController': Lookup method resolution failed; nested exception is java.lang.IllegalStateException: Failed to introspect Class [com.link.core.controller.SysDictDetailController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@379db7d]
+2025-11-11 11:22:12.453  INFO 23372 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} closing ...
+2025-11-11 11:22:12.454  INFO 23372 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} closed
+2025-11-11 11:22:12.455  INFO 23372 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-11 11:22:12.482  INFO 23372 --- [restartedMain] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2025-11-11 11:22:12.610 ERROR 23372 --- [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sysDictDetailController': Lookup method resolution failed; nested exception is java.lang.IllegalStateException: Failed to introspect Class [com.link.core.controller.SysDictDetailController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@379db7d]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:298)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1302)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1219)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:921)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.link.arknights.ArKnightsApplication.main(ArKnightsApplication.java:30)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.link.core.controller.SysDictDetailController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@379db7d]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:485)
+	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:321)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:276)
+	... 23 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: com/link/core/entity/BasePageEntity
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:467)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:73)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:368)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:362)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:361)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.findClass(RestartClassLoader.java:160)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:142)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:467)
+	... 25 common frames omitted
+Caused by: java.lang.ClassNotFoundException: com.link.core.entity.BasePageEntity
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:338)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:348)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:145)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 41 common frames omitted
+
+2025-11-11 11:22:15.168  INFO 23372 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 23372 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:22:15.168  INFO 23372 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:22:15.455  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:22:15.456  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:22:15.467  INFO 23372 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:22:15.578  INFO 23372 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:22:15.578  INFO 23372 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:22:15.579  INFO 23372 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:22:15.690 ERROR 23372 --- [restartedMain] org.apache.catalina.core.ContainerBase   : A child container failed during start
+
+java.util.concurrent.ExecutionException: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:873)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:794)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:248)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:433)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:921)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:489)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:481)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:211)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:184)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:162)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:577)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.link.arknights.ArKnightsApplication.main(ArKnightsApplication.java:30)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.zip.ZipFile$ZipEntryIterator.next(ZipFile.java:534)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:514)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:495)
+	at java.util.jar.JarFile$JarEntryIterator.next(JarFile.java:257)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:266)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:247)
+	at org.apache.tomcat.util.scan.JarFileUrlJar.nextEntry(JarFileUrlJar.java:178)
+	at org.apache.jasper.servlet.TldScanner$TldScannerCallback.scan(TldScanner.java:303)
+	at org.apache.tomcat.util.scan.StandardJarScanner.process(StandardJarScanner.java:391)
+	at org.apache.tomcat.util.scan.StandardJarScanner.processURLs(StandardJarScanner.java:322)
+	at org.apache.tomcat.util.scan.StandardJarScanner.doScanClassPath(StandardJarScanner.java:274)
+	at org.apache.tomcat.util.scan.StandardJarScanner.scan(StandardJarScanner.java:237)
+	at org.apache.jasper.servlet.TldScanner.scanJars(TldScanner.java:262)
+	at org.apache.jasper.servlet.TldScanner.scan(TldScanner.java:104)
+	at org.apache.jasper.servlet.JasperInitializer.onStartup(JasperInitializer.java:83)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4904)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	... 35 common frames omitted
+
+2025-11-11 11:22:15.800 ERROR 23372 --- [restartedMain] org.apache.catalina.core.ContainerBase   : A child container failed during start
+
+java.util.concurrent.ExecutionException: org.apache.catalina.LifecycleException: A child container failed during start
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:873)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:248)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:433)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:921)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:489)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:481)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:211)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:184)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:162)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:577)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.link.arknights.ArKnightsApplication.main(ArKnightsApplication.java:30)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: org.apache.catalina.LifecycleException: A child container failed during start
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:885)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:794)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	... 26 common frames omitted
+Caused by: java.util.concurrent.ExecutionException: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:873)
+	... 35 common frames omitted
+Caused by: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.zip.ZipFile$ZipEntryIterator.next(ZipFile.java:534)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:514)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:495)
+	at java.util.jar.JarFile$JarEntryIterator.next(JarFile.java:257)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:266)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:247)
+	at org.apache.tomcat.util.scan.JarFileUrlJar.nextEntry(JarFileUrlJar.java:178)
+	at org.apache.jasper.servlet.TldScanner$TldScannerCallback.scan(TldScanner.java:303)
+	at org.apache.tomcat.util.scan.StandardJarScanner.process(StandardJarScanner.java:391)
+	at org.apache.tomcat.util.scan.StandardJarScanner.processURLs(StandardJarScanner.java:322)
+	at org.apache.tomcat.util.scan.StandardJarScanner.doScanClassPath(StandardJarScanner.java:274)
+	at org.apache.tomcat.util.scan.StandardJarScanner.scan(StandardJarScanner.java:237)
+	at org.apache.jasper.servlet.TldScanner.scanJars(TldScanner.java:262)
+	at org.apache.jasper.servlet.TldScanner.scan(TldScanner.java:104)
+	at org.apache.jasper.servlet.JasperInitializer.onStartup(JasperInitializer.java:83)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4904)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	... 35 common frames omitted
+
+2025-11-11 11:22:15.800  INFO 23372 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-11 11:22:15.805  WARN 23372 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+2025-11-11 11:22:15.808  INFO 23372 --- [restartedMain] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2025-11-11 11:22:15.817 ERROR 23372 --- [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:165)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:577)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.link.arknights.ArKnightsApplication.main(ArKnightsApplication.java:30)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:142)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:481)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:211)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:184)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:162)
+	... 13 common frames omitted
+Caused by: org.apache.catalina.LifecycleException: A child container failed during start
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:885)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:248)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:433)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:921)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:489)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+	... 18 common frames omitted
+Caused by: java.util.concurrent.ExecutionException: org.apache.catalina.LifecycleException: A child container failed during start
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:873)
+	... 26 common frames omitted
+Caused by: org.apache.catalina.LifecycleException: A child container failed during start
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:885)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:794)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	... 26 common frames omitted
+Caused by: java.util.concurrent.ExecutionException: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:873)
+	... 35 common frames omitted
+Caused by: java.util.zip.ZipError: jzentry == 0,
+ jzfile = 490677232,
+ total = 228,
+ name = C:\Users\ty\AppData\Local\JetBrains\IntelliJIdea2025.1\captureAgent\debugger-agent.jar,
+ i = 1,
+ message = null
+	at java.util.zip.ZipFile$ZipEntryIterator.next(ZipFile.java:534)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:514)
+	at java.util.zip.ZipFile$ZipEntryIterator.nextElement(ZipFile.java:495)
+	at java.util.jar.JarFile$JarEntryIterator.next(JarFile.java:257)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:266)
+	at java.util.jar.JarFile$JarEntryIterator.nextElement(JarFile.java:247)
+	at org.apache.tomcat.util.scan.JarFileUrlJar.nextEntry(JarFileUrlJar.java:178)
+	at org.apache.jasper.servlet.TldScanner$TldScannerCallback.scan(TldScanner.java:303)
+	at org.apache.tomcat.util.scan.StandardJarScanner.process(StandardJarScanner.java:391)
+	at org.apache.tomcat.util.scan.StandardJarScanner.processURLs(StandardJarScanner.java:322)
+	at org.apache.tomcat.util.scan.StandardJarScanner.doScanClassPath(StandardJarScanner.java:274)
+	at org.apache.tomcat.util.scan.StandardJarScanner.scan(StandardJarScanner.java:237)
+	at org.apache.jasper.servlet.TldScanner.scanJars(TldScanner.java:262)
+	at org.apache.jasper.servlet.TldScanner.scan(TldScanner.java:104)
+	at org.apache.jasper.servlet.JasperInitializer.onStartup(JasperInitializer.java:83)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4904)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	... 35 common frames omitted
+
+2025-11-11 11:22:19.383  INFO 23952 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 23952 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:22:19.385  INFO 23952 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:22:19.544  INFO 23952 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:22:19.544  INFO 23952 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:22:20.993  INFO 23952 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:22:20.999  INFO 23952 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:22:21.054  INFO 23952 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 25 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:22:22.882  INFO 23952 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:22:22.909  INFO 23952 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:22:22.910  INFO 23952 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:22:23.685  INFO 23952 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:22:23.699  INFO 23952 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:22:23.700  INFO 23952 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4155 ms
+2025-11-11 11:22:24.112  INFO 23952 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:22:24.747  INFO 23952 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:22:27.356  INFO 23952 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:22:27.930  INFO 23952 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:22:28.106  INFO 23952 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:22:28.122  INFO 23952 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 9.664 seconds (JVM running for 11.957)
+2025-11-11 11:22:28.150  INFO 23952 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:22:29.131  INFO 23952 --- [http-nio-8096-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:22:29.131  INFO 23952 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:22:29.132  INFO 23952 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-11 11:22:31.110  INFO 23952 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1397 ms
+2025-11-11 11:22:31.294  INFO 23952 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1626 ms
+2025-11-11 11:22:47.976  INFO 23952 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 42 ms
+2025-11-11 11:22:48.226  INFO 23952 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:286 ms
+2025-11-11 11:26:05.982  INFO 23952 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:26:05.991  INFO 23952 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:26:14.281  INFO 23096 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 23096 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:26:14.284  INFO 23096 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:26:14.374  INFO 23096 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:26:14.374  INFO 23096 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:26:15.522  INFO 23096 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:26:15.527  INFO 23096 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:26:15.576  INFO 23096 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:26:16.905  INFO 23096 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:26:16.923  INFO 23096 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:26:16.923  INFO 23096 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:26:17.277  INFO 23096 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:26:17.285  INFO 23096 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:26:17.286  INFO 23096 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2911 ms
+2025-11-11 11:26:17.497  INFO 23096 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:26:17.719  INFO 23096 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:26:19.878  INFO 23096 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:26:20.447  INFO 23096 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:26:20.556  INFO 23096 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:26:20.571  INFO 23096 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 7.274 seconds (JVM running for 9.362)
+2025-11-11 11:26:20.588  INFO 23096 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:26:21.525  INFO 23096 --- [http-nio-8096-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:26:21.525  INFO 23096 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:26:21.529  INFO 23096 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-11-11 11:26:23.544  INFO 23096 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1530 ms
+2025-11-11 11:26:23.567  INFO 23096 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1598 ms
+2025-11-11 11:27:38.186  INFO 23096 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:27:38.193  INFO 23096 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:27:44.020  INFO 15336 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 15336 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:27:44.023  INFO 15336 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:27:44.146  INFO 15336 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:27:44.146  INFO 15336 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:27:45.338  INFO 15336 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:27:45.343  INFO 15336 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:27:45.396  INFO 15336 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 22 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:27:46.859  INFO 15336 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:27:46.877  INFO 15336 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:27:46.877  INFO 15336 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:27:47.229  INFO 15336 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:27:47.237  INFO 15336 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:27:47.237  INFO 15336 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3089 ms
+2025-11-11 11:27:47.442  INFO 15336 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:27:47.643  INFO 15336 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:27:49.892  INFO 15336 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:27:50.489  INFO 15336 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:27:50.607  INFO 15336 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:27:50.622  INFO 15336 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 7.751 seconds (JVM running for 9.698)
+2025-11-11 11:27:50.640  INFO 15336 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:27:51.567  INFO 15336 --- [http-nio-8096-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:27:51.567  INFO 15336 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:27:51.569  INFO 15336 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-11 11:27:53.980  INFO 15336 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1874 ms
+2025-11-11 11:27:53.999  INFO 15336 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1824 ms
+2025-11-11 11:33:25.758  INFO 15336 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:33:25.767  INFO 15336 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:33:32.023  INFO 20052 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 20052 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:33:32.026  INFO 20052 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:33:32.187  INFO 20052 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:33:32.187  INFO 20052 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:33:33.909  INFO 20052 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:33:33.917  INFO 20052 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:33:33.995  INFO 20052 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 24 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:33:35.860  INFO 20052 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:33:35.891  INFO 20052 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:33:35.891  INFO 20052 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:33:36.567  INFO 20052 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:33:36.577  INFO 20052 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:33:36.577  INFO 20052 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4387 ms
+2025-11-11 11:33:36.907  INFO 20052 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:33:37.244  INFO 20052 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:33:40.121  INFO 20052 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:33:40.679  INFO 20052 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:33:40.784  INFO 20052 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:33:40.799  INFO 20052 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 9.993 seconds (JVM running for 12.099)
+2025-11-11 11:33:40.817  INFO 20052 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:33:41.699  INFO 20052 --- [http-nio-8096-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:33:41.699  INFO 20052 --- [http-nio-8096-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:33:41.701  INFO 20052 --- [http-nio-8096-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-11 11:33:44.085  INFO 20052 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1771 ms
+2025-11-11 11:33:44.089  INFO 20052 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1632 ms
+2025-11-11 11:44:09.185  INFO 20052 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:44:09.235  INFO 20052 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:44:23.029  INFO 24580 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 24580 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:44:23.031  INFO 24580 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:44:23.217  INFO 24580 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:44:23.218  INFO 24580 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:44:25.879  INFO 24580 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:44:25.885  INFO 24580 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:44:25.961  INFO 24580 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:44:28.244  INFO 24580 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:44:28.276  INFO 24580 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:44:28.276  INFO 24580 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:44:28.940  INFO 24580 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:44:28.954  INFO 24580 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:44:28.954  INFO 24580 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5734 ms
+2025-11-11 11:44:29.298  INFO 24580 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:44:29.622  INFO 24580 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:44:32.576  INFO 24580 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:44:33.338  INFO 24580 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:44:33.629  INFO 24580 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:44:33.648  INFO 24580 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 12.091 seconds (JVM running for 18.281)
+2025-11-11 11:44:33.675  INFO 24580 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:44:34.823  INFO 24580 --- [http-nio-8096-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:44:34.824  INFO 24580 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:44:34.825  INFO 24580 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-11 11:44:38.143  INFO 24580 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 2487 ms
+2025-11-11 11:44:38.694 ERROR 24580 --- [http-nio-8096-exec-5] c.l.c.c.e.handler.RestExceptionHandler   : Exception,exception:
+
+org.springframework.jdbc.BadSqlGrammarException: 
+### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by
+### The error may exist in file [F:\Link_Base\Arknights\target\classes\mapper\CardStateMapper.xml]
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: SELECT             p.poolName AS pool,             -- 总次数（所有稀有度之和）             SUM(stat.total) AS sum,             -- 各稀有度次数（通过 CASE 过滤）             SUM(stat.six) AS six,             SUM(stat.five) AS five,             SUM(stat.four) AS four,             SUM(stat.three) AS three         FROM             poolinformation p                 LEFT JOIN (                 -- 子查询：一次扫描表，计算所有统计值                 SELECT                     pool,                     COUNT(*) AS total,  -- 该卡池总抽卡次数                     -- 按稀有度统计（COUNT 忽略 NULL，符合条件的记为 1，否则 NULL）                     COUNT(CASE WHEN rarity = 6 THEN 1 END) AS six,                     COUNT(CASE WHEN rarity = 5 THEN 1 END) AS five,                     COUNT(CASE WHEN rarity = 4 THEN 1 END) AS four,                     COUNT(CASE WHEN rarity = 3 THEN 1 END) AS three                 FROM cardstate                 GROUP BY pool  -- 仅分组一次             ) stat ON stat.pool = p.poolName         ORDER BY p.id ASC;
+### Cause: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by
+; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:93)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:82)
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:92)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:439)
+	at com.sun.proxy.$Proxy89.selectList(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:224)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at com.sun.proxy.$Proxy90.queryRespectiveNum(Unknown Source)
+	at com.link.arknights.cardpool.controller.DataMessageController.queryRespectiveNum(DataMessageController.java:73)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:529)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:623)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:168)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:928)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1794)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.execute(ClientPreparedStatement.java:354)
+	at com.alibaba.druid.pool.DruidPooledPreparedStatement.execute(DruidPooledPreparedStatement.java:483)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.ibatis.logging.jdbc.PreparedStatementLogger.invoke(PreparedStatementLogger.java:58)
+	at com.sun.proxy.$Proxy115.execute(Unknown Source)
+	at org.apache.ibatis.executor.statement.PreparedStatementHandler.query(PreparedStatementHandler.java:65)
+	at org.apache.ibatis.executor.statement.RoutingStatementHandler.query(RoutingStatementHandler.java:80)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:61)
+	at com.sun.proxy.$Proxy113.query(Unknown Source)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:65)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:333)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at com.sun.proxy.$Proxy112.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:425)
+	... 58 common frames omitted
+
+2025-11-11 11:44:39.157  WARN 24580 --- [http-nio-8096-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.jdbc.BadSqlGrammarException: <EOL><EOL>### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by<EOL><EOL>### The error may exist in file [F:\Link_Base\Arknights\target\classes\mapper\CardStateMapper.xml]<EOL><EOL>### The error may involve defaultParameterMap<EOL><EOL>### The error occurred while setting parameters<EOL><EOL>### SQL: SELECT             p.poolName AS pool,             -- 总次数（所有稀有度之和）             SUM(stat.total) AS sum,             -- 各稀有度次数（通过 CASE 过滤）             SUM(stat.six) AS six,             SUM(stat.five) AS five,             SUM(stat.four) AS four,             SUM(stat.three) AS three         FROM             poolinformation p                 LEFT JOIN (                 -- 子查询：一次扫描表，计算所有统计值                 SELECT                     pool,                     COUNT(*) AS total,  -- 该卡池总抽卡次数                     -- 按稀有度统计（COUNT 忽略 NULL，符合条件的记为 1，否则 NULL）                     COUNT(CASE WHEN rarity = 6 THEN 1 END) AS six,                     COUNT(CASE WHEN rarity = 5 THEN 1 END) AS five,                     COUNT(CASE WHEN rarity = 4 THEN 1 END) AS four,                     COUNT(CASE WHEN rarity = 3 THEN 1 END) AS three                 FROM cardstate                 GROUP BY pool  -- 仅分组一次             ) stat ON stat.pool = p.poolName         ORDER BY p.id ASC;<EOL><EOL>### Cause: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by<EOL>; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'arknights.p.poolName'; this is incompatible with sql_mode=only_full_group_by]
+2025-11-11 11:47:05.169  INFO 3404 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 3404 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:47:05.172  INFO 3404 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:47:05.356  INFO 3404 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:47:05.356  INFO 3404 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:47:08.837  INFO 3404 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:47:08.844  INFO 3404 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:47:08.978  INFO 3404 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 84 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:47:11.873  INFO 3404 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:47:11.921  INFO 3404 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:47:11.921  INFO 3404 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:47:12.491  INFO 3404 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:47:12.502  INFO 3404 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:47:12.503  INFO 3404 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 7145 ms
+2025-11-11 11:47:12.840  INFO 3404 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:47:13.250  INFO 3404 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:47:18.729  INFO 3404 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:47:19.846  INFO 3404 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:47:20.269  INFO 3404 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:47:20.296  INFO 3404 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 16.473 seconds (JVM running for 26.728)
+2025-11-11 11:47:20.397  INFO 3404 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:47:22.135  INFO 3404 --- [http-nio-8096-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:47:22.136  INFO 3404 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:47:22.139  INFO 3404 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-11-11 11:47:25.537  INFO 3404 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 2434 ms
+2025-11-11 11:47:25.560  INFO 3404 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:2521 ms
+2025-11-11 11:47:59.263  INFO 3404 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:47:59.272  INFO 3404 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:48:07.299  INFO 24628 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 24628 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:48:07.302  INFO 24628 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:48:07.432  INFO 24628 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:48:07.432  INFO 24628 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:48:08.981  INFO 24628 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:48:08.988  INFO 24628 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:48:09.055  INFO 24628 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:48:10.671  INFO 24628 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:48:10.693  INFO 24628 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:48:10.694  INFO 24628 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:48:11.135  INFO 24628 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:48:11.147  INFO 24628 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:48:11.147  INFO 24628 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3714 ms
+2025-11-11 11:48:11.425  INFO 24628 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:48:11.680  INFO 24628 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:48:14.402  INFO 24628 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:48:15.055  INFO 24628 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:48:15.177  INFO 24628 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:48:15.196  INFO 24628 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 9.094 seconds (JVM running for 11.93)
+2025-11-11 11:48:15.218  INFO 24628 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:48:16.204  INFO 24628 --- [http-nio-8096-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:48:16.204  INFO 24628 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:48:16.206  INFO 24628 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-11 11:48:18.441  INFO 24628 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1716 ms
+2025-11-11 11:48:18.442  INFO 24628 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1657 ms
+2025-11-11 11:48:21.915  INFO 24628 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 13 ms
+2025-11-11 11:48:22.009  INFO 24628 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:108 ms
+2025-11-11 11:48:39.779  INFO 24628 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:48:39.787  INFO 24628 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-11-11 11:48:47.061  INFO 25168 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_161 on LAPTOP-VC7J0NHL with PID 25168 (F:\Link_Base\Arknights\target\classes started by ty in F:\Link_Base)
+2025-11-11 11:48:47.063  INFO 25168 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-11 11:48:47.183  INFO 25168 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-11 11:48:47.184  INFO 25168 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-11 11:48:48.704  INFO 25168 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-11 11:48:48.710  INFO 25168 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-11 11:48:48.763  INFO 25168 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 26 ms. Found 0 Redis repository interfaces.
+2025-11-11 11:48:50.346  INFO 25168 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2025-11-11 11:48:50.364  INFO 25168 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11 11:48:50.365  INFO 25168 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-11-11 11:48:50.797  INFO 25168 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-11-11 11:48:50.807  INFO 25168 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11 11:48:50.808  INFO 25168 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3623 ms
+2025-11-11 11:48:51.119  INFO 25168 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2025-11-11 11:48:51.368  INFO 25168 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-11-11 11:48:54.047  INFO 25168 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2025-11-11 11:48:54.745  INFO 25168 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-11 11:48:54.859  INFO 25168 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2025-11-11 11:48:54.876  INFO 25168 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 9.107 seconds (JVM running for 11.59)
+2025-11-11 11:48:54.897  INFO 25168 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.81:8096/index.html
+	----------------------------------------------------------
+2025-11-11 11:48:55.926  INFO 25168 --- [http-nio-8096-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11 11:48:55.927  INFO 25168 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11 11:48:55.928  INFO 25168 --- [http-nio-8096-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-11 11:48:58.143  INFO 25168 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1679 ms
+2025-11-11 11:48:58.155  INFO 25168 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1646 ms
+2025-11-11 11:49:05.519  INFO 25168 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 117 ms
+2025-11-11 11:49:05.535  INFO 25168 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:126 ms
+2025-11-11 11:50:02.388  INFO 25168 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:105 ms
+2025-11-11 11:50:02.425  INFO 25168 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 142 ms

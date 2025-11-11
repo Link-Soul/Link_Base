@@ -7,5 +7,7 @@ spring:
     password: root
   main:
     allow-circular-references: true
+  application:
+    name: link-study
 pagehelper:
   helper-dialect: mysql

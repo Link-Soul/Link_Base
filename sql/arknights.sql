@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 11/11/2025 08:30:34
+ Date: 11/11/2025 11:46:25
 */
 
 SET NAMES utf8mb4;
@@ -96,7 +96,8 @@ CREATE TABLE `cardstate`  (
   INDEX `idx_uid`(`uid` ASC) USING BTREE,
   INDEX `idx_pool`(`pool` ASC) USING BTREE,
   INDEX `idx_createtime`(`createTime` ASC) USING BTREE,
-  INDEX `idx_rarity`(`rarity` ASC) USING BTREE
+  INDEX `idx_rarity`(`rarity` ASC) USING BTREE,
+  INDEX `idx_pool_rarity`(`pool` ASC, `rarity` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5568 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '抽卡记录信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------

@@ -11,7 +11,7 @@ import lombok.Data;
 /**
  * BaseEntity
  *
- * @author wenbin
+ * @author Link
  * @version V1.0
  * @date 2020年3月18日
  */
