@@ -5,7 +5,7 @@ import com.link.core.entity.SysFilesEntity;
 
 /**
  *@Description TODO
- *@author ZhouBinBin
+ *@author Link
  *@since 2025/11/10 17:52
  **/
 public interface SysFilesMapper extends BaseMapper<SysFilesEntity> {

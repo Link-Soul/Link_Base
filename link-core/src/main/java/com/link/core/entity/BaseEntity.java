@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  *@Description TODO
- *@author ZhouBinBin
+ *@author Link
  *@since 2025/11/10 17:53
  **/
 public class BaseEntity {

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 文件上传 服务类
  *
- * @author wenbin
+ * @author Link
  * @version V1.0
  * @date 2020年3月18日
  */
@@ -33,13 +33,5 @@ public interface SysFilesService extends IService<SysFilesEntity> {
      */
     void removeByIdsAndFiles(List<String> ids);
 
-    /**
-     * 上传营业执照
-     *
-     * @param file
-     * @param request
-     * @return
-     */
-    String uploadBusinessLicense(String companyName, MultipartFile file, HttpServletRequest request);
 }
 

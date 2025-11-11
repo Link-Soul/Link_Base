@@ -19,8 +19,8 @@ import java.io.File;
 import java.util.List;
 
 /**
- *@Description TODO
- *@author ZhouBinBin
+ *@Description 文件上传 服务类实现
+ *@author Link
  *@since 2025/11/10 17:31
  **/
 @Service
@@ -84,52 +84,6 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
     }
 
     /**
-     * 上传营业执照
-     *
-     * @param companyName
-     * @param file
-     * @param request
-     * @return
-     */
-    @Override
-    public String uploadBusinessLicense(String companyName, MultipartFile file, HttpServletRequest request) {
-        //存储文件夹
-        String createTime = DateUtil.format(DateUtil.date(), DatePattern.PURE_DATE_PATTERN);
-        String newPath = filePath + File.separator + createTime + File.separator;
-        File uploadDirectory = new File(newPath);
-        if (uploadDirectory.exists()) {
-            if (!uploadDirectory.isDirectory()) {
-                uploadDirectory.delete();
-            }
-        } else {
-            uploadDirectory.mkdir();
-        }
-        try {
-            String fileName = file.getOriginalFilename();
-            //id与filename保持一直，删除文件
-            String fileNameNew = IdUtil.getSnowflakeNextIdStr() + getFileType(fileName);
-            String newFilePathName = newPath + fileNameNew;
-            String url = (contextPath + File.separator + "files" + File.separator + createTime + File.separator + fileNameNew).replaceAll("/+", "/");
-            //创建输出文件对象
-            File outFile = new File(newFilePathName);
-            //拷贝文件到输出文件对象
-            FileUtils.copyInputStreamToFile(file.getInputStream(), outFile);
-            //保存文件记录
-            SysFilesEntity sysFilesEntity = new SysFilesEntity();
-            sysFilesEntity.setFileName(fileName + "_" + companyName + "上传的营业执照");
-            sysFilesEntity.setFilePath(newFilePathName);
-
-            String organRelation = baseOrganRelation;
-            sysFilesEntity.setOrganRelation(organRelation);
-            sysFilesEntity.setUrl(url);
-            this.save(sysFilesEntity);
-            return url;
-        } catch (Exception e) {
-            throw new RuntimeException("文件上传失败");
-        }
-    }
-
-    /**
      * 获取文件后缀名
      *
      * @param fileName 文件名
@@ -143,7 +97,7 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
     }
 
     /**
-     * 获取跟路径
+     * 获取根路径
      *
      * @param request
      * @return
