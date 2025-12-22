@@ -713,3 +713,5 @@ Caused by: java.sql.SQLSyntaxErrorException: In aggregated query without GROUP B
 2025-11-11 11:49:05.535  INFO 25168 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:126 ms
 2025-11-11 11:50:02.388  INFO 25168 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:105 ms
 2025-11-11 11:50:02.425  INFO 25168 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 142 ms
+2025-11-11 11:51:31.685  INFO 25168 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-11-11 11:51:31.703  INFO 25168 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed

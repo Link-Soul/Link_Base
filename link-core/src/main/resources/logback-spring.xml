@@ -5,7 +5,7 @@
 
     <property name="LOG_LEVEL" value="INFO"/>
     <property name="LOG_PATH" value="log"/>
-    <property name="LOG_FILE" value="${spring.application.name:-link}.log"/>
+    <property name="LOG_FILE" value="${spring.application.name:-link}-%d{yyyy-MM-dd}.log"/>
     <property name="LOG_HISTORY" value="${spring.application.name:-link}.%d{yyyy-MM-dd}.log"/>
 
     <!--日志输出到控制台-->
