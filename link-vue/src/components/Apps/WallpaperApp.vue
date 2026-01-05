@@ -34,6 +34,28 @@
             <input
               type="radio"
               v-model="wallpaperType"
+              value="image"
+              @change="updateWallpaper"
+            />
+            <span>图片壁纸</span>
+          </label>
+          
+          <div v-if="wallpaperType === 'image'" class="image-picker">
+            <div class="current-image">
+              <img v-if="selectedImage" :src="selectedImage" alt="当前壁纸" />
+              <span v-else>未选择图片</span>
+            </div>
+            <div class="image-options">
+              <button @click="selectDefaultImage" class="image-btn">使用默认图片</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="option-group">
+          <label class="option-label">
+            <input
+              type="radio"
+              v-model="wallpaperType"
               value="gradient"
               @change="updateWallpaper"
             />
@@ -86,6 +108,7 @@ const desktopStore = useDesktopStore()
 
 const wallpaperType = ref('color')
 const selectedColor = ref('#f0f2f5')
+const selectedImage = ref('/img/paper.jpg')
 const gradientStart = ref('#667eea')
 const gradientEnd = ref('#764ba2')
 
@@ -136,13 +159,16 @@ const presets = [
 const updateWallpaper = () => {
   if (wallpaperType.value === 'color') {
     desktopStore.changeWallpaper('color', selectedColor.value)
+  } else if (wallpaperType.value === 'image') {
+    desktopStore.changeImageWallpaper(selectedImage.value)
   } else if (wallpaperType.value === 'gradient') {
-    desktopStore.wallpaper.type = 'gradient'
-    desktopStore.wallpaper.gradient = {
-      start: gradientStart.value,
-      end: gradientEnd.value
-    }
+    desktopStore.changeGradientWallpaper(gradientStart.value, gradientEnd.value)
   }
+}
+
+const selectDefaultImage = () => {
+  selectedImage.value = '/img/paper.jpg'
+  updateWallpaper()
 }
 
 const applyPreset = (preset) => {
@@ -154,11 +180,7 @@ const applyPreset = (preset) => {
   } else if (preset.type === 'gradient') {
     gradientStart.value = preset.start
     gradientEnd.value = preset.end
-    desktopStore.wallpaper.type = 'gradient'
-    desktopStore.wallpaper.gradient = {
-      start: preset.start,
-      end: preset.end
-    }
+    desktopStore.changeGradientWallpaper(preset.start, preset.end)
   }
 }
 
@@ -169,6 +191,8 @@ onMounted(() => {
   
   if (wallpaper.type === 'color') {
     selectedColor.value = wallpaper.value || '#f0f2f5'
+  } else if (wallpaper.type === 'image') {
+    selectedImage.value = wallpaper.image || '/img/paper.jpg'
   } else if (wallpaper.type === 'gradient') {
     gradientStart.value = wallpaper.gradient?.start || '#667eea'
     gradientEnd.value = wallpaper.gradient?.end || '#764ba2'
@@ -256,6 +280,47 @@ input[type="color"] {
   border: 1px solid var(--color-border);
   border-radius: calc(var(--border-radius) / 2);
   cursor: pointer;
+}
+
+.image-picker {
+  margin-left: 24px;
+}
+
+.current-image {
+  margin-bottom: 12px;
+}
+
+.current-image img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.current-image span {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.image-options {
+  display: flex;
+  gap: 8px;
+}
+
+.image-btn {
+  padding: 6px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) / 2);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing);
+}
+
+.image-btn:hover {
+  background: var(--color-primary);
+  color: white;
 }
 
 .preset-grid {

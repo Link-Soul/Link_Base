@@ -51,8 +51,8 @@
       <Suspense>
         <template #default>
           <component
-            v-if="windowData.component"
-            :is="windowData.component"
+            v-if="currentComponent"
+            :is="currentComponent"
             v-bind="windowData.props"
             @window-action="handleWindowAction"
           />
@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 
 const props = defineProps({
   windowData: {
@@ -99,6 +99,32 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
+})
+
+// 动态导入组件
+const getComponent = (componentName) => {
+  const componentMap = {
+    'FilesApp': () => import('@/components/Apps/FilesApp.vue'),
+    'CalculatorApp': () => import('@/components/Apps/CalculatorApp.vue'),
+    'NotesApp': () => import('@/components/Apps/NotesApp.vue'),
+    'SettingsApp': () => import('@/components/Apps/SettingsApp.vue'),
+    'WallpaperApp': () => import('@/components/Apps/WallpaperApp.vue'),
+    'TerminalApp': () => import('@/components/Apps/PlaceholderApp.vue'),
+    'BrowserApp': () => import('@/components/Apps/PlaceholderApp.vue'),
+    'MusicApp': () => import('@/components/Apps/PlaceholderApp.vue'),
+    'CalendarApp': () => import('@/components/Apps/PlaceholderApp.vue'),
+    'GachaApp': () => import('@/components/Apps/GachaApp.vue')
+  }
+  
+  const loader = componentMap[componentName] || (() => import('@/components/Apps/PlaceholderApp.vue'))
+  return defineAsyncComponent(loader)
+}
+
+const currentComponent = computed(() => {
+  if (props.windowData.component) {
+    return getComponent(props.windowData.component)
+  }
+  return null
 })
 
 const emit = defineEmits(['close', 'minimize', 'maximize', 'focus', 'move', 'resize'])

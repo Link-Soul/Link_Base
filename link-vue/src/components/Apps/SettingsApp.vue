@@ -82,6 +82,29 @@
             />
           </div>
           
+          <div v-if="wallpaperType === 'image'" class="setting-item">
+            <label class="setting-label">图片壁纸</label>
+            <div class="image-uploader">
+              <input
+                type="file"
+                ref="fileInput"
+                accept="image/*"
+                style="display: none;"
+                @change="handleImageUpload"
+              />
+              <button
+                class="upload-btn"
+                @click="triggerFileInput"
+              >
+                <span class="upload-icon">📁</span>
+                <span>选择图片</span>
+              </button>
+              <div v-if="selectedImage" class="image-preview">
+                <img :src="selectedImage" alt="预览" class="preview-img" />
+              </div>
+            </div>
+          </div>
+          
           <div class="setting-item">
             <label class="setting-label">显示桌面图标</label>
             <input
@@ -189,6 +212,8 @@ const showDesktopIcons = ref(true)
 const showGrid = ref(false)
 const animationsEnabled = ref(true)
 const animationSpeed = ref('normal')
+const selectedImage = ref('')
+const fileInput = ref(null)
 
 const sections = [
   { id: 'appearance', name: '外观', icon: '🎨' },
@@ -206,11 +231,27 @@ const updateWallpaper = () => {
   if (wallpaperType.value === 'color') {
     desktopStore.changeWallpaper('color', wallpaperColor.value)
   } else if (wallpaperType.value === 'gradient') {
-    desktopStore.wallpaper.type = 'gradient'
-    desktopStore.wallpaper.gradient = {
-      start: gradientStart.value,
-      end: gradientEnd.value
+    desktopStore.changeGradientWallpaper(gradientStart.value, gradientEnd.value)
+  } else if (wallpaperType.value === 'image' && selectedImage.value) {
+    desktopStore.changeImageWallpaper(selectedImage.value)
+  }
+}
+
+const triggerFileInput = () => {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+const handleImageUpload = (event) => {
+  const file = event.target.files[0]
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      selectedImage.value = e.target.result
+      desktopStore.changeImageWallpaper(selectedImage.value)
     }
+    reader.readAsDataURL(file)
   }
 }
 
@@ -234,6 +275,8 @@ onMounted(() => {
   } else if (wallpaper.type === 'gradient') {
     gradientStart.value = wallpaper.gradient?.start || '#667eea'
     gradientEnd.value = wallpaper.gradient?.end || '#764ba2'
+  } else if (wallpaper.type === 'image') {
+    selectedImage.value = wallpaper.image || ''
   }
   
   showDesktopIcons.value = desktopStore.settings.showDesktopIcons
@@ -377,6 +420,50 @@ onMounted(() => {
   width: 18px;
   height: 18px;
   cursor: pointer;
+}
+
+.image-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) / 2);
+  background: var(--color-background);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing);
+}
+
+.upload-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.upload-icon {
+  font-size: 16px;
+}
+
+.image-preview {
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) / 2);
+  padding: 8px;
+  background: var(--color-surface);
+}
+
+.preview-img {
+  max-width: 200px;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: calc(var(--border-radius) / 2);
 }
 
 .about-content {

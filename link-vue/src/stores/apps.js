@@ -1,9 +1,24 @@
 import { defineStore } from 'pinia';
+import { useDesktopStore } from './desktop';
 
 export const useAppsStore = defineStore('apps', {
   state: () => ({
     // 已安装的应用
     installedApps: [
+      {
+        id: 'files',
+        name: '文件',
+        icon: '📁',
+        category: 'productivity',
+        component: 'FilesApp',
+        windowConfig: {
+          width: 800,
+          height: 600,
+          resizable: true,
+          minWidth: 600,
+          minHeight: 400
+        }
+      },
       {
         id: 'calculator',
         name: '计算器',
@@ -116,6 +131,20 @@ export const useAppsStore = defineStore('apps', {
           minWidth: 600,
           minHeight: 400
         }
+      },
+      {
+        id: 'gacha',
+        name: '抽卡数据查询',
+        icon: '🎰',
+        category: 'entertainment',
+        component: 'GachaApp',
+        windowConfig: {
+          width: 1200,
+          height: 800,
+          resizable: true,
+          minWidth: 800,
+          minHeight: 600
+        }
       }
     ],
     
@@ -137,7 +166,7 @@ export const useAppsStore = defineStore('apps', {
     usageStats: {},
     
     // 收藏的应用
-    favoriteApps: ['calculator', 'notes', 'files']
+    favoriteApps: ['calculator', 'notes', 'files', 'gacha']
   }),
 
   getters: {
@@ -194,18 +223,8 @@ export const useAppsStore = defineStore('apps', {
     
     // 获取应用组件
     getAppComponent(componentName) {
-      const componentMap = {
-        'CalculatorApp': () => import('@/components/Apps/CalculatorApp.vue'),
-        'NotesApp': () => import('@/components/Apps/NotesApp.vue'),
-        'SettingsApp': () => import('@/components/Apps/SettingsApp.vue'),
-        'WallpaperApp': () => import('@/components/Apps/WallpaperApp.vue'),
-        'TerminalApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-        'BrowserApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-        'MusicApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-        'CalendarApp': () => import('@/components/Apps/PlaceholderApp.vue')
-      }
-      
-      return componentMap[componentName] || (() => import('@/components/Apps/PlaceholderApp.vue'))
+      // 直接返回组件名称，由Window组件使用动态导入
+      return componentName
     },
     
     // 安装应用

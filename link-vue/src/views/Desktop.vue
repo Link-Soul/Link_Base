@@ -4,7 +4,7 @@
     <div class="desktop-background" :class="`background-${wallpaper.type}`">
       <div v-if="wallpaper.type === 'color'" class="background-color" :style="{ backgroundColor: wallpaper.value }"></div>
       <div v-else-if="wallpaper.type === 'gradient'" class="background-gradient" :style="gradientStyle"></div>
-      <img v-else-if="wallpaper.type === 'image' && wallpaper.image" :src="wallpaper.image" alt="Wallpaper" class="background-image">
+      <img v-else-if="wallpaper.type === 'image' && wallpaper.image" :src="wallpaper.image" alt="Wallpaper" class="background-image" draggable="false">
     </div>
 
     <!-- 桌面图标网格 -->
@@ -122,6 +122,9 @@ const handleContextMenuSelect = (action) => {
     case 'open-wallpaper':
       appsStore.launchApp('wallpaper')
       break
+    case 'open-gacha':
+      appsStore.launchApp('gacha')
+      break
     case 'open-settings':
       appsStore.launchApp('settings')
       break
@@ -149,6 +152,7 @@ const handleDesktopContextMenu = (event) => {
     contextMenu.target = 'desktop'
     contextMenu.items = [
       { label: '壁纸设置', action: 'open-wallpaper', icon: '🖼️' },
+      { label: '抽卡数据统计', action: 'open-gacha', icon: '🎰' },
       { separator: true },
       { label: '系统设置', action: 'open-settings', icon: '⚙️' },
       { separator: true },
@@ -173,6 +177,21 @@ const handleKeydown = (event) => {
 
 const closeAppLauncher = () => {
   showAppLauncher.value = false
+}
+
+// 处理拖放图片设置壁纸
+const handleDrop = (event) => {
+  const files = event.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        desktopStore.changeImageWallpaper(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 }
 
 onMounted(() => {
@@ -236,7 +255,6 @@ onUnmounted(() => {
   left: 20px;
   right: 20px;
   bottom: 100px;
-  pointer-events: none;
 }
 
 .icon-grid {

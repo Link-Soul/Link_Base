@@ -92,6 +92,7 @@ const dockApps = computed(() => desktopStore.dockApps.filter(app => app.id !== '
 const systemApps = computed(() => [
   { id: 'launchpad', name: 'Launchpad', icon: '🚀' },
   { id: 'finder', name: '访达', icon: '🗂️' },
+  { id: 'gacha', name: '抽卡数据统计', icon: '🎰' },
   { id: 'settings', name: '系统偏好设置', icon: '⚙️' }
 ])
 
@@ -133,11 +134,17 @@ const handleSystemAppClick = (systemApp) => {
   switch (systemApp.id) {
     case 'launchpad':
       // 打开应用启动器
-      showAppLauncher.value = true
+      // 发送自定义事件，让父组件处理
+      const launchpadEvent = new CustomEvent('open-launchpad')
+      document.dispatchEvent(launchpadEvent)
       break
     case 'finder':
       // 打开计算器
       appsStore.launchApp('calculator')
+      break
+    case 'gacha':
+      // 打开抽卡数据统计应用
+      appsStore.launchApp('gacha')
       break
     case 'settings':
       // 打开系统设置

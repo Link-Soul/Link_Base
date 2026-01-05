@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
+import { useAppsStore } from './apps';
 
 export const useDesktopStore = defineStore('desktop', {
   state: () => ({
     // 桌面壁纸设置
     wallpaper: {
-      type: 'color', // 'color' | 'image' | 'gradient'
+      type: 'image', // 'color' | 'image' | 'gradient'
       value: '#f0f2f5',
-      image: '',
+      image: '/img/paper.jpg', // 默认图片壁纸
       gradient: {
         start: '#667eea',
         end: '#764ba2'
@@ -19,7 +20,7 @@ export const useDesktopStore = defineStore('desktop', {
     // Dock栏应用
     dockApps: [
       { id: 'finder', name: '访达', icon: '🗂️', active: true },
-      { id: 'settings', name: '系统偏好', icon: '⚙️', active: false }
+      // { id: 'settings', name: '系统偏好', icon: '⚙️', active: false }
     ],
     // 桌面设置
     settings: {
@@ -131,6 +132,21 @@ export const useDesktopStore = defineStore('desktop', {
     changeWallpaper(type, value) {
       this.wallpaper.type = type;
       this.wallpaper.value = value;
+    },
+
+    // 更改图片壁纸
+    changeImageWallpaper(imagePath) {
+      this.wallpaper.type = 'image';
+      this.wallpaper.image = imagePath;
+    },
+
+    // 更改渐变壁纸
+    changeGradientWallpaper(start, end) {
+      this.wallpaper.type = 'gradient';
+      this.wallpaper.gradient = {
+        start,
+        end
+      };
     },
 
     // 切换Dock应用状态

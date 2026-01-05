@@ -1,0 +1,79 @@
+2026-01-04 16:47:15.570  INFO 13664 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Starting ArKnightsApplication using Java 1.8.0_381 on XTW-20231030CIS with PID 13664 (D:\workplace\Link_Base\Arknights\target\classes started by Administrator in D:\workplace\Link_Base)
+2026-01-04 16:47:15.573  INFO 13664 --- [restartedMain] com.link.arknights.ArKnightsApplication  : No active profile set, falling back to 1 default profile: "default"
+2026-01-04 16:47:15.643  INFO 13664 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-01-04 16:47:15.643  INFO 13664 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-01-04 16:47:16.870  INFO 13664 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-01-04 16:47:16.875  INFO 13664 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-01-04 16:47:16.931  INFO 13664 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 0 Redis repository interfaces.
+2026-01-04 16:47:17.959  INFO 13664 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8096 (http)
+2026-01-04 16:47:17.971  INFO 13664 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-04 16:47:17.971  INFO 13664 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-01-04 16:47:18.298  INFO 13664 --- [restartedMain] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2026-01-04 16:47:18.305  INFO 13664 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-04 16:47:18.305  INFO 13664 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2661 ms
+2026-01-04 16:47:18.453  INFO 13664 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2026-01-04 16:47:18.581  INFO 13664 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2026-01-04 16:47:19.937  INFO 13664 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [META-INF/resources/index.html]
+2026-01-04 16:47:20.359  INFO 13664 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-01-04 16:47:20.496  INFO 13664 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8096 (http) with context path ''
+2026-01-04 16:47:20.514  INFO 13664 --- [restartedMain] com.link.arknights.ArKnightsApplication  : Started ArKnightsApplication in 5.657 seconds (JVM running for 7.612)
+2026-01-04 16:47:20.541  INFO 13664 --- [restartedMain] com.link.arknights.ArKnightsApplication  : 
+----------------------------------------------------------
+	Application '明日方舟抽卡信息存储服务' is running! Access URLs:
+	主页: 	http://192.168.0.4:8096/index.html
+	----------------------------------------------------------
+2026-01-04 16:47:22.475  INFO 13664 --- [http-nio-8096-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-04 16:47:22.475  INFO 13664 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-04 16:47:22.477  INFO 13664 --- [http-nio-8096-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-01-04 16:47:24.226  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:1244 ms
+2026-01-04 16:47:24.228  INFO 13664 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 1229 ms
+2026-01-04 16:57:19.279  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 24 ms
+2026-01-04 16:57:19.309  INFO 13664 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:16 ms
+2026-01-04 16:57:30.418  INFO 13664 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 11 ms
+2026-01-04 16:57:30.440  INFO 13664 --- [http-nio-8096-exec-2] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:10 ms
+2026-01-04 16:58:42.703  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 16:58:42.726  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:17:36.199  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 8 ms
+2026-01-04 17:17:36.224  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:10 ms
+2026-01-04 17:18:04.654  INFO 13664 --- [http-nio-8096-exec-9] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 10 ms
+2026-01-04 17:18:04.673  INFO 13664 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:5 ms
+2026-01-04 17:19:00.086  INFO 13664 --- [http-nio-8096-exec-8] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 17:19:00.104  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:4 ms
+2026-01-04 17:19:08.942  INFO 13664 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 17:19:08.963  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:21:24.084  INFO 13664 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 17:21:24.106  INFO 13664 --- [http-nio-8096-exec-9] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:6 ms
+2026-01-04 17:23:57.508  INFO 13664 --- [http-nio-8096-exec-2] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 17:23:57.529  INFO 13664 --- [http-nio-8096-exec-8] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:6 ms
+2026-01-04 17:24:07.250  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 9 ms
+2026-01-04 17:24:07.290  INFO 13664 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:30:13.101  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 9 ms
+2026-01-04 17:30:13.120  INFO 13664 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:7 ms
+2026-01-04 17:30:33.993  INFO 13664 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 4 ms
+2026-01-04 17:30:34.009  INFO 13664 --- [http-nio-8096-exec-2] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:3 ms
+2026-01-04 17:31:10.832  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 11 ms
+2026-01-04 17:31:10.853  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:4 ms
+2026-01-04 17:48:16.123  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 6 ms
+2026-01-04 17:48:16.149  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:9 ms
+2026-01-04 17:48:47.038  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 4 ms
+2026-01-04 17:48:47.054  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:5 ms
+2026-01-04 17:48:47.225  INFO 13664 --- [http-nio-8096-exec-9] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 6 ms
+2026-01-04 17:48:47.250  INFO 13664 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:9 ms
+2026-01-04 17:48:52.559  INFO 13664 --- [http-nio-8096-exec-8] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 6 ms
+2026-01-04 17:48:52.571  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:3 ms
+2026-01-04 17:49:15.211  INFO 13664 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 3 ms
+2026-01-04 17:49:15.229  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:50:20.527  INFO 13664 --- [http-nio-8096-exec-10] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 4 ms
+2026-01-04 17:50:20.545  INFO 13664 --- [http-nio-8096-exec-9] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:5 ms
+2026-01-04 17:50:20.693  INFO 13664 --- [http-nio-8096-exec-2] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 5 ms
+2026-01-04 17:50:20.718  INFO 13664 --- [http-nio-8096-exec-8] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:6 ms
+2026-01-04 17:51:32.651  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 6 ms
+2026-01-04 17:51:32.674  INFO 13664 --- [http-nio-8096-exec-5] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 9 ms
+2026-01-04 17:51:32.689  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:51:32.706  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:11 ms
+2026-01-04 17:52:36.094  INFO 13664 --- [http-nio-8096-exec-3] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 6 ms
+2026-01-04 17:52:36.114  INFO 13664 --- [http-nio-8096-exec-2] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:52:42.240  INFO 13664 --- [http-nio-8096-exec-7] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 4 ms
+2026-01-04 17:52:42.334  INFO 13664 --- [http-nio-8096-exec-6] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:8 ms
+2026-01-04 17:53:12.671  INFO 13664 --- [http-nio-8096-exec-4] c.l.a.c.c.DataMessageController          : 用户uid:86670999 查询获取抽卡信息 共消耗时间 4 ms
+2026-01-04 17:53:12.685  INFO 13664 --- [http-nio-8096-exec-1] c.l.a.c.c.DataMessageController          : 查询柱状图用数据消耗时间:6 ms
