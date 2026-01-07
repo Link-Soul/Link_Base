@@ -1,8 +1,8 @@
-package com.nssoftware.wakagaoagent.mapper;
+package com.link.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.nssoftware.wakagaoagent.common.aop.annotation.CustomDataPermission;
-import com.nssoftware.wakagaoagent.entity.SysLog;
+import com.link.core.common.aop.annotation.CustomDataPermission;
+import com.link.core.entity.SysLog;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

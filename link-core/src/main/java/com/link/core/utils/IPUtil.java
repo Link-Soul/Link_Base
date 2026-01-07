@@ -1,11 +1,11 @@
-package com.nssoftware.wakagaoagent.common.utils;
+package com.link.core.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * IP工具类
  *
- * @author FangCheng
+ * @author Link
  * @since 2025/12/15 15:48
  **/
 public class IPUtil {

@@ -2,16 +2,34 @@
   <div class="desktop" :style="desktopStyle">
     <!-- 桌面背景 -->
     <div class="desktop-background" :class="`background-${wallpaper.type}`">
-      <div v-if="wallpaper.type === 'color'" class="background-color" :style="{ backgroundColor: wallpaper.value }"></div>
-      <div v-else-if="wallpaper.type === 'gradient'" class="background-gradient" :style="gradientStyle"></div>
-      <img v-else-if="wallpaper.type === 'image' && wallpaper.image" :src="wallpaper.image" alt="Wallpaper" class="background-image" draggable="false">
+      <div
+        v-if="wallpaper.type === 'color'"
+        class="background-color"
+        :style="{ backgroundColor: wallpaper.value }"
+      ></div>
+      <div
+        v-else-if="wallpaper.type === 'gradient'"
+        class="background-gradient"
+        :style="gradientStyle"
+      ></div>
+      <img
+        v-else-if="wallpaper.type === 'image' && wallpaper.image"
+        :src="wallpaper.image"
+        alt="Wallpaper"
+        class="background-image"
+        draggable="false"
+      />
     </div>
 
     <!-- 桌面图标网格 -->
-    <div v-if="settings.showDesktopIcons" class="desktop-icons" :class="{ 'show-grid': settings.showGrid }">
+    <div
+      v-if="settings.showDesktopIcons"
+      class="desktop-icons"
+      :class="{ 'show-grid': settings.showGrid }"
+    >
       <div class="icon-grid">
-        <div 
-          v-for="app in favoriteApps" 
+        <div
+          v-for="app in favoriteApps"
           :key="app.id"
           class="desktop-icon"
           @dblclick="launchApp(app.id)"
@@ -47,174 +65,256 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, reactive } from 'vue'
-import { useDesktopStore } from '@/stores/desktop'
-import { useAppsStore } from '@/stores/apps'
-import { useThemeStore } from '@/stores/theme'
-import WindowManager from '@/components/Desktop/WindowManager.vue'
-import Dock from '@/components/Desktop/Dock.vue'
-import AppLauncher from '@/components/Desktop/AppLauncher.vue'
-import ContextMenu from '@/components/Common/ContextMenu.vue'
+import { computed, onMounted, onUnmounted, ref, reactive } from "vue";
+import { useDesktopStore } from "@/stores/desktop";
+import { useAppsStore } from "@/stores/apps";
+import { useThemeStore } from "@/stores/theme";
+import WindowManager from "@/components/Desktop/WindowManager.vue";
+import Dock from "@/components/Desktop/Dock.vue";
+import AppLauncher from "@/components/Desktop/AppLauncher.vue";
+import ContextMenu from "@/components/Common/ContextMenu.vue";
+import { wallpaperApi, settingsApi, desktopApi } from "@/services/api";
 
-const desktopStore = useDesktopStore()
-const appsStore = useAppsStore()
-const themeStore = useThemeStore()
+const desktopStore = useDesktopStore();
+const appsStore = useAppsStore();
+const themeStore = useThemeStore();
 
-const showAppLauncher = ref(false)
+const showAppLauncher = ref(false);
 
 const contextMenu = reactive({
   show: false,
   x: 0,
   y: 0,
   items: [],
-  target: null
-})
+  target: null,
+});
 
 // 计算属性
-const wallpaper = computed(() => desktopStore.wallpaper)
-const settings = computed(() => desktopStore.settings)
-const favoriteApps = computed(() => appsStore.favoriteAppsList)
+const wallpaper = computed(() => desktopStore.wallpaper);
+const settings = computed(() => desktopStore.settings);
+const favoriteApps = computed(() => appsStore.favoriteAppsList);
 
 const desktopStyle = computed(() => ({
-  ...themeStore.cssVariables
-}))
+  ...themeStore.cssVariables,
+}));
 
 const gradientStyle = computed(() => ({
-  background: `linear-gradient(135deg, ${wallpaper.value.gradient.start}, ${wallpaper.value.gradient.end})`
-}))
+  background: `linear-gradient(135deg, ${wallpaper.value.gradient.start}, ${wallpaper.value.gradient.end})`,
+}));
 
 // 方法
 const launchApp = (appId) => {
-  appsStore.launchApp(appId)
-}
+  // 使用API启动应用
+  desktopApi.launchApp(appId).then(() => {
+    appsStore.launchApp(appId);
+  }).catch(error => {
+    console.error("Failed to launch app via API:", error);
+    // 降级到本地存储
+    appsStore.launchApp(appId);
+  });
+};
 
 const showIconContextMenu = (event, app) => {
-  contextMenu.show = true
-  contextMenu.x = event.clientX
-  contextMenu.y = event.clientY
-  contextMenu.target = app
+  contextMenu.show = true;
+  contextMenu.x = event.clientX;
+  contextMenu.y = event.clientY;
+  contextMenu.target = app;
   contextMenu.items = [
-    { label: '打开', action: 'open', icon: '📂' },
-    { label: '显示简介', action: 'info', icon: 'ℹ️' },
+    { label: "打开", action: "open", icon: "📂" },
+    { label: "显示简介", action: "info", icon: "ℹ️" },
     { separator: true },
-    { label: appsStore.favoriteApps.includes(app.id) ? '从收藏移除' : '添加到收藏', action: 'toggle-favorite', icon: '⭐' },
+    {
+      label: appsStore.favoriteApps.includes(app.id)
+        ? "从收藏移除"
+        : "添加到收藏",
+      action: "toggle-favorite",
+      icon: "⭐",
+    },
     { separator: true },
-    { label: '移到废纸篓', action: 'trash', icon: '🗑️' }
-  ]
-}
+    { label: "卸载", action: "uninstall", icon: "❌" },
+  ];
+};
 
 const handleContextMenuSelect = (action) => {
-  if (!contextMenu.target) return
-  
+  if (!contextMenu.target) return;
+
   switch (action) {
-    case 'open':
-      launchApp(contextMenu.target.id)
-      break
-    case 'toggle-favorite':
-      appsStore.toggleFavorite(contextMenu.target.id)
-      break
-    case 'info':
-      showAppInfo(contextMenu.target)
-      break
-    case 'trash':
-      // 实现移到废纸篓功能
-      break
-    case 'open-wallpaper':
-      appsStore.launchApp('wallpaper')
-      break
-    case 'open-gacha':
-      appsStore.launchApp('gacha')
-      break
-    case 'open-settings':
-      appsStore.launchApp('settings')
-      break
-    case 'view-options':
-      appsStore.launchApp('settings')
-      break
+    case "open":
+      launchApp(contextMenu.target.id);
+      break;
+    case "toggle-favorite":
+      appsStore.toggleFavorite(contextMenu.target.id);
+      break;
+    case "info":
+      showAppInfo(contextMenu.target);
+      break;
+    case "uninstall":
+      // 使用API卸载应用
+      desktopApi.uninstallApp(contextMenu.target.id).then(() => {
+        appsStore.uninstallApp(contextMenu.target.id);
+      }).catch(error => {
+        console.error("Failed to uninstall app via API:", error);
+        // 降级到本地存储
+        appsStore.uninstallApp(contextMenu.target.id);
+      });
+      break;
+    case "open-wallpaper":
+      appsStore.launchApp("wallpaper");
+      break;
+    case "open-gacha":
+      appsStore.launchApp("gacha");
+      break;
+    case "open-settings":
+      appsStore.launchApp("settings");
+      break;
+    case "view-options":
+      appsStore.launchApp("settings");
+      break;
   }
-  
-  contextMenu.show = false
-}
+
+  contextMenu.show = false;
+};
 
 const showAppInfo = (app) => {
   // 显示应用信息弹窗
-  console.log('App info:', app)
-}
+  console.log("App info:", app);
+};
 
 const handleDesktopContextMenu = (event) => {
   // 只在空白区域显示右键菜单
-  if (event.target === event.currentTarget || event.target.classList.contains('desktop-background') || 
-      event.target.classList.contains('background-color') || event.target.classList.contains('background-gradient') ||
-      (event.target.tagName === 'IMG' && event.target.classList.contains('background-image'))) {
-    contextMenu.show = true
-    contextMenu.x = event.clientX
-    contextMenu.y = event.clientY
-    contextMenu.target = 'desktop'
+  if (
+    event.target === event.currentTarget ||
+    event.target.classList.contains("desktop-background") ||
+    event.target.classList.contains("background-color") ||
+    event.target.classList.contains("background-gradient") ||
+    (event.target.tagName === "IMG" &&
+      event.target.classList.contains("background-image"))
+  ) {
+    contextMenu.show = true;
+    contextMenu.x = event.clientX;
+    contextMenu.y = event.clientY;
+    contextMenu.target = "desktop";
     contextMenu.items = [
-      { label: '壁纸设置', action: 'open-wallpaper', icon: '🖼️' },
-      { label: '抽卡数据统计', action: 'open-gacha', icon: '🎰' },
+      { label: "壁纸设置", action: "open-wallpaper", icon: "🖼️" },
+      { label: "抽卡数据统计", action: "open-gacha", icon: "🎰" },
       { separator: true },
-      { label: '系统设置', action: 'open-settings', icon: '⚙️' },
+      { label: "系统设置", action: "open-settings", icon: "⚙️" },
       { separator: true },
-      { label: '显示视图选项', action: 'view-options', icon: '👁️' }
-    ]
+      { label: "显示视图选项", action: "view-options", icon: "👁️" },
+    ];
   }
-}
+};
 
 // 键盘快捷键
 const handleKeydown = (event) => {
   // Cmd/Ctrl + Space 打开应用启动器
-  if ((event.metaKey || event.ctrlKey) && event.code === 'Space') {
-    event.preventDefault()
-    showAppLauncher.value = !showAppLauncher.value
+  if ((event.metaKey || event.ctrlKey) && event.code === "Space") {
+    event.preventDefault();
+    showAppLauncher.value = !showAppLauncher.value;
   }
-  
+
   // Esc 关闭应用启动器
-  if (event.code === 'Escape' && showAppLauncher.value) {
-    closeAppLauncher()
+  if (event.code === "Escape" && showAppLauncher.value) {
+    closeAppLauncher();
   }
-}
+};
 
 const closeAppLauncher = () => {
-  showAppLauncher.value = false
-}
+  showAppLauncher.value = false;
+};
 
 // 处理拖放图片设置壁纸
 const handleDrop = (event) => {
-  const files = event.dataTransfer.files
+  const files = event.dataTransfer.files;
   if (files.length > 0) {
-    const file = files[0]
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        desktopStore.changeImageWallpaper(e.target.result)
-      }
-      reader.readAsDataURL(file)
+    const file = files[0];
+    if (file.type.startsWith("image/")) {
+      // 使用API上传图片并设置壁纸
+      import("@/services/api").then(({ uploadApi, wallpaperApi }) => {
+        uploadApi.uploadFile(file).then((uploadResult) => {
+          const wallpaperData = {
+            type: "image",
+            image: uploadResult.fileUrl,
+          };
+          wallpaperApi.addWallpaper(wallpaperData).then(() => {
+            wallpaperApi.setCurrentWallpaper(uploadResult.fileUrl).then(() => {
+              desktopStore.changeImageWallpaper(uploadResult.fileUrl);
+            });
+          });
+        }).catch(error => {
+          console.error("Failed to upload wallpaper via API:", error);
+          // 降级到本地存储
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            desktopStore.changeImageWallpaper(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
     }
   }
-}
+};
 
 onMounted(() => {
   // 初始化主题
-  themeStore.applyTheme()
-  
+  themeStore.applyTheme();
+
+  // 加载桌面数据从API
+  loadDesktopData();
+
   // 添加键盘事件监听
-  document.addEventListener('keydown', handleKeydown)
-  
+  document.addEventListener("keydown", handleKeydown);
+
   // 添加桌面右键菜单
-  const desktopElement = document.querySelector('.desktop')
+  const desktopElement = document.querySelector(".desktop");
   if (desktopElement) {
-    desktopElement.addEventListener('contextmenu', handleDesktopContextMenu)
+    desktopElement.addEventListener("contextmenu", handleDesktopContextMenu);
   }
-})
+});
+
+// 从API加载桌面数据
+const loadDesktopData = async () => {
+  try {
+    // 加载壁纸
+    const currentWallpaper = await wallpaperApi.getCurrentWallpaper();
+    if (currentWallpaper) {
+      if (currentWallpaper.type === "image") {
+        desktopStore.changeImageWallpaper(currentWallpaper.image);
+      } else if (currentWallpaper.type === "gradient") {
+        desktopStore.changeGradientWallpaper(currentWallpaper.gradient.start, currentWallpaper.gradient.end);
+      } else if (currentWallpaper.type === "color") {
+        desktopStore.changeWallpaper("color", currentWallpaper.value);
+      }
+    }
+
+    // 加载设置
+    const settingsMap = await settingsApi.getSettingsMap();
+    if (settingsMap) {
+      // 更新本地存储的设置
+      Object.keys(settingsMap).forEach(key => {
+        // 根据设置键更新相应的本地状态
+        console.log(`Setting ${key}: ${settingsMap[key]}`);
+      });
+    }
+
+    // 加载应用列表
+    const apps = await desktopApi.getApps();
+    if (apps) {
+      console.log("Loaded apps from API:", apps);
+    }
+  } catch (error) {
+    console.error("Failed to load desktop data from API:", error);
+    // 降级到本地存储
+  }
+};
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  const desktopElement = document.querySelector('.desktop')
+  document.removeEventListener("keydown", handleKeydown);
+  const desktopElement = document.querySelector(".desktop");
   if (desktopElement) {
-    desktopElement.removeEventListener('contextmenu', handleDesktopContextMenu)
+    desktopElement.removeEventListener("contextmenu", handleDesktopContextMenu);
   }
-})
+});
 </script>
 
 <style scoped>
@@ -307,8 +407,10 @@ onUnmounted(() => {
 }
 
 .show-grid .icon-grid {
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 80px 80px;
   border-radius: var(--border-radius);
@@ -320,16 +422,16 @@ onUnmounted(() => {
     grid-template-columns: repeat(auto-fill, 60px);
     gap: 15px;
   }
-  
+
   .icon-wrapper {
     width: 36px;
     height: 36px;
   }
-  
+
   .icon {
     font-size: 24px;
   }
-  
+
   .icon-name {
     font-size: 10px;
   }

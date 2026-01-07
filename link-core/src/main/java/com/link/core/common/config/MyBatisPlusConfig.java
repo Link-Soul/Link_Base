@@ -1,4 +1,4 @@
-package com.nssoftware.wakagaoagent.common.config;
+package com.link.core.common.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MyBatisPlusConfig {
-    @Autowired
-    private MyDataPermissionHandler myDataPermissionHandler;
+//    @Autowired
+//    private MyDataPermissionHandler myDataPermissionHandler;
 
     /**
      * 配置mybatis-plus 分页查件
@@ -28,11 +28,11 @@ public class MyBatisPlusConfig {
 
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 添加数据权限插件
-        DataPermissionInterceptor dataPermissionInterceptor = new DataPermissionInterceptor();
-        // 添加自定义的数据权限处理器
-        dataPermissionInterceptor.setDataPermissionHandler(myDataPermissionHandler);
-
-        interceptor.addInnerInterceptor(dataPermissionInterceptor);
+//        DataPermissionInterceptor dataPermissionInterceptor = new DataPermissionInterceptor();
+//        // 添加自定义的数据权限处理器
+//        dataPermissionInterceptor.setDataPermissionHandler(myDataPermissionHandler);
+//
+//        interceptor.addInnerInterceptor(dataPermissionInterceptor);
         //向Mybatis过滤器链中添加分页拦截器
         interceptor.addInnerInterceptor(new
                 PaginationInnerInterceptor(DbType.MYSQL));

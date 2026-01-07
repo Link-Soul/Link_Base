@@ -1,4 +1,4 @@
-package com.nssoftware.wakagaoagent.entity;
+package com.link.core.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

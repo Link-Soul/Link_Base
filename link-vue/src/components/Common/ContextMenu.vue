@@ -1,25 +1,22 @@
 <template>
   <teleport to="body">
-    <div
-      v-if="show"
-      class="context-menu"
-      :style="menuStyle"
-      @click.stop
-    >
+    <div v-if="show" class="context-menu" :style="menuStyle" @click.stop>
       <div
         v-for="(item, index) in items"
         :key="index"
         class="menu-item"
         :class="{
-          'separator': item.separator,
-          'disabled': item.disabled
+          separator: item.separator,
+          disabled: item.disabled,
         }"
         @click="handleItemClick(item)"
       >
         <div v-if="!item.separator" class="menu-item-content">
           <span v-if="item.icon" class="menu-icon">{{ item.icon }}</span>
           <span class="menu-label">{{ item.label }}</span>
-          <span v-if="item.shortcut" class="menu-shortcut">{{ item.shortcut }}</span>
+          <span v-if="item.shortcut" class="menu-shortcut">{{
+            item.shortcut
+          }}</span>
         </div>
       </div>
     </div>
@@ -27,66 +24,66 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps({
   show: {
     type: Boolean,
-    default: false
+    default: false,
   },
   x: {
     type: Number,
-    default: 0
+    default: 0,
   },
   y: {
     type: Number,
-    default: 0
+    default: 0,
   },
   items: {
     type: Array,
-    default: () => []
-  }
-})
+    default: () => [],
+  },
+});
 
-const emit = defineEmits(['close', 'select'])
+const emit = defineEmits(["close", "select"]);
 
-const menuRef = ref(null)
+const menuRef = ref(null);
 
 const menuStyle = computed(() => {
   return {
     left: `${props.x}px`,
-    top: `${props.y}px`
-  }
-})
+    top: `${props.y}px`,
+  };
+});
 
 const handleItemClick = (item) => {
-  if (item.separator || item.disabled) return
-  
-  emit('select', item.action)
-  emit('close')
-}
+  if (item.separator || item.disabled) return;
+
+  emit("select", item.action);
+  emit("close");
+};
 
 const handleClickOutside = (event) => {
   if (menuRef.value && !menuRef.value.contains(event.target)) {
-    emit('close')
+    emit("close");
   }
-}
+};
 
 const handleKeydown = (event) => {
-  if (event.key === 'Escape') {
-    emit('close')
+  if (event.key === "Escape") {
+    emit("close");
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-  document.addEventListener('keydown', handleKeydown)
-})
+  document.addEventListener("click", handleClickOutside);
+  document.addEventListener("keydown", handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  document.removeEventListener('keydown', handleKeydown)
-})
+  document.removeEventListener("click", handleClickOutside);
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style scoped>

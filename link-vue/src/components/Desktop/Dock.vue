@@ -1,12 +1,12 @@
 <template>
-  <div class="dock" :class="{ 'expanded': isExpanded }">
+  <div class="dock" :class="{ expanded: isExpanded }">
     <div class="dock-container">
       <!-- 应用图标 -->
       <div
         v-for="app in dockApps"
         :key="app.id"
         class="dock-item"
-        :class="{ 'active': isAppActive(app.id), 'running': isAppRunning(app.id) }"
+        :class="{ active: isAppActive(app.id), running: isAppRunning(app.id) }"
         @click="handleDockClick(app)"
         @mouseenter="hoveredApp = app.id"
         @mouseleave="hoveredApp = null"
@@ -16,7 +16,7 @@
           <span class="icon">{{ app.icon }}</span>
           <div v-if="isAppRunning(app.id)" class="running-indicator"></div>
         </div>
-        
+
         <!-- 应用名称提示 -->
         <transition name="tooltip">
           <div v-if="hoveredApp === app.id" class="app-tooltip">
@@ -40,32 +40,10 @@
         <div class="app-icon">
           <span class="icon">{{ systemApp.icon }}</span>
         </div>
-        
+
         <transition name="tooltip">
           <div v-if="hoveredApp === systemApp.id" class="app-tooltip">
             {{ systemApp.name }}
-          </div>
-        </transition>
-      </div>
-
-      <!-- 垃圾桶 -->
-      <div
-        class="dock-item trash"
-        :class="{ 'active': isTrashActive }"
-        @dragover.prevent="isTrashActive = true"
-        @dragleave="isTrashActive = false"
-        @drop="handleTrashDrop"
-        @click="handleTrashClick"
-        @mouseenter="hoveredApp = 'trash'"
-        @mouseleave="hoveredApp = null"
-      >
-        <div class="app-icon">
-          <span class="icon">🗑️</span>
-        </div>
-        
-        <transition name="tooltip">
-          <div v-if="hoveredApp === 'trash'" class="app-tooltip">
-            废纸篓
           </div>
         </transition>
       </div>
@@ -74,135 +52,119 @@
 </template>
 
 <script setup>
-import { computed, ref, reactive, onMounted, onUnmounted } from 'vue'
-import { useDesktopStore } from '@/stores/desktop'
-import { useAppsStore } from '@/stores/apps'
 
-const desktopStore = useDesktopStore()
-const appsStore = useAppsStore()
+import { computed, ref, reactive, onMounted, onUnmounted } from "vue";
+import { useDesktopStore } from "@/stores/desktop";
+import { useAppsStore } from "@/stores/apps";
 
-const hoveredApp = ref(null)
-const isTrashActive = ref(false)
-const isExpanded = ref(false)
+const desktopStore = useDesktopStore();
+const appsStore = useAppsStore();
+
+const hoveredApp = ref(null);
+const isExpanded = ref(false);
+
 
 // Dock 应用
-const dockApps = computed(() => desktopStore.dockApps.filter(app => app.id !== 'trash'))
+const dockApps = computed(() =>
+  desktopStore.dockApps.filter((app) => app.id !== "trash")
+);
 
 // 系统应用
 const systemApps = computed(() => [
-  { id: 'launchpad', name: 'Launchpad', icon: '🚀' },
-  { id: 'finder', name: '访达', icon: '🗂️' },
-  { id: 'gacha', name: '抽卡数据统计', icon: '🎰' },
-  { id: 'settings', name: '系统偏好设置', icon: '⚙️' }
-])
+  { id: "launchpad", name: "Launchpad", icon: "🚀" },
+  { id: "finder", name: "访达", icon: "🗂️" },
+  { id: "gacha", name: "抽卡数据统计", icon: "🎰" },
+  { id: "settings", name: "系统偏好设置", icon: "⚙️" },
+]);
 
 // 检查应用是否活动
 const isAppActive = (appId) => {
-  return desktopStore.activeWindowId && 
-    desktopStore.windows.some(w => w.id === desktopStore.activeWindowId && w.appId === appId)
-}
+  return (
+    desktopStore.activeWindowId &&
+    desktopStore.windows.some(
+      (w) => w.id === desktopStore.activeWindowId && w.appId === appId
+    )
+  );
+};
 
 // 检查应用是否正在运行
 const isAppRunning = (appId) => {
-  return desktopStore.windows.some(w => w.appId === appId && !w.isMinimized)
-}
+  return desktopStore.windows.some((w) => w.appId === appId && !w.isMinimized);
+};
 
 // 处理 Dock 点击
 const handleDockClick = (app) => {
-  const runningWindow = desktopStore.windows.find(w => w.appId === app.id)
-  
+  const runningWindow = desktopStore.windows.find((w) => w.appId === app.id);
+
   if (runningWindow) {
     if (runningWindow.isMinimized) {
       // 恢复最小化窗口
-      desktopStore.minimizeWindow(runningWindow.id)
-      desktopStore.setActiveWindow(runningWindow.id)
+      desktopStore.minimizeWindow(runningWindow.id);
+      desktopStore.setActiveWindow(runningWindow.id);
     } else if (desktopStore.activeWindowId === runningWindow.id) {
       // 最小化当前活动窗口
-      desktopStore.minimizeWindow(runningWindow.id)
+      desktopStore.minimizeWindow(runningWindow.id);
     } else {
       // 切换到该窗口
-      desktopStore.setActiveWindow(runningWindow.id)
+      desktopStore.setActiveWindow(runningWindow.id);
     }
   } else {
     // 启动新应用
-    appsStore.launchApp(app.id)
+    appsStore.launchApp(app.id);
   }
-}
+};
 
 // 处理系统应用点击
 const handleSystemAppClick = (systemApp) => {
   switch (systemApp.id) {
-    case 'launchpad':
+    case "launchpad":
       // 打开应用启动器
       // 发送自定义事件，让父组件处理
-      const launchpadEvent = new CustomEvent('open-launchpad')
-      document.dispatchEvent(launchpadEvent)
-      break
-    case 'finder':
+      const launchpadEvent = new CustomEvent("open-launchpad");
+      document.dispatchEvent(launchpadEvent);
+      break;
+    case "finder":
       // 打开计算器
-      appsStore.launchApp('calculator')
-      break
-    case 'gacha':
+      appsStore.launchApp("calculator");
+      break;
+    case "gacha":
       // 打开抽卡数据统计应用
-      appsStore.launchApp('gacha')
-      break
-    case 'settings':
+      appsStore.launchApp("gacha");
+      break;
+    case "settings":
       // 打开系统设置
-      appsStore.launchApp('settings')
-      break
+      appsStore.launchApp("settings");
+      break;
   }
-}
-
-// 处理垃圾桶点击
-const handleTrashClick = () => {
-  // 打开垃圾桶
-  console.log('Open trash')
-}
-
-// 处理拖放到垃圾桶
-const handleTrashDrop = (event) => {
-  isTrashActive.value = false
-  const data = event.dataTransfer.getData('text/plain')
-  
-  try {
-    const dragData = JSON.parse(data)
-    if (dragData.type === 'window') {
-      desktopStore.closeWindow(dragData.windowId)
-    } else if (dragData.type === 'app') {
-      appsStore.uninstallApp(dragData.appId)
-    }
-  } catch (error) {
-    console.error('Invalid drag data:', error)
-  }
-}
+};
 
 // 显示应用右键菜单
 const showAppContextMenu = (event, app) => {
   // 实现右键菜单逻辑
-  console.log('Show context menu for app:', app)
-}
+  console.log("Show context menu for app:", app);
+};
 
 // 监听鼠标移动来扩展 Dock
 const handleMouseMove = (event) => {
-  const dock = document.querySelector('.dock')
-  const rect = dock.getBoundingClientRect()
-  const distance = Math.abs(event.clientY - rect.top)
-  
+  const dock = document.querySelector(".dock");
+  const rect = dock.getBoundingClientRect();
+  const distance = Math.abs(event.clientY - rect.top);
+
   if (distance < 50) {
-    isExpanded.value = true
+    isExpanded.value = true;
   } else if (distance > 100) {
-    isExpanded.value = false
+    isExpanded.value = false;
   }
-}
+};
 
 // 生命周期
 onMounted(() => {
-  document.addEventListener('mousemove', handleMouseMove)
-})
+  document.addEventListener("mousemove", handleMouseMove);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('mousemove', handleMouseMove)
-})
+  document.removeEventListener("mousemove", handleMouseMove);
+});
 </script>
 
 <style scoped>
@@ -302,11 +264,6 @@ onUnmounted(() => {
   background: transparent;
 }
 
-.trash.active .app-icon {
-  background: #ff6b6b;
-  animation: shake 0.3s ease-in-out;
-}
-
 .app-tooltip {
   position: absolute;
   bottom: 100%;
@@ -336,9 +293,16 @@ onUnmounted(() => {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(-50%) rotate(0deg); }
-  25% { transform: translateX(-52%) rotate(-5deg); }
-  75% { transform: translateX(-48%) rotate(5deg); }
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-52%) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(-48%) rotate(5deg);
+  }
 }
 
 /* 响应式设计 */
@@ -346,16 +310,16 @@ onUnmounted(() => {
   .dock {
     bottom: 10px;
   }
-  
+
   .dock-item {
     width: 40px;
     height: 40px;
   }
-  
+
   .icon {
     font-size: 20px;
   }
-  
+
   .dock.expanded .dock-item {
     width: 48px;
     height: 48px;

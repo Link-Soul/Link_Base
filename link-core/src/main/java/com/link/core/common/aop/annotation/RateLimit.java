@@ -1,4 +1,4 @@
-package com.nssoftware.wakagaoagent.common.aop.annotation;
+package com.link.core.common.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

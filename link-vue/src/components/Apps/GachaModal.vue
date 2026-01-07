@@ -9,14 +9,16 @@
       <div class="gacha-modal-controls">
         <button @click="submitJSON" class="btn btn-primary">更新数据</button>
         <div class="input-group">
-          <input 
-            v-model="jsonFileUrl" 
-            placeholder="请输入小黑盒数据地址" 
+          <input
+            v-model="jsonFileUrl"
+            placeholder="请输入小黑盒数据地址"
             class="form-control"
           />
           <button @click="getData" class="btn btn-secondary">获取数据</button>
         </div>
-        <button @click="resetTotalMessageTable" class="btn btn-warning">重置数据</button>
+        <button @click="resetTotalMessageTable" class="btn btn-warning">
+          重置数据
+        </button>
       </div>
 
       <!-- 加载遮罩 -->
@@ -30,16 +32,16 @@
           <div class="chart-container">
             <div ref="getNumByPoolChart" class="chart"></div>
             <div class="chart-controls">
-              <button 
-                v-if="showTotalView" 
-                @click="change(true)" 
+              <button
+                v-if="showTotalView"
+                @click="change(true)"
                 class="btn btn-sm btn-info"
               >
                 点击切换为各卡池细则
               </button>
-              <button 
-                v-if="!showTotalView" 
-                @click="change(false)" 
+              <button
+                v-if="!showTotalView"
+                @click="change(false)"
                 class="btn btn-sm btn-info"
               >
                 点击切换为总抽数
@@ -52,34 +54,60 @@
             <table class="table table-striped">
               <tbody>
                 <tr>
-                  <td colspan="2">至今为止已过去 <span class="highlight">{{ totalTime }}</span></td>
+                  <td colspan="2">
+                    至今为止已过去
+                    <span class="highlight">{{ totalTime }}</span>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="2">
-                    总计 <span class="highlight text-primary">{{ messageTotal.sum }}</span> 抽，
-                    共消耗合成玉：<span class="highlight text-warning">{{ messageTotal.stones }}</span>
+                    总计
+                    <span class="highlight text-primary">{{
+                      messageTotal.sum
+                    }}</span>
+                    抽， 共消耗合成玉：<span class="highlight text-warning">{{
+                      messageTotal.stones
+                    }}</span>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    六星共计 <span class="highlight text-danger">{{ messageTotal.six }}</span> 人，
-                    概率 <span class="highlight">{{ messageTotal.sixRate }}%</span>，
-                    平均出货 <span class="highlight">{{ messageTotal.sixAvg }}</span> 抽
+                    六星共计
+                    <span class="highlight text-danger">{{
+                      messageTotal.six
+                    }}</span>
+                    人， 概率
+                    <span class="highlight">{{ messageTotal.sixRate }}%</span>，
+                    平均出货
+                    <span class="highlight">{{ messageTotal.sixAvg }}</span> 抽
                   </td>
                   <td>
-                    四星共计 <span class="highlight text-info">{{ messageTotal.four }}</span> 人，
-                    概率 <span class="highlight">{{ messageTotal.fourRate }}%</span>
+                    四星共计
+                    <span class="highlight text-info">{{
+                      messageTotal.four
+                    }}</span>
+                    人， 概率
+                    <span class="highlight">{{ messageTotal.fourRate }}%</span>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    五星共计 <span class="highlight text-warning">{{ messageTotal.five }}</span> 人，
-                    概率 <span class="highlight">{{ messageTotal.fiveRate }}%</span>，
-                    平均出货 <span class="highlight">{{ messageTotal.fiveAvg }}</span> 抽
+                    五星共计
+                    <span class="highlight text-warning">{{
+                      messageTotal.five
+                    }}</span>
+                    人， 概率
+                    <span class="highlight">{{ messageTotal.fiveRate }}%</span
+                    >， 平均出货
+                    <span class="highlight">{{ messageTotal.fiveAvg }}</span> 抽
                   </td>
                   <td>
-                    三星共计 <span class="highlight text-secondary">{{ messageTotal.three }}</span> 人，
-                    概率 <span class="highlight">{{ messageTotal.threeRate }}%</span>
+                    三星共计
+                    <span class="highlight text-secondary">{{
+                      messageTotal.three
+                    }}</span>
+                    人， 概率
+                    <span class="highlight">{{ messageTotal.threeRate }}%</span>
                   </td>
                 </tr>
               </tbody>
@@ -94,8 +122,8 @@
 
         <div class="gacha-right">
           <div class="card-pool-list">
-            <div 
-              v-for="(item, index) in cardMsgByPoolList" 
+            <div
+              v-for="(item, index) in cardMsgByPoolList"
               :key="index"
               class="pool-item"
             >
@@ -104,8 +132,8 @@
                 <span class="pool-total">{{ item.total }}</span>
               </div>
               <div v-if="item.six && item.six.length > 0" class="pool-six">
-                <div 
-                  v-for="(card, cardIndex) in item.six" 
+                <div
+                  v-for="(card, cardIndex) in item.six"
                   :key="cardIndex"
                   class="six-card-item"
                 >
@@ -123,371 +151,393 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
-import * as echarts from 'echarts'
+import { ref, onMounted, nextTick } from "vue";
+import * as echarts from "echarts";
 
 // 定义事件
-const emit = defineEmits(['close'])
+const emit = defineEmits(["close"]);
 
 // 响应式数据
-const loading = ref(false)
-const jsonFileUrl = ref('')
-const totalTime = ref('')
-const showTotalView = ref(true)
-const getNumByPoolChart = ref(null)
-const RespectiveNumData = ref(null)
+const loading = ref(false);
+const jsonFileUrl = ref("");
+const totalTime = ref("");
+const showTotalView = ref(true);
+const getNumByPoolChart = ref(null);
+const RespectiveNumData = ref(null);
 
 // 数据
-const data = ref([])
-const getNumByPoolData = ref([])
-const RespectiveNumDataArray = ref([])
-const cardMsgByPoolList = ref([])
+const data = ref([]);
+const getNumByPoolData = ref([]);
+const RespectiveNumDataArray = ref([]);
+const cardMsgByPoolList = ref([]);
 
 // 统计数据
 const messageTotal = ref({
   sum: 0,
   stones: 0,
   six: 0,
-  sixRate: '0.00',
-  sixAvg: '0.0',
+  sixRate: "0.00",
+  sixAvg: "0.0",
   five: 0,
-  fiveRate: '0.00',
-  fiveAvg: '0.0',
+  fiveRate: "0.00",
+  fiveAvg: "0.0",
   four: 0,
-  fourRate: '0.00',
+  fourRate: "0.00",
   three: 0,
-  threeRate: '0.00'
-})
+  threeRate: "0.00",
+});
 
 // 图表实例
-let getNumByPoolChartInstance = null
-let RespectiveNumDataChartInstance = null
+let getNumByPoolChartInstance = null;
+let RespectiveNumDataChartInstance = null;
 
 // 图表配置
-const selectedT = ref({'total': true, '六星': false, '五星': false, '四星': false, '三星': false})
-const selectedF = ref({'total': false, '六星': true, '五星': true, '四星': true, '三星': true})
+const selectedT = ref({
+  total: true,
+  六星: false,
+  五星: false,
+  四星: false,
+  三星: false,
+});
+const selectedF = ref({
+  total: false,
+  六星: true,
+  五星: true,
+  四星: true,
+  三星: true,
+});
 
 const getNumByPoolOption = ref({
   grid: {
-    left: '10%',
-    right: '10%',
+    left: "10%",
+    right: "10%",
   },
   title: {
-    text: '各卡池寻访次数'
+    text: "各卡池寻访次数",
   },
   tooltip: {
-    trigger: 'item'
+    trigger: "item",
   },
   legend: {
-    data: ['total', '六星', '五星', '四星', '三星'],
+    data: ["total", "六星", "五星", "四星", "三星"],
     selected: {
-      'total': true,
-      '六星': false,
-      '五星': false,
-      '四星': false,
-      '三星': false
-    }
+      total: true,
+      六星: false,
+      五星: false,
+      四星: false,
+      三星: false,
+    },
   },
   xAxis: {
     data: [],
     axisLabel: {
       interval: 0,
-      rotate: -30
+      rotate: -30,
     },
   },
   yAxis: {},
   series: [
     {
-      name: 'total',
-      type: 'bar',
+      name: "total",
+      type: "bar",
       data: [],
       label: {
         show: true,
-        position: 'top',
-        formatter: '{c}'
+        position: "top",
+        formatter: "{c}",
       },
       itemStyle: {
-        color: '#4A90E2'
+        color: "#4A90E2",
       },
     },
     {
-      name: '六星',
-      type: 'bar',
+      name: "六星",
+      type: "bar",
       data: [],
       label: {
         show: true,
-        position: 'top',
-        formatter: '{c}'
+        position: "top",
+        formatter: "{c}",
       },
       itemStyle: {
-        color: new echarts.graphic.LinearGradient(
-          0, 0, 0, 1,
-          [
-            {offset: 1, color: '#ee7800'},
-            {offset: 0, color: '#e80505'}
-          ]
-        ),
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 1, color: "#ee7800" },
+          { offset: 0, color: "#e80505" },
+        ]),
       },
     },
     {
-      name: '五星',
-      type: 'bar',
+      name: "五星",
+      type: "bar",
       data: [],
       label: {
         show: true,
-        position: 'top',
-        formatter: '{c}'
+        position: "top",
+        formatter: "{c}",
       },
       itemStyle: {
-        color: '#f39800'
+        color: "#f39800",
       },
     },
     {
-      name: '四星',
-      type: 'bar',
+      name: "四星",
+      type: "bar",
       data: [],
       label: {
         show: true,
-        position: 'top',
-        formatter: '{c}'
+        position: "top",
+        formatter: "{c}",
       },
       itemStyle: {
-        color: '#a1a1bd'
+        color: "#a1a1bd",
       },
     },
     {
-      name: '三星',
-      type: 'bar',
+      name: "三星",
+      type: "bar",
       data: [],
       label: {
         show: true,
-        position: 'top',
-        formatter: '{c}'
+        position: "top",
+        formatter: "{c}",
       },
       itemStyle: {
-        color: '#74aff8'
+        color: "#74aff8",
       },
     },
-  ]
-})
+  ],
+});
 
 const optionForRespectiveNumDataChart = ref({
   series: [
     {
-      type: 'pie',
+      type: "pie",
       data: [],
-    }
-  ]
-})
+    },
+  ],
+});
 
 // 方法
 const closeModal = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 const showMask = () => {
-  loading.value = true
-}
+  loading.value = true;
+};
 
 const hideMask = () => {
-  loading.value = false
-}
+  loading.value = false;
+};
 
 const submitJSON = async () => {
-  showMask()
+  showMask();
   try {
     // 调用后端API
-    const response = await fetch('/api/insert', {
-      method: 'GET',
+    const response = await fetch("/api/insert", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    const result = await response.json()
-    
-    hideMask()
-    onLoad()
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await response.json();
+
+    hideMask();
+    onLoad();
   } catch (error) {
-    hideMask()
-    alert('更新数据失败，请检查后端服务是否正常运行')
+    hideMask();
+    alert("更新数据失败，请检查后端服务是否正常运行");
   }
-}
+};
 
 const getData = async () => {
   if (!jsonFileUrl.value.trim()) {
-    alert("请输入数据地址！")
-    return
+    alert("请输入数据地址！");
+    return;
   }
 
-  showMask()
+  showMask();
   try {
     // 调用后端API
-    const response = await fetch(`/api/insertFromXhhWeb?fileUrl=${encodeURIComponent(jsonFileUrl.value)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `/api/insertFromXhhWeb?fileUrl=${encodeURIComponent(jsonFileUrl.value)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    })
-    const result = await response.json()
-    
-    hideMask()
-    onLoad()
+    );
+    const result = await response.json();
+
+    hideMask();
+    onLoad();
   } catch (error) {
-    hideMask()
-    alert('获取数据失败，请检查数据地址和后端服务是否正常')
+    hideMask();
+    alert("获取数据失败，请检查数据地址和后端服务是否正常");
   }
-}
+};
 
 const change = (TF) => {
-  showTotalView.value = TF
+  showTotalView.value = TF;
   if (TF) {
-    getNumByPoolOption.value.legend.selected = selectedF.value
+    getNumByPoolOption.value.legend.selected = selectedF.value;
   } else {
-    getNumByPoolOption.value.legend.selected = selectedT.value
+    getNumByPoolOption.value.legend.selected = selectedT.value;
   }
   if (getNumByPoolChartInstance) {
-    getNumByPoolChartInstance.setOption(getNumByPoolOption.value)
+    getNumByPoolChartInstance.setOption(getNumByPoolOption.value);
   }
-}
+};
 
 const resetTotalMessageTable = () => {
-  changeTotalMessageTable("total")
-}
+  changeTotalMessageTable("total");
+};
 
 const changeTotalMessageTable = (name = "total") => {
-  let currentData = {}
-  
-  RespectiveNumDataArray.value.forEach(item => {
+  let currentData = {};
+
+  RespectiveNumDataArray.value.forEach((item) => {
     if (item.pool === name) {
-      currentData = item
+      currentData = item;
     }
-  })
+  });
 
   // 更新统计数据
-  messageTotal.value.sum = currentData.sum || 0
-  messageTotal.value.stones = currentData.sum * 600
-  messageTotal.value.six = currentData.six || 0
-  messageTotal.value.five = currentData.five || 0
-  messageTotal.value.four = currentData.four || 0
-  messageTotal.value.three = currentData.three || 0
-  
-  const sum = currentData.sum || 1
-  messageTotal.value.sixRate = ((currentData.six || 0) * 100 / sum).toFixed(2)
-  messageTotal.value.fiveRate = ((currentData.five || 0) * 100 / sum).toFixed(2)
-  messageTotal.value.fourRate = ((currentData.four || 0) * 100 / sum).toFixed(2)
-  messageTotal.value.threeRate = ((currentData.three || 0) * 100 / sum).toFixed(2)
-  
-  messageTotal.value.sixAvg = (sum / (currentData.six || 1)).toFixed(1)
-  messageTotal.value.fiveAvg = (sum / (currentData.five || 1)).toFixed(1)
+  messageTotal.value.sum = currentData.sum || 0;
+  messageTotal.value.stones = currentData.sum * 600;
+  messageTotal.value.six = currentData.six || 0;
+  messageTotal.value.five = currentData.five || 0;
+  messageTotal.value.four = currentData.four || 0;
+  messageTotal.value.three = currentData.three || 0;
+
+  const sum = currentData.sum || 1;
+  messageTotal.value.sixRate = (((currentData.six || 0) * 100) / sum).toFixed(
+    2
+  );
+  messageTotal.value.fiveRate = (((currentData.five || 0) * 100) / sum).toFixed(
+    2
+  );
+  messageTotal.value.fourRate = (((currentData.four || 0) * 100) / sum).toFixed(
+    2
+  );
+  messageTotal.value.threeRate = (
+    ((currentData.three || 0) * 100) /
+    sum
+  ).toFixed(2);
+
+  messageTotal.value.sixAvg = (sum / (currentData.six || 1)).toFixed(1);
+  messageTotal.value.fiveAvg = (sum / (currentData.five || 1)).toFixed(1);
 
   // 更新饼图
   if (RespectiveNumDataChartInstance) {
-    const optionData = optionForRespectiveNumDataChart.value.series[0].data
-    optionData.splice(0)
-    optionData.push({name: "六星", value: currentData.six || 0})
-    optionData.push({name: "五星", value: currentData.five || 0})
-    optionData.push({name: "四星", value: currentData.four || 0})
-    optionData.push({name: "三星", value: currentData.three || 0})
-    RespectiveNumDataChartInstance.setOption(optionForRespectiveNumDataChart.value)
+    const optionData = optionForRespectiveNumDataChart.value.series[0].data;
+    optionData.splice(0);
+    optionData.push({ name: "六星", value: currentData.six || 0 });
+    optionData.push({ name: "五星", value: currentData.five || 0 });
+    optionData.push({ name: "四星", value: currentData.four || 0 });
+    optionData.push({ name: "三星", value: currentData.three || 0 });
+    RespectiveNumDataChartInstance.setOption(
+      optionForRespectiveNumDataChart.value
+    );
   }
-}
+};
 
 const setNumByPoolChart = (res) => {
-  const ser = getNumByPoolOption.value.series
-  const xAxis = getNumByPoolOption.value.xAxis.data
-  xAxis.splice(0)
-  ser[0].data.splice(0)
-  ser[1].data.splice(0)
-  ser[2].data.splice(0)
-  ser[3].data.splice(0)
-  ser[4].data.splice(0)
-  
+  const ser = getNumByPoolOption.value.series;
+  const xAxis = getNumByPoolOption.value.xAxis.data;
+  xAxis.splice(0);
+  ser[0].data.splice(0);
+  ser[1].data.splice(0);
+  ser[2].data.splice(0);
+  ser[3].data.splice(0);
+  ser[4].data.splice(0);
+
   for (let i = 0; i < res.length - 1; i++) {
-    xAxis.push(res[i].pool)
-    ser[0].data.push(res[i].sum)
-    ser[1].data.push(res[i].six)
-    ser[2].data.push(res[i].five)
-    ser[3].data.push(res[i].four)
-    ser[4].data.push(res[i].three)
+    xAxis.push(res[i].pool);
+    ser[0].data.push(res[i].sum);
+    ser[1].data.push(res[i].six);
+    ser[2].data.push(res[i].five);
+    ser[3].data.push(res[i].four);
+    ser[4].data.push(res[i].three);
   }
-  
+
   if (getNumByPoolChartInstance) {
-    getNumByPoolChartInstance.setOption(getNumByPoolOption.value)
+    getNumByPoolChartInstance.setOption(getNumByPoolOption.value);
   }
-}
+};
 
 const cardMsgByPoolListTable = (res) => {
-  cardMsgByPoolList.value = res.map(item => {
+  cardMsgByPoolList.value = res.map((item) => {
     if (item.six) {
       return {
         ...item,
-        six: [...item.six].reverse()
-      }
+        six: [...item.six].reverse(),
+      };
     }
-    return item
-  })
-}
+    return item;
+  });
+};
 
 const onLoad = async () => {
   try {
     // 调用后端API获取抽卡信息
-    const cardResponse = await fetch('/api/getCardMessageById?uid=86670999', {
-      method: 'GET',
+    const cardResponse = await fetch("/api/getCardMessageById?uid=86670999", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    
-    const cardData = await cardResponse.text()
-    
+        "Content-Type": "application/json",
+      },
+    });
+
+    const cardData = await cardResponse.text();
+
     // 检查响应是否为JSON格式
-    let res
+    let res;
     try {
-      res = JSON.parse(cardData)
+      res = JSON.parse(cardData);
     } catch (jsonError) {
-      throw new Error('服务器返回的数据格式错误，不是有效的JSON')
+      throw new Error("服务器返回的数据格式错误，不是有效的JSON");
     }
-    
-    data.value = res.reverse()
-    data.value.forEach(item => {
+
+    data.value = res.reverse();
+    data.value.forEach((item) => {
       if (item.six !== undefined) {
-        item.six.reverse()
+        item.six.reverse();
       }
-    })
-    cardMsgByPoolListTable(res)
-    
+    });
+    cardMsgByPoolListTable(res);
+
     // 获取柱状图数据
-    const chartResponse = await fetch('/api/queryRespectiveNum', {
-      method: 'GET',
+    const chartResponse = await fetch("/api/queryRespectiveNum", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    
-    const chartData = await chartResponse.text()
-    
-    let chartRes
+        "Content-Type": "application/json",
+      },
+    });
+
+    const chartData = await chartResponse.text();
+
+    let chartRes;
     try {
-      chartRes = JSON.parse(chartData)
+      chartRes = JSON.parse(chartData);
     } catch (jsonError) {
-      throw new Error('服务器返回的数据格式错误，不是有效的JSON')
+      throw new Error("服务器返回的数据格式错误，不是有效的JSON");
     }
-    
-    RespectiveNumDataArray.value = chartRes
-    changeTotalMessageTable()
-    setNumByPoolChart(chartRes)
-    
+
+    RespectiveNumDataArray.value = chartRes;
+    changeTotalMessageTable();
+    setNumByPoolChart(chartRes);
+
     // 获取时间跨度
-    const timeResponse = await fetch('/api/getTotalTime', {
-      method: 'GET',
+    const timeResponse = await fetch("/api/getTotalTime", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    
-    const timeData = await timeResponse.text()
-    totalTime.value = timeData
-    
+        "Content-Type": "application/json",
+      },
+    });
+
+    const timeData = await timeResponse.text();
+    totalTime.value = timeData;
   } catch (error) {
     // 如果API调用失败，使用模拟数据
     const mockData = [
@@ -504,8 +554,8 @@ const onLoad = async () => {
           { name: "银灰", num: 2 },
           { name: "能天使", num: 1 },
           { name: "艾雅法拉", num: 1 },
-          { name: "伊芙利特", num: 1 }
-        ]
+          { name: "伊芙利特", num: 1 },
+        ],
       },
       {
         poolName: "限定寻访",
@@ -519,11 +569,11 @@ const onLoad = async () => {
         sixList: [
           { name: "史尔特尔", num: 1 },
           { name: "浊心斯卡蒂", num: 1 },
-          { name: "凯尔希", num: 1 }
-        ]
-      }
-    ]
-    
+          { name: "凯尔希", num: 1 },
+        ],
+      },
+    ];
+
     const mockRespectiveNumData = [
       {
         pool: "total",
@@ -531,7 +581,7 @@ const onLoad = async () => {
         six: 8,
         five: 27,
         four: 75,
-        three: 70
+        three: 70,
       },
       {
         pool: "standard",
@@ -539,7 +589,7 @@ const onLoad = async () => {
         six: 5,
         five: 15,
         four: 40,
-        three: 40
+        three: 40,
       },
       {
         pool: "limited",
@@ -547,54 +597,56 @@ const onLoad = async () => {
         six: 3,
         five: 12,
         four: 35,
-        three: 30
-      }
-    ]
-    
-    totalTime.value = "120天"
-    
-    data.value = mockData
-    cardMsgByPoolListTable(mockData)
-    RespectiveNumDataArray.value = mockRespectiveNumData
-    
-    changeTotalMessageTable()
-    setNumByPoolChart(mockRespectiveNumData)
+        three: 30,
+      },
+    ];
+
+    totalTime.value = "120天";
+
+    data.value = mockData;
+    cardMsgByPoolListTable(mockData);
+    RespectiveNumDataArray.value = mockRespectiveNumData;
+
+    changeTotalMessageTable();
+    setNumByPoolChart(mockRespectiveNumData);
   }
-}
+};
 
 // 初始化图表
 const initCharts = () => {
   if (getNumByPoolChart.value) {
-    getNumByPoolChartInstance = echarts.init(getNumByPoolChart.value)
-    getNumByPoolChartInstance.setOption(getNumByPoolOption.value)
-    
+    getNumByPoolChartInstance = echarts.init(getNumByPoolChart.value);
+    getNumByPoolChartInstance.setOption(getNumByPoolOption.value);
+
     // 点击事件
-    getNumByPoolChartInstance.on('click', (params) => {
-      changeTotalMessageTable(params.name)
-    })
+    getNumByPoolChartInstance.on("click", (params) => {
+      changeTotalMessageTable(params.name);
+    });
   }
-  
+
   if (RespectiveNumData.value) {
-    RespectiveNumDataChartInstance = echarts.init(RespectiveNumData.value)
-    RespectiveNumDataChartInstance.setOption(optionForRespectiveNumDataChart.value)
+    RespectiveNumDataChartInstance = echarts.init(RespectiveNumData.value);
+    RespectiveNumDataChartInstance.setOption(
+      optionForRespectiveNumDataChart.value
+    );
   }
-}
+};
 
 onMounted(async () => {
-  await nextTick()
-  initCharts()
-  onLoad()
-  
+  await nextTick();
+  initCharts();
+  onLoad();
+
   // 监听窗口大小变化
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     if (getNumByPoolChartInstance) {
-      getNumByPoolChartInstance.resize()
+      getNumByPoolChartInstance.resize();
     }
     if (RespectiveNumDataChartInstance) {
-      RespectiveNumDataChartInstance.resize()
+      RespectiveNumDataChartInstance.resize();
     }
-  })
-})
+  });
+});
 </script>
 
 <style scoped>
@@ -916,7 +968,7 @@ onMounted(async () => {
   .gacha-modal-content {
     flex-direction: column;
   }
-  
+
   .gacha-left,
   .gacha-right {
     flex: 1;
@@ -929,29 +981,29 @@ onMounted(async () => {
     width: 95vw;
     height: 95vh;
   }
-  
+
   .gacha-modal-header {
     padding: 10px 15px;
   }
-  
+
   .gacha-modal-controls {
     padding: 10px 15px;
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .input-group {
     flex-direction: column;
   }
-  
+
   .form-control {
     min-width: auto;
   }
-  
+
   .gacha-modal-content {
     padding: 10px;
   }
-  
+
   .chart {
     height: 300px;
   }

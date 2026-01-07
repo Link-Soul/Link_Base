@@ -3,7 +3,7 @@
     <div class="files-header">
       <h2>文件管理</h2>
     </div>
-    
+
     <div class="files-content">
       <div class="file-navigation">
         <div class="nav-item active">
@@ -27,12 +27,12 @@
           <span class="nav-text">视频</span>
         </div>
       </div>
-      
+
       <div class="file-list">
         <div class="file-list-header">
           <h3>最近文件</h3>
         </div>
-        
+
         <div class="file-grid">
           <div class="file-item folder">
             <div class="file-icon">📁</div>
@@ -41,7 +41,7 @@
               <div class="file-date">2025-12-23</div>
             </div>
           </div>
-          
+
           <div class="file-item image">
             <div class="file-icon">🖼️</div>
             <div class="file-info">
@@ -49,7 +49,7 @@
               <div class="file-date">2025-12-23</div>
             </div>
           </div>
-          
+
           <div class="file-item text">
             <div class="file-icon">📄</div>
             <div class="file-info">
@@ -57,7 +57,7 @@
               <div class="file-date">2025-12-23</div>
             </div>
           </div>
-          
+
           <div class="file-item folder">
             <div class="file-icon">📁</div>
             <div class="file-info">

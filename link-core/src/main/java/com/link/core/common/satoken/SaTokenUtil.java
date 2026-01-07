@@ -1,4 +1,4 @@
-package com.nssoftware.wakagaoagent.common.satoken;
+package com.link.core.common.satoken;
 
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * sa-token 补充工具类
  *
- * @author FangCheng
+ * @author Link
  * @since 2024/12/12 11:00
  **/
 @Slf4j
@@ -15,7 +15,7 @@ public class SaTokenUtil {
     /**
      * 向session存入数据
      *
-     * @author FangCheng
+     * @author Link
      * @since 2024/12/12 11:07
      * @param key key
      * @param value value
@@ -31,7 +31,7 @@ public class SaTokenUtil {
     /**
      * 从session取数据
      *
-     * @author FangCheng
+     * @author Link
      * @since 2024/12/12 11:10
      * @param key key
      * @return java.lang.Object

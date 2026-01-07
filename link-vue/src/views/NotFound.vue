@@ -3,33 +3,27 @@
     <div class="not-found-content">
       <h1 class="error-code">404</h1>
       <h2 class="error-title">页面未找到</h2>
-      <p class="error-description">
-        抱歉，您访问的页面不存在或已被移动。
-      </p>
+      <p class="error-description">抱歉，您访问的页面不存在或已被移动。</p>
       <div class="actions">
-        <button class="btn-primary" @click="goHome">
-          返回桌面
-        </button>
-        <button class="btn-secondary" @click="goBack">
-          返回上页
-        </button>
+        <button class="btn-primary" @click="goHome">返回桌面</button>
+        <button class="btn-secondary" @click="goBack">返回上页</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
 const goHome = () => {
-  router.push('/')
-}
+  router.push("/");
+};
 
 const goBack = () => {
-  router.go(-1)
-}
+  router.go(-1);
+};
 </script>
 
 <style scoped>
@@ -112,20 +106,20 @@ const goBack = () => {
   .error-code {
     font-size: 6rem;
   }
-  
+
   .error-title {
     font-size: 1.5rem;
   }
-  
+
   .error-description {
     font-size: 1rem;
   }
-  
+
   .actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn-primary,
   .btn-secondary {
     width: 200px;

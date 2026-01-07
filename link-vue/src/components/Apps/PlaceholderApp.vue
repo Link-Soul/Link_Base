@@ -1,9 +1,9 @@
 <template>
   <div class="placeholder-app">
     <div class="placeholder-content">
-      <div class="app-icon">{{ icon || '📱' }}</div>
-      <h2 class="app-title">{{ title || '应用' }}</h2>
-      <p class="app-description">{{ description || '此应用正在开发中...' }}</p>
+      <div class="app-icon">{{ icon || "📱" }}</div>
+      <h2 class="app-title">{{ title || "应用" }}</h2>
+      <p class="app-description">{{ description || "此应用正在开发中..." }}</p>
       <div class="app-actions">
         <button class="action-btn primary" @click="refresh">
           <span>🔄</span>
@@ -19,32 +19,32 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   title: {
     type: String,
-    default: ''
+    default: "",
   },
   description: {
     type: String,
-    default: ''
+    default: "",
   },
   icon: {
     type: String,
-    default: ''
-  }
-})
+    default: "",
+  },
+});
 
-const emit = defineEmits(['window-action'])
+const emit = defineEmits(["window-action"]);
 
 const refresh = () => {
-  console.log('Refreshing app...')
-}
+  console.log("Refreshing app...");
+};
 
 const close = () => {
-  emit('window-action', 'close')
-}
+  emit("window-action", "close");
+};
 </script>
 
 <style scoped>

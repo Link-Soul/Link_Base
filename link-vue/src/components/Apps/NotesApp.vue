@@ -7,28 +7,33 @@
       <button class="toolbar-btn" @click="saveNote" title="保存笔记">
         <span>💾</span>
       </button>
-      <button class="toolbar-btn" @click="deleteNote" title="删除笔记" :disabled="!currentNoteId">
+      <button
+        class="toolbar-btn"
+        @click="deleteNote"
+        title="删除笔记"
+        :disabled="!currentNoteId"
+      >
         <span>🗑️</span>
       </button>
       <div class="toolbar-spacer"></div>
       <span class="note-count">{{ notes.length }} 条笔记</span>
     </div>
-    
+
     <div class="notes-content">
       <div class="notes-list">
         <div
           v-for="note in notes"
           :key="note.id"
           class="note-item"
-          :class="{ 'active': note.id === currentNoteId }"
+          :class="{ active: note.id === currentNoteId }"
           @click="selectNote(note.id)"
         >
-          <div class="note-title">{{ note.title || '无标题' }}</div>
+          <div class="note-title">{{ note.title || "无标题" }}</div>
           <div class="note-preview">{{ note.content.substring(0, 50) }}...</div>
           <div class="note-date">{{ formatDate(note.updatedAt) }}</div>
         </div>
       </div>
-      
+
       <div class="note-editor">
         <input
           v-model="currentTitle"
@@ -49,118 +54,157 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from "vue";
+import { notesApi } from "@/services/api";
 
-const notes = ref([])
-const currentNoteId = ref(null)
-const currentTitle = ref('')
-const currentContent = ref('')
+const notes = ref([]);
+const currentNoteId = ref(null);
+const currentTitle = ref("");
+const currentContent = ref("");
 
 const currentNote = computed(() => {
-  return notes.value.find(note => note.id === currentNoteId.value)
-})
+  return notes.value.find((note) => note.id === currentNoteId.value);
+});
 
-const newNote = () => {
-  const newNote = {
-    id: Date.now().toString(),
-    title: '',
-    content: '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+// 从后端加载所有笔记
+const loadNotes = async () => {
+  try {
+    const response = await notesApi.getAllNotes();
+    notes.value = response;
+    if (notes.value.length > 0) {
+      selectNote(notes.value[0].id);
+    } else {
+      // 如果没有笔记，创建一条默认笔记
+      await newNote();
+    }
+  } catch (error) {
+    console.error("Failed to load notes:", error);
+    // 失败时创建一个本地笔记作为备份
+    const newNote = {
+      id: Date.now().toString(),
+      title: "欢迎使用备忘录",
+      content: `这是你的第一条笔记！\n\n你可以：\n• 点击 📝 创建新笔记\n• 点击 💾 保存笔记\n• 点击 🗑️ 删除笔记\n• 在左侧列表中选择不同的笔记`,
+      status: 0,
+      createTime: new Date(),
+      updateTime: new Date(),
+    };
+    notes.value = [newNote];
+    selectNote(newNote.id);
+    await saveNote();
   }
-  
-  notes.value.unshift(newNote)
-  selectNote(newNote.id)
-}
+};
+
+const newNote = async () => {
+  try {
+    const newNote = {
+      title: "",
+      content: "",
+      status: 0,
+    };
+
+    const savedNote = await notesApi.addNote(newNote);
+    notes.value.unshift(savedNote);
+    selectNote(savedNote.id);
+  } catch (error) {
+    console.error("Failed to create new note:", error);
+  }
+};
 
 const selectNote = (noteId) => {
-  currentNoteId.value = noteId
-  const note = notes.value.find(n => n.id === noteId)
+  currentNoteId.value = noteId;
+  const note = notes.value.find((n) => n.id === noteId);
   if (note) {
-    currentTitle.value = note.title
-    currentContent.value = note.content
+    currentTitle.value = note.title;
+    currentContent.value = note.content;
   }
-}
+};
 
-const updateNote = () => {
-  if (!currentNoteId.value) return
-  
-  const noteIndex = notes.value.findIndex(n => n.id === currentNoteId.value)
-  if (noteIndex !== -1) {
-    notes.value[noteIndex] = {
-      ...notes.value[noteIndex],
-      title: currentTitle.value,
-      content: currentContent.value,
-      updatedAt: new Date().toISOString()
+const saveNote = async () => {
+  if (!currentNoteId.value) return;
+
+  try {
+    const note = notes.value.find((n) => n.id === currentNoteId.value);
+    if (note) {
+      const updatedNote = {
+        ...note,
+        title: currentTitle.value,
+        content: currentContent.value,
+        status: note.status || 0,
+      };
+
+      await notesApi.updateNote(updatedNote);
+      // 更新本地列表
+      const noteIndex = notes.value.findIndex(
+        (n) => n.id === currentNoteId.value
+      );
+      if (noteIndex !== -1) {
+        notes.value[noteIndex] = updatedNote;
+      }
     }
+  } catch (error) {
+    console.error("Failed to save note:", error);
   }
-}
+};
 
-const saveNote = () => {
-  if (!currentNoteId.value) return
-  
-  updateNote()
-  localStorage.setItem('notes', JSON.stringify(notes.value))
-}
+const deleteNote = async () => {
+  if (!currentNoteId.value) return;
 
-const deleteNote = () => {
-  if (!currentNoteId.value) return
-  
-  const noteIndex = notes.value.findIndex(n => n.id === currentNoteId.value)
-  if (noteIndex !== -1) {
-    notes.value.splice(noteIndex, 1)
-    currentNoteId.value = null
-    currentTitle.value = ''
-    currentContent.value = ''
-    
-    localStorage.setItem('notes', JSON.stringify(notes.value))
+  try {
+    await notesApi.deleteNote(currentNoteId.value);
+    // 从本地列表中移除
+    const noteIndex = notes.value.findIndex(
+      (n) => n.id === currentNoteId.value
+    );
+    if (noteIndex !== -1) {
+      notes.value.splice(noteIndex, 1);
+      currentNoteId.value = notes.value.length > 0 ? notes.value[0].id : null;
+      if (currentNoteId.value) {
+        selectNote(currentNoteId.value);
+      } else {
+        currentTitle.value = "";
+        currentContent.value = "";
+      }
+    }
+  } catch (error) {
+    console.error("Failed to delete note:", error);
   }
-}
+};
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diff = now - date
-  
-  if (diff < 60000) return '刚刚'
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`
-  if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`
-  
-  return date.toLocaleDateString()
-}
+const formatDate = (date) => {
+  if (!date) return "";
+  const dateObj = new Date(date);
+  const now = new Date();
+  const diff = now - dateObj;
 
-const loadNotes = () => {
-  const savedNotes = localStorage.getItem('notes')
-  if (savedNotes) {
-    notes.value = JSON.parse(savedNotes)
-  } else {
-    // 创建默认笔记
-    newNote()
-    currentTitle.value = '欢迎使用备忘录'
-    currentContent.value = `这是你的第一条笔记！
+  if (diff < 60000) return "刚刚";
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`;
 
-你可以：
-• 点击 📝 创建新笔记
-• 点击 💾 保存笔记
-• 点击 🗑️ 删除笔记
-• 在左侧列表中选择不同的笔记`
-    updateNote()
-    saveNote()
-  }
-}
+  return dateObj.toLocaleDateString();
+};
 
-// 监听当前笔记变化，自动保存
-watch([currentTitle, currentContent], () => {
-  if (currentNoteId.value) {
-    updateNote()
-    localStorage.setItem('notes', JSON.stringify(notes.value))
-  }
-}, { deep: true })
+// 监听当前笔记变化，自动保存（延迟1秒）
+let saveTimeout = null;
+watch(
+  [currentTitle, currentContent],
+  () => {
+    if (!currentNoteId.value) return;
+
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    saveTimeout = setTimeout(() => {
+      saveNote();
+    }, 1000);
+  },
+  { deep: true }
+);
 
 onMounted(() => {
-  loadNotes()
-})
+  loadNotes();
+});
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@
       <div class="display-value">{{ displayValue }}</div>
       <div class="display-expression">{{ expression }}</div>
     </div>
-    
+
     <div class="calculator-buttons">
       <div class="button-row">
         <button class="btn btn-function" @click="clear">AC</button>
@@ -12,30 +12,32 @@
         <button class="btn btn-function" @click="percentage">%</button>
         <button class="btn btn-operator" @click="setOperator('/')">÷</button>
       </div>
-      
+
       <div class="button-row">
         <button class="btn btn-number" @click="appendNumber('7')">7</button>
         <button class="btn btn-number" @click="appendNumber('8')">8</button>
         <button class="btn btn-number" @click="appendNumber('9')">9</button>
         <button class="btn btn-operator" @click="setOperator('*')">×</button>
       </div>
-      
+
       <div class="button-row">
         <button class="btn btn-number" @click="appendNumber('4')">4</button>
         <button class="btn btn-number" @click="appendNumber('5')">5</button>
         <button class="btn btn-number" @click="appendNumber('6')">6</button>
         <button class="btn btn-operator" @click="setOperator('-')">−</button>
       </div>
-      
+
       <div class="button-row">
         <button class="btn btn-number" @click="appendNumber('1')">1</button>
         <button class="btn btn-number" @click="appendNumber('2')">2</button>
         <button class="btn btn-number" @click="appendNumber('3')">3</button>
         <button class="btn btn-operator" @click="setOperator('+')">+</button>
       </div>
-      
+
       <div class="button-row">
-        <button class="btn btn-number btn-zero" @click="appendNumber('0')">0</button>
+        <button class="btn btn-number btn-zero" @click="appendNumber('0')">
+          0
+        </button>
         <button class="btn btn-number" @click="appendDecimal">.</button>
         <button class="btn btn-operator" @click="calculate">=</button>
       </div>
@@ -44,112 +46,115 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
-const currentValue = ref('0')
-const previousValue = ref('')
-const operator = ref('')
-const waitingForOperand = ref(false)
+const currentValue = ref("0");
+const previousValue = ref("");
+const operator = ref("");
+const waitingForOperand = ref(false);
 
 const displayValue = computed(() => {
-  const number = parseFloat(currentValue.value)
-  if (isNaN(number)) return currentValue.value
-  return number.toLocaleString()
-})
+  const number = parseFloat(currentValue.value);
+  if (isNaN(number)) return currentValue.value;
+  return number.toLocaleString();
+});
 
 const expression = computed(() => {
-  if (!operator.value && !previousValue.value) return ''
-  return `${previousValue.value} ${operator.value} ${waitingForOperand.value ? '' : currentValue.value}`
-})
+  if (!operator.value && !previousValue.value) return "";
+  return `${previousValue.value} ${operator.value} ${
+    waitingForOperand.value ? "" : currentValue.value
+  }`;
+});
 
 const clear = () => {
-  currentValue.value = '0'
-  previousValue.value = ''
-  operator.value = ''
-  waitingForOperand.value = false
-}
+  currentValue.value = "0";
+  previousValue.value = "";
+  operator.value = "";
+  waitingForOperand.value = false;
+};
 
 const toggleSign = () => {
-  const number = parseFloat(currentValue.value)
-  if (number === 0) return
-  currentValue.value = String(number * -1)
-}
+  const number = parseFloat(currentValue.value);
+  if (number === 0) return;
+  currentValue.value = String(number * -1);
+};
 
 const percentage = () => {
-  const number = parseFloat(currentValue.value)
-  if (number === 0) return
-  currentValue.value = String(number / 100)
-}
+  const number = parseFloat(currentValue.value);
+  if (number === 0) return;
+  currentValue.value = String(number / 100);
+};
 
 const appendNumber = (num) => {
   if (waitingForOperand.value) {
-    currentValue.value = num
-    waitingForOperand.value = false
+    currentValue.value = num;
+    waitingForOperand.value = false;
   } else {
-    currentValue.value = currentValue.value === '0' ? num : currentValue.value + num
+    currentValue.value =
+      currentValue.value === "0" ? num : currentValue.value + num;
   }
-}
+};
 
 const appendDecimal = () => {
   if (waitingForOperand.value) {
-    currentValue.value = '0.'
-    waitingForOperand.value = false
-  } else if (currentValue.value.indexOf('.') === -1) {
-    currentValue.value += '.'
+    currentValue.value = "0.";
+    waitingForOperand.value = false;
+  } else if (currentValue.value.indexOf(".") === -1) {
+    currentValue.value += ".";
   }
-}
+};
 
 const setOperator = (nextOperator) => {
-  const inputValue = parseFloat(currentValue.value)
+  const inputValue = parseFloat(currentValue.value);
 
-  if (previousValue.value === '') {
-    previousValue.value = currentValue.value
+  if (previousValue.value === "") {
+    previousValue.value = currentValue.value;
   } else if (operator.value) {
-    const currentValueFloat = parseFloat(currentValue.value)
-    const previousValueFloat = parseFloat(previousValue.value)
-    let newValue = previousValueFloat
+    const currentValueFloat = parseFloat(currentValue.value);
+    const previousValueFloat = parseFloat(previousValue.value);
+    let newValue = previousValueFloat;
 
-    if (operator.value === '+') {
-      newValue = previousValueFloat + currentValueFloat
-    } else if (operator.value === '-') {
-      newValue = previousValueFloat - currentValueFloat
-    } else if (operator.value === '*') {
-      newValue = previousValueFloat * currentValueFloat
-    } else if (operator.value === '/') {
-      newValue = previousValueFloat / currentValueFloat
+    if (operator.value === "+") {
+      newValue = previousValueFloat + currentValueFloat;
+    } else if (operator.value === "-") {
+      newValue = previousValueFloat - currentValueFloat;
+    } else if (operator.value === "*") {
+      newValue = previousValueFloat * currentValueFloat;
+    } else if (operator.value === "/") {
+      newValue = previousValueFloat / currentValueFloat;
     }
 
-    currentValue.value = String(newValue)
-    previousValue.value = currentValue.value
+    currentValue.value = String(newValue);
+    previousValue.value = currentValue.value;
   }
 
-  waitingForOperand.value = true
-  operator.value = nextOperator
-}
+  waitingForOperand.value = true;
+  operator.value = nextOperator;
+};
 
 const calculate = () => {
-  const inputValue = parseFloat(currentValue.value)
+  const inputValue = parseFloat(currentValue.value);
 
-  if (previousValue.value !== '' && operator.value) {
-    const previousValueFloat = parseFloat(previousValue.value)
-    let newValue = previousValueFloat
+  if (previousValue.value !== "" && operator.value) {
+    const previousValueFloat = parseFloat(previousValue.value);
+    let newValue = previousValueFloat;
 
-    if (operator.value === '+') {
-      newValue = previousValueFloat + inputValue
-    } else if (operator.value === '-') {
-      newValue = previousValueFloat - inputValue
-    } else if (operator.value === '*') {
-      newValue = previousValueFloat * inputValue
-    } else if (operator.value === '/') {
-      newValue = previousValueFloat / inputValue
+    if (operator.value === "+") {
+      newValue = previousValueFloat + inputValue;
+    } else if (operator.value === "-") {
+      newValue = previousValueFloat - inputValue;
+    } else if (operator.value === "*") {
+      newValue = previousValueFloat * inputValue;
+    } else if (operator.value === "/") {
+      newValue = previousValueFloat / inputValue;
     }
 
-    currentValue.value = String(newValue)
-    previousValue.value = ''
-    operator.value = ''
-    waitingForOperand.value = true
+    currentValue.value = String(newValue);
+    previousValue.value = "";
+    operator.value = "";
+    waitingForOperand.value = true;
   }
-}
+};
 </script>
 
 <style scoped>

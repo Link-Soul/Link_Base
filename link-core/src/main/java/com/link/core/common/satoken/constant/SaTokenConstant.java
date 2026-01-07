@@ -1,9 +1,9 @@
-package com.nssoftware.wakagaoagent.common.satoken.constant;
+package com.link.core.common.satoken.constant;
 
 /**
  * sa-token 通用常量
  *
- * @author FangCheng
+ * @author Link
  * @since 2024/12/12 10:43
  **/
 public class SaTokenConstant {

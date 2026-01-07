@@ -3,11 +3,11 @@
     <div class="wallpaper-header">
       <h2>壁纸设置</h2>
     </div>
-    
+
     <div class="wallpaper-content">
       <div class="wallpaper-options">
         <h3>选择壁纸类型</h3>
-        
+
         <div class="option-group">
           <label class="option-label">
             <input
@@ -18,7 +18,7 @@
             />
             <span>纯色背景</span>
           </label>
-          
+
           <div v-if="wallpaperType === 'color'" class="color-picker">
             <input
               v-model="selectedColor"
@@ -28,7 +28,7 @@
             <span>{{ selectedColor }}</span>
           </div>
         </div>
-        
+
         <div class="option-group">
           <label class="option-label">
             <input
@@ -39,18 +39,20 @@
             />
             <span>图片壁纸</span>
           </label>
-          
+
           <div v-if="wallpaperType === 'image'" class="image-picker">
             <div class="current-image">
               <img v-if="selectedImage" :src="selectedImage" alt="当前壁纸" />
               <span v-else>未选择图片</span>
             </div>
             <div class="image-options">
-              <button @click="selectDefaultImage" class="image-btn">使用默认图片</button>
+              <button @click="selectDefaultImage" class="image-btn">
+                使用默认图片
+              </button>
             </div>
           </div>
         </div>
-        
+
         <div class="option-group">
           <label class="option-label">
             <input
@@ -61,7 +63,7 @@
             />
             <span>渐变背景</span>
           </label>
-          
+
           <div v-if="wallpaperType === 'gradient'" class="gradient-picker">
             <div class="gradient-color">
               <label>起始颜色</label>
@@ -82,7 +84,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="preset-wallpapers">
         <h3>预设壁纸</h3>
         <div class="preset-grid">
@@ -101,103 +103,106 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useDesktopStore } from '@/stores/desktop'
+import { ref, onMounted } from "vue";
+import { useDesktopStore } from "@/stores/desktop";
 
-const desktopStore = useDesktopStore()
+const desktopStore = useDesktopStore();
 
-const wallpaperType = ref('color')
-const selectedColor = ref('#f0f2f5')
-const selectedImage = ref('/img/paper.jpg')
-const gradientStart = ref('#667eea')
-const gradientEnd = ref('#764ba2')
+const wallpaperType = ref("color");
+const selectedColor = ref("#f0f2f5");
+const selectedImage = ref("/img/paper.jpg");
+const gradientStart = ref("#667eea");
+const gradientEnd = ref("#764ba2");
 
 const presets = [
   {
-    name: '默认灰色',
-    type: 'color',
-    color: '#f0f2f5',
-    style: { backgroundColor: '#f0f2f5' }
+    name: "默认灰色",
+    type: "color",
+    color: "#f0f2f5",
+    style: { backgroundColor: "#f0f2f5" },
   },
   {
-    name: '深蓝渐变',
-    type: 'gradient',
-    start: '#667eea',
-    end: '#764ba2',
-    style: { background: 'linear-gradient(135deg, #667eea, #764ba2)' }
+    name: "深蓝渐变",
+    type: "gradient",
+    start: "#667eea",
+    end: "#764ba2",
+    style: { background: "linear-gradient(135deg, #667eea, #764ba2)" },
   },
   {
-    name: '日落渐变',
-    type: 'gradient',
-    start: '#ff6b6b',
-    end: '#feca57',
-    style: { background: 'linear-gradient(135deg, #ff6b6b, #feca57)' }
+    name: "日落渐变",
+    type: "gradient",
+    start: "#ff6b6b",
+    end: "#feca57",
+    style: { background: "linear-gradient(135deg, #ff6b6b, #feca57)" },
   },
   {
-    name: '海洋渐变',
-    type: 'gradient',
-    start: '#4facfe',
-    end: '#00f2fe',
-    style: { background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }
+    name: "海洋渐变",
+    type: "gradient",
+    start: "#4facfe",
+    end: "#00f2fe",
+    style: { background: "linear-gradient(135deg, #4facfe, #00f2fe)" },
   },
   {
-    name: '森林渐变',
-    type: 'gradient',
-    start: '#43e97b',
-    end: '#38f9d7',
-    style: { background: 'linear-gradient(135deg, #43e97b, #38f9d7)' }
+    name: "森林渐变",
+    type: "gradient",
+    start: "#43e97b",
+    end: "#38f9d7",
+    style: { background: "linear-gradient(135deg, #43e97b, #38f9d7)" },
   },
   {
-    name: '紫色梦幻',
-    type: 'gradient',
-    start: '#fa709a',
-    end: '#fee140',
-    style: { background: 'linear-gradient(135deg, #fa709a, #fee140)' }
-  }
-]
+    name: "紫色梦幻",
+    type: "gradient",
+    start: "#fa709a",
+    end: "#fee140",
+    style: { background: "linear-gradient(135deg, #fa709a, #fee140)" },
+  },
+];
 
 const updateWallpaper = () => {
-  if (wallpaperType.value === 'color') {
-    desktopStore.changeWallpaper('color', selectedColor.value)
-  } else if (wallpaperType.value === 'image') {
-    desktopStore.changeImageWallpaper(selectedImage.value)
-  } else if (wallpaperType.value === 'gradient') {
-    desktopStore.changeGradientWallpaper(gradientStart.value, gradientEnd.value)
+  if (wallpaperType.value === "color") {
+    desktopStore.changeWallpaper("color", selectedColor.value);
+  } else if (wallpaperType.value === "image") {
+    desktopStore.changeImageWallpaper(selectedImage.value);
+  } else if (wallpaperType.value === "gradient") {
+    desktopStore.changeGradientWallpaper(
+      gradientStart.value,
+      gradientEnd.value
+    );
   }
-}
+};
 
 const selectDefaultImage = () => {
-  selectedImage.value = '/img/paper.jpg'
-  updateWallpaper()
-}
+  selectedImage.value = "/img/paper.jpg";
+  updateWallpaper();
+};
 
 const applyPreset = (preset) => {
-  wallpaperType.value = preset.type
-  
-  if (preset.type === 'color') {
-    selectedColor.value = preset.color
-    desktopStore.changeWallpaper('color', preset.color)
-  } else if (preset.type === 'gradient') {
-    gradientStart.value = preset.start
-    gradientEnd.value = preset.end
-    desktopStore.changeGradientWallpaper(preset.start, preset.end)
+  wallpaperType.value = preset.type;
+
+  if (preset.type === "color") {
+    selectedColor.value = preset.color;
+    desktopStore.changeWallpaper("color", preset.color);
+  } else if (preset.type === "gradient") {
+    gradientStart.value = preset.start;
+    gradientEnd.value = preset.end;
+    desktopStore.changeGradientWallpaper(preset.start, preset.end);
   }
-}
+};
 
 onMounted(() => {
   // 初始化当前壁纸设置
-  const wallpaper = desktopStore.wallpaper
-  wallpaperType.value = wallpaper.type || 'color'
-  
-  if (wallpaper.type === 'color') {
-    selectedColor.value = wallpaper.value || '#f0f2f5'
-  } else if (wallpaper.type === 'image') {
-    selectedImage.value = wallpaper.image || '/img/paper.jpg'
-  } else if (wallpaper.type === 'gradient') {
-    gradientStart.value = wallpaper.gradient?.start || '#667eea'
-    gradientEnd.value = wallpaper.gradient?.end || '#764ba2'
+  const wallpaper = desktopStore.wallpaper;
+  wallpaperType.value = wallpaper.type || "color";
+
+  if (wallpaper.type === "color") {
+    selectedColor.value = wallpaper.value || "#f0f2f5";
+  } else if (wallpaper.type === "image") {
+    selectedImage.value = wallpaper.image || "/img/paper.jpg";
+  } else if (wallpaper.type === "gradient") {
+    gradientStart.value = wallpaper.gradient?.start || "#667eea";
+    gradientEnd.value = wallpaper.gradient?.end || "#764ba2";
   }
-})
+});
 </script>
 
 <style scoped>

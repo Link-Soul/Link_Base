@@ -13,6 +13,7 @@
         <module>Arknights</module>
         <module>link-study</module>
         <module>link-core</module>
+        <module>link-desktop</module>
     </modules>
 
     <!-- 继承Spring Boot 2的基础依赖 -->
@@ -51,11 +52,19 @@
         <commons-codec.version>1.15</commons-codec.version>
         <hutools.version>5.8.15</hutools.version>
         <commons.io.version>2.5</commons.io.version>
+        <satoken.version>1.38.0</satoken.version>
     </properties>
 
     <!-- 仅做版本管理，不实际引入依赖 -->
     <dependencyManagement>
         <dependencies>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-dependencies</artifactId>-->
+<!--                <version>${spring-boot.version}</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
             <!-- Spring Boot 相关依赖 -->
             <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
             <dependency>
@@ -71,6 +80,11 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
 
@@ -211,6 +225,20 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
             </dependency>
+
+            <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot-starter</artifactId>
+                <version>${satoken.version}</version>
+            </dependency>
+            <!-- 在 thymeleaf 标签中使用 Sa-Token -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-dialect-thymeleaf</artifactId>
+                <version>${satoken.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

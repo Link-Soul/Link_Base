@@ -1,6 +1,6 @@
 <template>
   <div class="app-launcher-overlay" @click="handleOverlayClick">
-    <div class="app-launcher" :class="{ 'expanded': isExpanded }" @click.stop>
+    <div class="app-launcher" :class="{ expanded: isExpanded }" @click.stop>
       <!-- 搜索栏 -->
       <div class="search-section">
         <div class="search-container">
@@ -23,7 +23,7 @@
           v-for="category in categories"
           :key="category.id"
           class="category-tab"
-          :class="{ 'active': selectedCategory === category.id }"
+          :class="{ active: selectedCategory === category.id }"
           @click="selectCategory(category.id)"
         >
           <span class="category-icon">{{ category.icon }}</span>
@@ -52,7 +52,10 @@
       </div>
 
       <!-- 最近使用 -->
-      <div v-if="!searchQuery && selectedCategory === 'all'" class="recent-section">
+      <div
+        v-if="!searchQuery && selectedCategory === 'all'"
+        class="recent-section"
+      >
         <h3 class="section-title">最近使用</h3>
         <div class="recent-apps">
           <div
@@ -83,104 +86,105 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { useAppsStore } from '@/stores/apps'
-import { useDesktopStore } from '@/stores/desktop'
+import { ref, computed, onMounted, nextTick } from "vue";
+import { useAppsStore } from "@/stores/apps";
+import { useDesktopStore } from "@/stores/desktop";
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(["close"]);
 
-const appsStore = useAppsStore()
-const desktopStore = useDesktopStore()
+const appsStore = useAppsStore();
+const desktopStore = useDesktopStore();
 
-const searchQuery = ref('')
-const selectedCategory = ref('all')
-const hoveredApp = ref(null)
-const isExpanded = ref(false)
-const searchInput = ref(null)
+const searchQuery = ref("");
+const selectedCategory = ref("all");
+const hoveredApp = ref(null);
+const isExpanded = ref(false);
+const searchInput = ref(null);
 
-const categories = computed(() => appsStore.categories)
-const installedApps = computed(() => appsStore.installedApps)
-const recentApps = computed(() => appsStore.mostUsedApps)
+const categories = computed(() => appsStore.categories);
+const installedApps = computed(() => appsStore.installedApps);
+const recentApps = computed(() => appsStore.mostUsedApps);
 
 const filteredApps = computed(() => {
-  let apps = installedApps.value
-  
+  let apps = installedApps.value;
+
   // 按分类筛选
-  if (selectedCategory.value !== 'all') {
-    apps = apps.filter(app => app.category === selectedCategory.value)
+  if (selectedCategory.value !== "all") {
+    apps = apps.filter((app) => app.category === selectedCategory.value);
   }
-  
+
   // 按搜索查询筛选
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    apps = apps.filter(app => 
-      app.name.toLowerCase().includes(query) ||
-      app.id.toLowerCase().includes(query)
-    )
+    const query = searchQuery.value.toLowerCase();
+    apps = apps.filter(
+      (app) =>
+        app.name.toLowerCase().includes(query) ||
+        app.id.toLowerCase().includes(query)
+    );
   }
-  
-  return apps
-})
+
+  return apps;
+});
 
 const isAppRunning = (appId) => {
-  return desktopStore.windows.some(w => w.appId === appId && !w.isMinimized)
-}
+  return desktopStore.windows.some((w) => w.appId === appId && !w.isMinimized);
+};
 
 const handleSearch = () => {
   // 搜索时自动展开
   if (searchQuery.value && !isExpanded.value) {
-    isExpanded.value = true
+    isExpanded.value = true;
   }
-}
+};
 
 const handleKeydown = (event) => {
   // Esc 关闭启动器
-  if (event.key === 'Escape') {
-    emit('close')
+  if (event.key === "Escape") {
+    emit("close");
   }
-  
+
   // Enter 启动第一个匹配的应用
-  if (event.key === 'Enter' && filteredApps.value.length > 0) {
-    launchApp(filteredApps.value[0])
+  if (event.key === "Enter" && filteredApps.value.length > 0) {
+    launchApp(filteredApps.value[0]);
   }
-  
+
   // 上下箭头导航
-  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-    event.preventDefault()
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
     // 实现键盘导航逻辑
   }
-}
+};
 
 const selectCategory = (categoryId) => {
-  selectedCategory.value = categoryId
-  searchQuery.value = ''
-}
+  selectedCategory.value = categoryId;
+  searchQuery.value = "";
+};
 
 const launchApp = (app) => {
-  appsStore.launchApp(app.id)
-  emit('close')
-}
+  appsStore.launchApp(app.id);
+  emit("close");
+};
 
 const openAppStore = () => {
   // 打开应用商店
-  console.log('Open app store')
-}
+  console.log("Open app store");
+};
 
 const openSettings = () => {
-  appsStore.launchApp('settings')
-  emit('close')
-}
+  appsStore.launchApp("settings");
+  emit("close");
+};
 
 const handleOverlayClick = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 onMounted(() => {
   // 自动聚焦搜索框
   nextTick(() => {
-    searchInput.value?.focus()
-  })
-})
+    searchInput.value?.focus();
+  });
+});
 </script>
 
 <style scoped>
@@ -467,33 +471,33 @@ onMounted(() => {
     width: 95vw;
     max-height: 95vh;
   }
-  
+
   .search-section {
     padding: 16px 16px 12px;
   }
-  
+
   .category-tabs {
     padding: 0 16px 12px;
   }
-  
+
   .apps-grid-container {
     padding: 0 16px;
   }
-  
+
   .apps-grid {
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 12px;
   }
-  
+
   .app-icon-container {
     width: 36px;
     height: 36px;
   }
-  
+
   .app-icon {
     font-size: 20px;
   }
-  
+
   .action-bar {
     padding: 12px 16px;
   }

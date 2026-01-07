@@ -3,9 +3,9 @@
     ref="windowRef"
     class="window"
     :class="{
-      'active': isActive,
-      'maximized': isMaximized,
-      'minimized': isMinimized
+      active: isActive,
+      maximized: isMaximized,
+      minimized: isMinimized,
     }"
     :style="windowStyle"
     @mousedown="handleWindowClick"
@@ -17,10 +17,10 @@
       @dblclick="toggleMaximize"
     >
       <div class="window-title">
-        <span class="app-icon">{{ windowData.icon || '📱' }}</span>
+        <span class="app-icon">{{ windowData.icon || "📱" }}</span>
         <span class="title-text">{{ windowData.title }}</span>
       </div>
-      
+
       <div class="window-controls">
         <button
           class="control-button minimize"
@@ -34,7 +34,7 @@
           @click.stop="handleMaximize"
           :title="isMaximized ? '还原' : '最大化'"
         >
-          <span class="control-icon">{{ isMaximized ? '□' : '□' }}</span>
+          <span class="control-icon">{{ isMaximized ? "□" : "□" }}</span>
         </button>
         <button
           class="control-button close"
@@ -88,246 +88,277 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
+import {
+  ref,
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  defineAsyncComponent,
+} from "vue";
 
 const props = defineProps({
   windowData: {
     type: Object,
-    required: true
+    required: true,
   },
   isActive: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
 // 动态导入组件
 const getComponent = (componentName) => {
   const componentMap = {
-    'FilesApp': () => import('@/components/Apps/FilesApp.vue'),
-    'CalculatorApp': () => import('@/components/Apps/CalculatorApp.vue'),
-    'NotesApp': () => import('@/components/Apps/NotesApp.vue'),
-    'SettingsApp': () => import('@/components/Apps/SettingsApp.vue'),
-    'WallpaperApp': () => import('@/components/Apps/WallpaperApp.vue'),
-    'TerminalApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-    'BrowserApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-    'MusicApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-    'CalendarApp': () => import('@/components/Apps/PlaceholderApp.vue'),
-    'GachaApp': () => import('@/components/Apps/GachaApp.vue')
-  }
-  
-  const loader = componentMap[componentName] || (() => import('@/components/Apps/PlaceholderApp.vue'))
-  return defineAsyncComponent(loader)
-}
+    FilesApp: () => import("@/components/Apps/FilesApp.vue"),
+    CalculatorApp: () => import("@/components/Apps/CalculatorApp.vue"),
+    NotesApp: () => import("@/components/Apps/NotesApp.vue"),
+    SettingsApp: () => import("@/components/Apps/SettingsApp.vue"),
+    WallpaperApp: () => import("@/components/Apps/WallpaperApp.vue"),
+    TerminalApp: () => import("@/components/Apps/PlaceholderApp.vue"),
+    BrowserApp: () => import("@/components/Apps/PlaceholderApp.vue"),
+    MusicApp: () => import("@/components/Apps/PlaceholderApp.vue"),
+    CalendarApp: () => import("@/components/Apps/PlaceholderApp.vue"),
+    GachaApp: () => import("@/components/Apps/GachaApp.vue"),
+  };
+
+  const loader =
+    componentMap[componentName] ||
+    (() => import("@/components/Apps/PlaceholderApp.vue"));
+  return defineAsyncComponent(loader);
+};
 
 const currentComponent = computed(() => {
   if (props.windowData.component) {
-    return getComponent(props.windowData.component)
+    return getComponent(props.windowData.component);
   }
-  return null
-})
+  return null;
+});
 
-const emit = defineEmits(['close', 'minimize', 'maximize', 'focus', 'move', 'resize'])
+const emit = defineEmits([
+  "close",
+  "minimize",
+  "maximize",
+  "focus",
+  "move",
+  "resize",
+]);
 
-const windowRef = ref(null)
-const isDragging = ref(false)
-const isResizing = ref(false)
-const resizeDirection = ref('')
-const dragStart = ref({ x: 0, y: 0, windowX: 0, windowY: 0 })
-const resizeStart = ref({ width: 0, height: 0, x: 0, y: 0 })
+const windowRef = ref(null);
+const isDragging = ref(false);
+const isResizing = ref(false);
+const resizeDirection = ref("");
+const dragStart = ref({ x: 0, y: 0, windowX: 0, windowY: 0 });
+const resizeStart = ref({ width: 0, height: 0, x: 0, y: 0 });
 
 // 计算属性
-const isMaximized = computed(() => props.windowData.isMaximized)
-const isMinimized = computed(() => props.windowData.isMinimized)
+const isMaximized = computed(() => props.windowData.isMaximized);
+const isMinimized = computed(() => props.windowData.isMinimized);
 
 const windowStyle = computed(() => {
   if (isMaximized.value) {
     return {
-      top: '0',
-      left: '0',
-      width: '100vw',
-      height: '100vh',
-      transform: 'none',
-      zIndex: props.windowData.zIndex || 1000
-    }
+      top: "0",
+      left: "0",
+      width: "100vw",
+      height: "100vh",
+      transform: "none",
+      zIndex: props.windowData.zIndex || 1000,
+    };
   }
-  
+
   return {
     top: `${props.windowData.y || 100}px`,
     left: `${props.windowData.x || 100}px`,
     width: `${props.windowData.width || 800}px`,
     height: `${props.windowData.height || 600}px`,
-    transform: isMinimized.value ? 'scale(0)' : 'scale(1)',
-    zIndex: props.windowData.zIndex || 1000
-  }
-})
+    transform: isMinimized.value ? "scale(0)" : "scale(1)",
+    zIndex: props.windowData.zIndex || 1000,
+  };
+});
 
 // 方法
 const handleWindowClick = () => {
   if (!props.isActive) {
-    emit('focus', props.windowData.id)
+    emit("focus", props.windowData.id);
   }
-}
+};
 
 const handleClose = () => {
-  emit('close', props.windowData.id)
-}
+  emit("close", props.windowData.id);
+};
 
 const handleMinimize = () => {
-  emit('minimize', props.windowData.id)
-}
+  emit("minimize", props.windowData.id);
+};
 
 const handleMaximize = () => {
-  emit('maximize', props.windowData.id)
-}
+  emit("maximize", props.windowData.id);
+};
 
 const toggleMaximize = () => {
-  emit('maximize', props.windowData.id)
-}
+  emit("maximize", props.windowData.id);
+};
 
 const handleWindowAction = (action) => {
   switch (action) {
-    case 'close':
-      handleClose()
-      break
-    case 'minimize':
-      handleMinimize()
-      break
-    case 'maximize':
-      handleMaximize()
-      break
+    case "close":
+      handleClose();
+      break;
+    case "minimize":
+      handleMinimize();
+      break;
+    case "maximize":
+      handleMaximize();
+      break;
   }
-}
+};
 
 // 拖拽功能
 const startDrag = (event) => {
-  if (isMaximized.value) return
-  
-  isDragging.value = true
+  if (isMaximized.value) return;
+
+  isDragging.value = true;
   dragStart.value = {
     x: event.clientX,
     y: event.clientY,
     windowX: props.windowData.x,
-    windowY: props.windowData.y
-  }
-  
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', stopDrag)
-  event.preventDefault()
-}
+    windowY: props.windowData.y,
+  };
+
+  document.addEventListener("mousemove", onDrag);
+  document.addEventListener("mouseup", stopDrag);
+  event.preventDefault();
+};
 
 const onDrag = (event) => {
-  if (!isDragging.value) return
-  
-  const deltaX = event.clientX - dragStart.value.x
-  const deltaY = event.clientY - dragStart.value.y
-  
-  const newX = Math.max(0, dragStart.value.windowX + deltaX)
-  const newY = Math.max(0, dragStart.value.windowY + deltaY)
-  
-  emit('move', {
+  if (!isDragging.value) return;
+
+  const deltaX = event.clientX - dragStart.value.x;
+  const deltaY = event.clientY - dragStart.value.y;
+
+  const newX = Math.max(0, dragStart.value.windowX + deltaX);
+  const newY = Math.max(0, dragStart.value.windowY + deltaY);
+
+  emit("move", {
     windowId: props.windowData.id,
     x: newX,
-    y: newY
-  })
-}
+    y: newY,
+  });
+};
 
 const stopDrag = () => {
-  isDragging.value = false
-  document.removeEventListener('mousemove', onDrag)
-  document.removeEventListener('mouseup', stopDrag)
-}
+  isDragging.value = false;
+  document.removeEventListener("mousemove", onDrag);
+  document.removeEventListener("mouseup", stopDrag);
+};
 
 // 调整大小功能
 const startResize = (direction) => {
-  isResizing.value = true
-  resizeDirection.value = direction
+  isResizing.value = true;
+  resizeDirection.value = direction;
   resizeStart.value = {
     width: props.windowData.width,
     height: props.windowData.height,
     x: props.windowData.x,
     y: props.windowData.y,
     mouseX: event.clientX,
-    mouseY: event.clientY
-  }
-  
-  document.addEventListener('mousemove', onResize)
-  document.addEventListener('mouseup', stopResize)
-  event.preventDefault()
-}
+    mouseY: event.clientY,
+  };
+
+  document.addEventListener("mousemove", onResize);
+  document.addEventListener("mouseup", stopResize);
+  event.preventDefault();
+};
 
 const onResize = (event) => {
-  if (!isResizing.value) return
-  
-  const deltaX = event.clientX - resizeStart.value.mouseX
-  const deltaY = event.clientY - resizeStart.value.mouseY
-  
-  let newWidth = resizeStart.value.width
-  let newHeight = resizeStart.value.height
-  let newX = resizeStart.value.x
-  let newY = resizeStart.value.y
-  
+  if (!isResizing.value) return;
+
+  const deltaX = event.clientX - resizeStart.value.mouseX;
+  const deltaY = event.clientY - resizeStart.value.mouseY;
+
+  let newWidth = resizeStart.value.width;
+  let newHeight = resizeStart.value.height;
+  let newX = resizeStart.value.x;
+  let newY = resizeStart.value.y;
+
   switch (resizeDirection.value) {
-    case 'se':
-      newWidth = Math.max(props.windowData.minWidth || 400, resizeStart.value.width + deltaX)
-      newHeight = Math.max(props.windowData.minHeight || 300, resizeStart.value.height + deltaY)
-      break
-    case 'e':
-      newWidth = Math.max(props.windowData.minWidth || 400, resizeStart.value.width + deltaX)
-      break
-    case 's':
-      newHeight = Math.max(props.windowData.minHeight || 300, resizeStart.value.height + deltaY)
-      break
+    case "se":
+      newWidth = Math.max(
+        props.windowData.minWidth || 400,
+        resizeStart.value.width + deltaX
+      );
+      newHeight = Math.max(
+        props.windowData.minHeight || 300,
+        resizeStart.value.height + deltaY
+      );
+      break;
+    case "e":
+      newWidth = Math.max(
+        props.windowData.minWidth || 400,
+        resizeStart.value.width + deltaX
+      );
+      break;
+    case "s":
+      newHeight = Math.max(
+        props.windowData.minHeight || 300,
+        resizeStart.value.height + deltaY
+      );
+      break;
   }
-  
-  emit('resize', {
+
+  emit("resize", {
     windowId: props.windowData.id,
     width: newWidth,
-    height: newHeight
-  })
-}
+    height: newHeight,
+  });
+};
 
 const stopResize = () => {
-  isResizing.value = false
-  resizeDirection.value = ''
-  document.removeEventListener('mousemove', onResize)
-  document.removeEventListener('mouseup', stopResize)
-}
+  isResizing.value = false;
+  resizeDirection.value = "";
+  document.removeEventListener("mousemove", onResize);
+  document.removeEventListener("mouseup", stopResize);
+};
 
 // 键盘事件处理
 const handleKeydown = (event) => {
-  if (!props.isActive) return
-  
+  if (!props.isActive) return;
+
   // Cmd/Ctrl + W 关闭窗口
-  if ((event.metaKey || event.ctrlKey) && event.key === 'w') {
-    event.preventDefault()
-    handleClose()
+  if ((event.metaKey || event.ctrlKey) && event.key === "w") {
+    event.preventDefault();
+    handleClose();
   }
-  
+
   // Cmd/Ctrl + M 最小化窗口
-  if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-    event.preventDefault()
-    handleMinimize()
+  if ((event.metaKey || event.ctrlKey) && event.key === "m") {
+    event.preventDefault();
+    handleMinimize();
   }
-  
+
   // F11 或 Cmd/Ctrl + Enter 最大化/还原
-  if (event.key === 'F11' || ((event.metaKey || event.ctrlKey) && event.key === 'Enter')) {
-    event.preventDefault()
-    handleMaximize()
+  if (
+    event.key === "F11" ||
+    ((event.metaKey || event.ctrlKey) && event.key === "Enter")
+  ) {
+    event.preventDefault();
+    handleMaximize();
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+  document.addEventListener("keydown", handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  document.removeEventListener('mousemove', onDrag)
-  document.removeEventListener('mouseup', stopDrag)
-  document.removeEventListener('mousemove', onResize)
-  document.removeEventListener('mouseup', stopResize)
-})
+  document.removeEventListener("keydown", handleKeydown);
+  document.removeEventListener("mousemove", onDrag);
+  document.removeEventListener("mouseup", stopDrag);
+  document.removeEventListener("mousemove", onResize);
+  document.removeEventListener("mouseup", stopResize);
+});
 </script>
 
 <style scoped>
@@ -496,16 +527,16 @@ onUnmounted(() => {
     min-width: 300px;
     min-height: 200px;
   }
-  
+
   .window-header {
     padding: 6px 8px;
   }
-  
+
   .control-button {
     width: 14px;
     height: 14px;
   }
-  
+
   .title-text {
     font-size: 12px;
   }

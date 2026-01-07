@@ -1,7 +1,8 @@
-package com.nssoftware.wakagaoagent.service;
+package com.link.core.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nssoftware.wakagaoagent.entity.SysLog;
+import com.link.core.entity.SysLog;
+
 
 /**
  * 系统日志
@@ -14,7 +15,7 @@ public interface LogService extends IService<SysLog> {
     /**
      * 保存日志，为了加异步注解
      *
-     * @author FangCheng
+     * @author Link
      * @since 2024/12/26 09:02
      * @param sysLog sysLog
      */

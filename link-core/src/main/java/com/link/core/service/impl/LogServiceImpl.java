@@ -1,9 +1,9 @@
-package com.nssoftware.wakagaoagent.service.impl;
+package com.link.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.nssoftware.wakagaoagent.entity.SysLog;
-import com.nssoftware.wakagaoagent.mapper.SysLogMapper;
-import com.nssoftware.wakagaoagent.service.LogService;
+import com.link.core.entity.SysLog;
+import com.link.core.mapper.SysLogMapper;
+import com.link.core.service.LogService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class LogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements
     /**
      * 保存日志，为了加异步注解
      *
-     * @author FangCheng
+     * @author Link
      * @since 2024/12/26 09:02
      * @param sysLog sysLog
      */

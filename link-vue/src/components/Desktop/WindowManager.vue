@@ -18,38 +18,38 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useDesktopStore } from '@/stores/desktop'
-import Window from './Window.vue'
+import { computed } from "vue";
+import { useDesktopStore } from "@/stores/desktop";
+import Window from "./Window.vue";
 
-const desktopStore = useDesktopStore()
+const desktopStore = useDesktopStore();
 
-const windows = computed(() => desktopStore.windows)
-const activeWindowId = computed(() => desktopStore.activeWindowId)
+const windows = computed(() => desktopStore.windows);
+const activeWindowId = computed(() => desktopStore.activeWindowId);
 
 const closeWindow = (windowId) => {
-  desktopStore.closeWindow(windowId)
-}
+  desktopStore.closeWindow(windowId);
+};
 
 const minimizeWindow = (windowId) => {
-  desktopStore.minimizeWindow(windowId)
-}
+  desktopStore.minimizeWindow(windowId);
+};
 
 const maximizeWindow = (windowId) => {
-  desktopStore.maximizeWindow(windowId)
-}
+  desktopStore.maximizeWindow(windowId);
+};
 
 const setActiveWindow = (windowId) => {
-  desktopStore.setActiveWindow(windowId)
-}
+  desktopStore.setActiveWindow(windowId);
+};
 
 const moveWindow = ({ windowId, x, y }) => {
-  desktopStore.moveWindow(windowId, x, y)
-}
+  desktopStore.moveWindow(windowId, x, y);
+};
 
 const resizeWindow = ({ windowId, width, height }) => {
-  desktopStore.resizeWindow(windowId, width, height)
-}
+  desktopStore.resizeWindow(windowId, width, height);
+};
 </script>
 
 <style scoped>

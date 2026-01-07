@@ -1,13 +1,13 @@
-package com.nssoftware.wakagaoagent.common.config;
+package com.link.core.common.config;
 
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
-import com.nssoftware.wakagaoagent.common.aop.annotation.CustomDataPermission;
-import com.nssoftware.wakagaoagent.common.satoken.SaTokenUtil;
-import com.nssoftware.wakagaoagent.common.satoken.constant.SaTokenConstant;
+import com.link.core.common.aop.annotation.CustomDataPermission;
+import com.link.core.common.satoken.SaTokenUtil;
+import com.link.core.common.satoken.constant.SaTokenConstant;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * 自定义数据权限处理
  *
- * @author FangCheng
+ * @author Link
  * @since 2025/07/25 14:15
  **/
 @Slf4j

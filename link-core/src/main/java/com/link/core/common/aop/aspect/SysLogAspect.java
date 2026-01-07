@@ -1,14 +1,16 @@
-package com.nssoftware.wakagaoagent.common.aop.aspect;
+package com.link.core.common.aop.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.json.JSONObject;
-import com.alibaba.fastjson.JSON;
-import com.nssoftware.wakagaoagent.common.aop.annotation.LogAnnotation;
-import com.nssoftware.wakagaoagent.common.satoken.SaTokenUtil;
-import com.nssoftware.wakagaoagent.common.satoken.constant.SaTokenConstant;
-import com.nssoftware.wakagaoagent.entity.SysLog;
-import com.nssoftware.wakagaoagent.service.LogService;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.link.core.common.aop.annotation.LogAnnotation;
+import com.link.core.common.satoken.SaTokenUtil;
+import com.link.core.common.satoken.constant.SaTokenConstant;
+import com.link.core.entity.SysLog;
+import com.link.core.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -47,7 +49,7 @@ public class SysLogAspect {
      * 此处的切点是注解的方式
      * 只要出现 @LogAnnotation注解都会进入
      */
-    @Pointcut("@annotation(com.nssoftware.wakagaoagent.common.aop.annotation.LogAnnotation)")
+    @Pointcut("@annotation(com.link.core.common.aop.annotation.LogAnnotation)")
     public void logPointCut() {
 
     }
@@ -103,12 +105,12 @@ public class SysLogAspect {
                 params = JSON.toJSONString(Arrays.stream(args).filter(arg -> !(arg instanceof HttpServletResponse) && !(arg instanceof MultipartFile)).toArray());
                 // 如果包含MultipartFile 参数，只保存文件名
                 if (multipartFile != null) {
-                    com.alibaba.fastjson.JSONArray jsonArray = JSON.parseArray(params);
+                    JSONArray jsonArray = JSON.parseArray(params);
                     if (jsonArray.size() > 0) {
                         jsonArray.getJSONObject(0).put("file", multipartFile.getOriginalFilename());
                         params = JSON.toJSONString(jsonArray);
                     } else {
-                        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+                        JSONObject jsonObject = new JSONObject();
                         jsonObject.put("file", multipartFile.getOriginalFilename());
                         params = JSON.toJSONString(jsonObject);
                     }

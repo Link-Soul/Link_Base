@@ -1,10 +1,9 @@
-package com.nssoftware.wakagaoagent.common.aop.aspect;
+package com.link.core.common.aop.aspect;
 
-import com.google.common.util.concurrent.RateLimiter;
-import com.nssoftware.wakagaoagent.common.aop.annotation.RateLimit;
-import com.nssoftware.wakagaoagent.common.exception.BusinessException;
-import com.nssoftware.wakagaoagent.common.exception.code.BaseResponseCode;
-import com.nssoftware.wakagaoagent.common.utils.IPUtil;
+import com.link.core.common.aop.annotation.RateLimit;
+import com.link.core.common.exception.BusinessException;
+import com.link.core.common.exception.code.BaseResponseCode;
+import com.link.core.utils.IPUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 限流切面
  *
- * @author FangCheng
+ * @author Link
  * @since 2025/07/02 13:25
  **/
 @Aspect

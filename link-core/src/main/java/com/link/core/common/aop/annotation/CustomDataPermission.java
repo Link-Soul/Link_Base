@@ -1,4 +1,4 @@
-package com.nssoftware.wakagaoagent.common.aop.annotation;
+package com.link.core.common.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * 自定义数据权限注解
- * @author FangCheng
+ * @author Link
  * @since 2025/07/25 14:15
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
