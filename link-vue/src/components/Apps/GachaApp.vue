@@ -3,14 +3,14 @@
     <div class="gacha-header">
       <h2>明日方舟抽卡数据统计</h2>
       <div class="gacha-controls">
-        <button @click="submitJSON" class="btn btn-primary">更新数据</button>
+        <button @click="submitJSON" class="btn btn-primary">从官网刷新数据</button>
         <div class="input-group">
           <input
             v-model="jsonFileUrl"
             placeholder="请输入小黑盒数据地址"
             class="form-control"
           />
-          <button @click="getData" class="btn btn-secondary">获取数据</button>
+          <button @click="getData" class="btn btn-secondary">从小黑盒获取数据</button>
         </div>
         <button @click="resetTotalMessageTable" class="btn btn-warning">
           重置数据
@@ -350,7 +350,7 @@ const getData = async () => {
     const response = await fetch(
       `/api/insertFromXhhWeb?fileUrl=${encodeURIComponent(jsonFileUrl.value)}`,
       {
-        method: "GET",
+        method: "Post",
         headers: {
           "Content-Type": "application/json",
         },

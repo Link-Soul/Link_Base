@@ -1,6 +1,7 @@
 package com.link.core.web.email;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @ConfigurationProperties(prefix = "email")
+@Slf4j
 public class EmailProperties {
 
     // 激活的邮箱标识（qq/163）
@@ -34,6 +36,11 @@ public class EmailProperties {
 
     // 根据激活标识，动态返回当前使用的邮箱配置
     public MailConfig getCurrentConfig() {
+        if (active == null || active.isEmpty()) {
+            log.warn("邮箱激活标识未配置");
+            return null;
+        }
+        
         switch (active) {
             case "qq":
                 return qq;

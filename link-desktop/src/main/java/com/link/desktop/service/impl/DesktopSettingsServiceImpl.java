@@ -1,6 +1,8 @@
 package com.link.desktop.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.link.desktop.entity.DesktopSettings;
 import com.link.desktop.mapper.DesktopSettingsMapper;
@@ -38,9 +40,15 @@ public class DesktopSettingsServiceImpl extends ServiceImpl<DesktopSettingsMappe
 
     @Override
     public boolean updateSetting(String settingKey, String settingValue) {
-        QueryWrapper<DesktopSettings> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("setting_key", settingKey);
-        return update().set("setting_value", settingValue).eq("setting_key", settingKey).update();
+        LambdaQueryWrapper<DesktopSettings> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DesktopSettings::getSettingKey, settingKey);
+        DesktopSettings setting = getOne(queryWrapper);
+        if (setting == null) {
+            setting = new DesktopSettings();
+            setting.setSettingKey(settingKey);
+        }
+        setting.setSettingValue(settingValue);
+        return saveOrUpdate(setting);
     }
 
     @Override

@@ -17,6 +17,13 @@
     <description>Desktop module for Link Base</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.link</groupId>
+            <artifactId>link-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,12 +73,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         
-        <!-- link-core -->
-        <dependency>
-            <groupId>com.link</groupId>
-            <artifactId>link-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>

@@ -1,3 +1,4 @@
+-
 <template>
   <div class="dock" :class="{ expanded: isExpanded }">
     <div class="dock-container">
@@ -52,7 +53,6 @@
 </template>
 
 <script setup>
-
 import { computed, ref, reactive, onMounted, onUnmounted } from "vue";
 import { useDesktopStore } from "@/stores/desktop";
 import { useAppsStore } from "@/stores/apps";
@@ -63,7 +63,6 @@ const appsStore = useAppsStore();
 const hoveredApp = ref(null);
 const isExpanded = ref(false);
 
-
 // Dock 应用
 const dockApps = computed(() =>
   desktopStore.dockApps.filter((app) => app.id !== "trash")
@@ -71,9 +70,8 @@ const dockApps = computed(() =>
 
 // 系统应用
 const systemApps = computed(() => [
-  { id: "launchpad", name: "Launchpad", icon: "🚀" },
-  { id: "finder", name: "访达", icon: "🗂️" },
-  { id: "gacha", name: "抽卡数据统计", icon: "🎰" },
+  // { id: "finder", name: "访达", icon: "🗂️" },
+  // { id: "gacha", name: "抽卡数据统计", icon: "🎰" },
   { id: "settings", name: "系统偏好设置", icon: "⚙️" },
 ]);
 

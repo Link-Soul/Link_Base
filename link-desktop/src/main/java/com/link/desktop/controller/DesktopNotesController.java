@@ -5,13 +5,14 @@ import com.link.desktop.service.DesktopNotesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 public class DesktopNotesController {
 
-    @Autowired
+    @Resource
     private DesktopNotesService desktopNotesService;
 
     @GetMapping

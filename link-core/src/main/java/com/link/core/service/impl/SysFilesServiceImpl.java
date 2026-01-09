@@ -65,7 +65,7 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
             this.save(sysFilesEntity);
             return url;
         } catch (Exception e) {
-            throw new RuntimeException("文件上传失败");
+            throw new RuntimeException("文件上传失败", e);
         }
     }
 

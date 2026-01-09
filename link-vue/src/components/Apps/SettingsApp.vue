@@ -44,51 +44,8 @@
         </div>
 
         <div class="setting-group">
-          <h3 class="group-title">桌面</h3>
+          <h3 class="group-title">壁纸</h3>
           <div class="setting-item">
-            <label class="setting-label">壁纸类型</label>
-            <select
-              v-model="wallpaperType"
-              @change="updateWallpaper"
-              class="setting-select"
-            >
-              <option value="color">纯色</option>
-              <option value="gradient">渐变</option>
-              <option value="image">图片</option>
-            </select>
-          </div>
-
-          <div v-if="wallpaperType === 'color'" class="setting-item">
-            <label class="setting-label">背景颜色</label>
-            <input
-              v-model="wallpaperColor"
-              type="color"
-              @change="updateWallpaper"
-              class="setting-color"
-            />
-          </div>
-
-          <div v-if="wallpaperType === 'gradient'" class="setting-item">
-            <label class="setting-label">渐变起始色</label>
-            <input
-              v-model="gradientStart"
-              type="color"
-              @change="updateWallpaper"
-              class="setting-color"
-            />
-          </div>
-
-          <div v-if="wallpaperType === 'gradient'" class="setting-item">
-            <label class="setting-label">渐变结束色</label>
-            <input
-              v-model="gradientEnd"
-              type="color"
-              @change="updateWallpaper"
-              class="setting-color"
-            />
-          </div>
-
-          <div v-if="wallpaperType === 'image'" class="setting-item">
             <label class="setting-label">图片壁纸</label>
             <div class="image-uploader">
               <input
@@ -202,15 +159,12 @@
 import { ref, computed, onMounted } from "vue";
 import { useThemeStore } from "@/stores/theme";
 import { useDesktopStore } from "@/stores/desktop";
+import { uploadApi, settingsApi } from "@/services/api";
 
 const themeStore = useThemeStore();
 const desktopStore = useDesktopStore();
 
 const activeSection = ref("appearance");
-const wallpaperType = ref("color");
-const wallpaperColor = ref("#f0f2f5");
-const gradientStart = ref("#667eea");
-const gradientEnd = ref("#764ba2");
 const showDesktopIcons = ref(true);
 const showGrid = ref(false);
 const animationsEnabled = ref(true);
@@ -220,26 +174,39 @@ const fileInput = ref(null);
 
 const sections = [
   { id: "appearance", name: "外观", icon: "🎨" },
-  { id: "system", name: "系统", icon: "⚙️" },
+  // { id: "system", name: "系统", icon: "⚙️" },
   { id: "about", name: "关于", icon: "ℹ️" },
 ];
 
 const currentTheme = computed(() => themeStore.currentTheme);
 
-const setTheme = (theme) => {
+const setTheme = async (theme) => {
+  // 更新本地状态
   themeStore.setTheme(theme);
+
+  // 保存到系统配置
+  try {
+    await settingsApi.updateSetting("themeMode", theme);
+  } catch (error) {
+    console.error("Failed to save theme setting:", error);
+  }
 };
 
-const updateWallpaper = () => {
-  if (wallpaperType.value === "color") {
-    desktopStore.changeWallpaper("color", wallpaperColor.value);
-  } else if (wallpaperType.value === "gradient") {
-    desktopStore.changeGradientWallpaper(
-      gradientStart.value,
-      gradientEnd.value
-    );
-  } else if (wallpaperType.value === "image" && selectedImage.value) {
+const updateWallpaper = async () => {
+  debugger
+
+  // 更新本地状态
+  if (selectedImage.value) {
     desktopStore.changeImageWallpaper(selectedImage.value);
+  }
+
+  // 保存到系统配置
+  try {
+    await settingsApi.updateSetting(
+      "wallpaper", selectedImage.value
+    );
+  } catch (error) {
+    console.error("Failed to save wallpaper config:", error);
   }
 };
 
@@ -249,39 +216,147 @@ const triggerFileInput = () => {
   }
 };
 
-const handleImageUpload = (event) => {
+/**
+ * 处理图片上传
+ * @param {Event} event - 文件选择事件
+ */
+const handleImageUpload = async (event) => {
   const file = event.target.files[0];
-  if (file && file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      selectedImage.value = e.target.result;
-      desktopStore.changeImageWallpaper(selectedImage.value);
-    };
-    reader.readAsDataURL(file);
+  if (!file || !file.type.startsWith("image/")) return;
+
+  try {
+    // 上传文件到系统文件接口
+    const response = await uploadApi.uploadSysFile(file);
+    debugger;
+
+    if (response && (response.fileUrl || response.url)) {
+      selectedImage.value = response.fileUrl || response.url;
+      await updateWallpaper();
+    } else {
+      // 如果上传失败，使用本地文件预览
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        selectedImage.value = e.target.result;
+        updateWallpaper();
+      };
+      reader.readAsDataURL(file);
+    }
+  } finally {
+    // 清空文件输入
+    if (fileInput.value) {
+      fileInput.value.value = "";
+    }
   }
 };
 
-const updateDesktopSettings = () => {
+const updateDesktopSettings = async () => {
+  // 更新本地状态
   desktopStore.settings.showDesktopIcons = showDesktopIcons.value;
   desktopStore.settings.showGrid = showGrid.value;
+
+  // 保存到系统配置
+  try {
+    await settingsApi.updateSetting(
+      "showDesktopIcons",
+      JSON.stringify(showDesktopIcons.value)
+    );
+    await settingsApi.updateSetting("showGrid", JSON.stringify(showGrid.value));
+  } catch (error) {
+    console.error("Failed to save desktop settings:", error);
+  }
 };
 
-const updateAnimationSettings = () => {
+const updateAnimationSettings = async () => {
+  // 更新本地状态
   themeStore.toggleAnimations();
-  // 这里可以添加更多动画设置逻辑
+
+  // 保存到系统配置
+  try {
+    await settingsApi.updateSetting("themeMode", themeStore.currentTheme);
+  } catch (error) {
+    console.error("Failed to save animation settings:", error);
+  }
 };
 
-onMounted(() => {
-  // 初始化设置值
-  const wallpaper = desktopStore.wallpaper;
-  wallpaperType.value = wallpaper.type || "color";
+const loadWallpaperConfig = async () => {
+  try {
+    const config = await settingsApi.getSettingByKey("wallpaper");
+    if (config && config.value) {
+      const wallpaperConfig = JSON.parse(config.value);
+      
+      if (wallpaperConfig.image) {
+        selectedImage.value = wallpaperConfig.image;
+      }
+      
+      // 更新本地状态
+      await updateWallpaper();
+    }
+  } catch (error) {
+    console.error("Failed to load wallpaper config:", error);
+  }
+};
 
-  if (wallpaper.type === "color") {
-    wallpaperColor.value = wallpaper.value || "#f0f2f5";
-  } else if (wallpaper.type === "gradient") {
-    gradientStart.value = wallpaper.gradient?.start || "#667eea";
-    gradientEnd.value = wallpaper.gradient?.end || "#764ba2";
-  } else if (wallpaper.type === "image") {
+// 从系统配置批量加载所有设置
+const loadAllSettings = async () => {
+  try {
+    // 使用批量获取接口获取所有设置
+    const settingsMap = await settingsApi.getSettingsMap();
+    if (settingsMap) {
+      // 加载壁纸配置
+      if (settingsMap.wallpaper) {
+        try {
+          const wallpaperConfig = JSON.parse(settingsMap.wallpaper);
+          if (wallpaperConfig.image) {
+            selectedImage.value = wallpaperConfig.image;
+            // 更新本地状态
+            await updateWallpaper();
+          }
+        } catch (parseError) {
+          console.error("Failed to parse wallpaper config:", parseError);
+        }
+      }
+      
+      // 加载显示桌面图标设置
+      if (settingsMap.showDesktopIcons) {
+        try {
+          showDesktopIcons.value = JSON.parse(settingsMap.showDesktopIcons);
+          desktopStore.settings.showDesktopIcons = showDesktopIcons.value;
+        } catch (parseError) {
+          console.error("Failed to parse showDesktopIcons config:", parseError);
+        }
+      }
+      
+      // 加载显示网格设置
+      if (settingsMap.showGrid) {
+        try {
+          showGrid.value = JSON.parse(settingsMap.showGrid);
+          desktopStore.settings.showGrid = showGrid.value;
+        } catch (parseError) {
+          console.error("Failed to parse showGrid config:", parseError);
+        }
+      }
+      
+      // 加载主题模式设置
+      if (settingsMap.themeMode) {
+        try {
+          themeStore.setTheme(settingsMap.themeMode);
+        } catch (parseError) {
+          console.error("Failed to parse themeMode config:", parseError);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Failed to load settings:", error);
+  }
+};
+
+onMounted(async () => {
+  // 首先尝试从系统配置批量加载所有设置
+  await loadAllSettings();
+  
+  // 如果没有系统配置，使用本地存储的设置
+  if (!selectedImage.value) {
+    const wallpaper = desktopStore.wallpaper;
     selectedImage.value = wallpaper.image || "";
   }
 

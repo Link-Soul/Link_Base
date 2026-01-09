@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/settings")
+@RequestMapping("/settings")
 public class DesktopSettingsController {
 
     @Autowired
@@ -30,12 +30,12 @@ public class DesktopSettingsController {
         return desktopSettingsService.getSettingByKey(key);
     }
 
-    @PutMapping("/{key}")
-    public boolean updateSetting(@PathVariable String key, @RequestParam String value) {
-        return desktopSettingsService.updateSetting(key, value);
+    @PutMapping("/updateSetting")
+    public boolean updateSetting(@RequestBody DesktopSettings setting) {
+        return desktopSettingsService.updateSetting(setting.getSettingKey(), setting.getSettingValue());
     }
 
-    @PutMapping
+    @PutMapping("/updateSettings")
     public boolean updateSettings(@RequestBody Map<String, String> settingsMap) {
         return desktopSettingsService.updateSettings(settingsMap);
     }

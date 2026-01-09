@@ -1,23 +1,16 @@
 <template>
   <div class="desktop" :style="desktopStyle">
     <!-- 桌面背景 -->
-    <div class="desktop-background" :class="`background-${wallpaper.type}`">
-      <div
-        v-if="wallpaper.type === 'color'"
-        class="background-color"
-        :style="{ backgroundColor: wallpaper.value }"
-      ></div>
-      <div
-        v-else-if="wallpaper.type === 'gradient'"
-        class="background-gradient"
-        :style="gradientStyle"
-      ></div>
+    <div
+      class="desktop-background"
+      @contextmenu.prevent="handleDesktopContextMenu"
+    >
       <img
-        v-else-if="wallpaper.type === 'image' && wallpaper.image"
         :src="wallpaper.image"
         alt="Wallpaper"
         class="background-image"
         draggable="false"
+        @error="handleWallpaperError"
       />
     </div>
 
@@ -73,7 +66,7 @@ import WindowManager from "@/components/Desktop/WindowManager.vue";
 import Dock from "@/components/Desktop/Dock.vue";
 import AppLauncher from "@/components/Desktop/AppLauncher.vue";
 import ContextMenu from "@/components/Common/ContextMenu.vue";
-import { wallpaperApi, settingsApi, desktopApi } from "@/services/api";
+import { settingsApi, desktopApi } from "@/services/api";
 
 const desktopStore = useDesktopStore();
 const appsStore = useAppsStore();
@@ -104,14 +97,19 @@ const gradientStyle = computed(() => ({
 
 // 方法
 const launchApp = (appId) => {
+  appsStore.launchApp(appId);
+
   // 使用API启动应用
-  desktopApi.launchApp(appId).then(() => {
-    appsStore.launchApp(appId);
-  }).catch(error => {
-    console.error("Failed to launch app via API:", error);
-    // 降级到本地存储
-    appsStore.launchApp(appId);
-  });
+  // desktopApi
+  //   .launchApp(appId)
+  //   .then(() => {
+  //     appsStore.launchApp(appId);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Failed to launch app via API:", error);
+  //     // 降级到本地存储
+  //     appsStore.launchApp(appId);
+  //   });
 };
 
 const showIconContextMenu = (event, app) => {
@@ -150,13 +148,16 @@ const handleContextMenuSelect = (action) => {
       break;
     case "uninstall":
       // 使用API卸载应用
-      desktopApi.uninstallApp(contextMenu.target.id).then(() => {
-        appsStore.uninstallApp(contextMenu.target.id);
-      }).catch(error => {
-        console.error("Failed to uninstall app via API:", error);
-        // 降级到本地存储
-        appsStore.uninstallApp(contextMenu.target.id);
-      });
+      desktopApi
+        .uninstallApp(contextMenu.target.id)
+        .then(() => {
+          appsStore.uninstallApp(contextMenu.target.id);
+        })
+        .catch((error) => {
+          console.error("Failed to uninstall app via API:", error);
+          // 降级到本地存储
+          appsStore.uninstallApp(contextMenu.target.id);
+        });
       break;
     case "open-wallpaper":
       appsStore.launchApp("wallpaper");
@@ -181,28 +182,19 @@ const showAppInfo = (app) => {
 };
 
 const handleDesktopContextMenu = (event) => {
-  // 只在空白区域显示右键菜单
-  if (
-    event.target === event.currentTarget ||
-    event.target.classList.contains("desktop-background") ||
-    event.target.classList.contains("background-color") ||
-    event.target.classList.contains("background-gradient") ||
-    (event.target.tagName === "IMG" &&
-      event.target.classList.contains("background-image"))
-  ) {
-    contextMenu.show = true;
-    contextMenu.x = event.clientX;
-    contextMenu.y = event.clientY;
-    contextMenu.target = "desktop";
-    contextMenu.items = [
-      { label: "壁纸设置", action: "open-wallpaper", icon: "🖼️" },
-      { label: "抽卡数据统计", action: "open-gacha", icon: "🎰" },
-      { separator: true },
-      { label: "系统设置", action: "open-settings", icon: "⚙️" },
-      { separator: true },
-      { label: "显示视图选项", action: "view-options", icon: "👁️" },
-    ];
-  }
+  // 显示桌面右键菜单
+  contextMenu.show = true;
+  contextMenu.x = event.clientX;
+  contextMenu.y = event.clientY;
+  contextMenu.target = "desktop";
+  contextMenu.items = [
+    { label: "壁纸设置", action: "open-wallpaper", icon: "🖼️" },
+    { label: "抽卡数据统计", action: "open-gacha", icon: "🎰" },
+    { separator: true },
+    { label: "系统设置", action: "open-settings", icon: "⚙️" },
+    { separator: true },
+    { label: "显示视图选项", action: "view-options", icon: "👁️" },
+  ];
 };
 
 // 键盘快捷键
@@ -224,32 +216,39 @@ const closeAppLauncher = () => {
 };
 
 // 处理拖放图片设置壁纸
+/**
+ * 处理拖放图片设置壁纸
+ * @param {DragEvent} event - 拖放事件
+ */
 const handleDrop = (event) => {
   const files = event.dataTransfer.files;
   if (files.length > 0) {
     const file = files[0];
     if (file.type.startsWith("image/")) {
       // 使用API上传图片并设置壁纸
-      import("@/services/api").then(({ uploadApi, wallpaperApi }) => {
-        uploadApi.uploadFile(file).then((uploadResult) => {
-          const wallpaperData = {
-            type: "image",
-            image: uploadResult.fileUrl,
-          };
-          wallpaperApi.addWallpaper(wallpaperData).then(() => {
-            wallpaperApi.setCurrentWallpaper(uploadResult.fileUrl).then(() => {
-              desktopStore.changeImageWallpaper(uploadResult.fileUrl);
-            });
+      import("@/services/api").then(({ uploadApi, settingsApi }) => {
+        uploadApi
+          .uploadSysFile(file)
+          .then((uploadResult) => {
+            const wallpaperData = {
+              image: uploadResult.fileUrl || uploadResult.url,
+            };
+            // 保存到系统配置
+            settingsApi
+              .updateSetting("wallpaper", JSON.stringify(wallpaperData))
+              .then(() => {
+                desktopStore.changeImageWallpaper(wallpaperData.image);
+              });
+          })
+          .catch((error) => {
+            console.error("Failed to upload wallpaper via API:", error);
+            // 降级到本地存储
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              desktopStore.changeImageWallpaper(e.target.result);
+            };
+            reader.readAsDataURL(file);
           });
-        }).catch(error => {
-          console.error("Failed to upload wallpaper via API:", error);
-          // 降级到本地存储
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            desktopStore.changeImageWallpaper(e.target.result);
-          };
-          reader.readAsDataURL(file);
-        });
       });
     }
   }
@@ -264,37 +263,57 @@ onMounted(() => {
 
   // 添加键盘事件监听
   document.addEventListener("keydown", handleKeydown);
-
-  // 添加桌面右键菜单
-  const desktopElement = document.querySelector(".desktop");
-  if (desktopElement) {
-    desktopElement.addEventListener("contextmenu", handleDesktopContextMenu);
-  }
 });
 
+// 处理壁纸加载失败
+const handleWallpaperError = () => {
+  // 当壁纸加载失败时，使用默认壁纸
+  desktopStore.changeImageWallpaper("/img/paper.jpg");
+};
+
 // 从API加载桌面数据
+/**
+ * 从API加载桌面数据
+ */
 const loadDesktopData = async () => {
   try {
-    // 加载壁纸
-    const currentWallpaper = await wallpaperApi.getCurrentWallpaper();
-    if (currentWallpaper) {
-      if (currentWallpaper.type === "image") {
-        desktopStore.changeImageWallpaper(currentWallpaper.image);
-      } else if (currentWallpaper.type === "gradient") {
-        desktopStore.changeGradientWallpaper(currentWallpaper.gradient.start, currentWallpaper.gradient.end);
-      } else if (currentWallpaper.type === "color") {
-        desktopStore.changeWallpaper("color", currentWallpaper.value);
-      }
-    }
-
-    // 加载设置
+    // 批量加载所有设置
     const settingsMap = await settingsApi.getSettingsMap();
+    debugger;
     if (settingsMap) {
-      // 更新本地存储的设置
-      Object.keys(settingsMap).forEach(key => {
-        // 根据设置键更新相应的本地状态
-        console.log(`Setting ${key}: ${settingsMap[key]}`);
-      });
+      // 加载壁纸配置
+      if (settingsMap.wallpaper) {
+        desktopStore.changeImageWallpaper(settingsMap.wallpaper);
+      }
+
+      // 加载显示桌面图标设置
+      if (settingsMap.showDesktopIcons) {
+        try {
+          desktopStore.settings.showDesktopIcons = JSON.parse(
+            settingsMap.showDesktopIcons
+          );
+        } catch (parseError) {
+          console.error("Failed to parse showDesktopIcons config:", parseError);
+        }
+      }
+
+      // 加载显示网格设置
+      if (settingsMap.showGrid) {
+        try {
+          desktopStore.settings.showGrid = JSON.parse(settingsMap.showGrid);
+        } catch (parseError) {
+          console.error("Failed to parse showGrid config:", parseError);
+        }
+      }
+
+      // 加载主题模式设置
+      if (settingsMap.themeMode) {
+        try {
+          themeStore.setTheme(settingsMap.themeMode);
+        } catch (parseError) {
+          console.error("Failed to parse themeMode config:", parseError);
+        }
+      }
     }
 
     // 加载应用列表
@@ -310,10 +329,6 @@ const loadDesktopData = async () => {
 
 onUnmounted(() => {
   document.removeEventListener("keydown", handleKeydown);
-  const desktopElement = document.querySelector(".desktop");
-  if (desktopElement) {
-    desktopElement.removeEventListener("contextmenu", handleDesktopContextMenu);
-  }
 });
 </script>
 

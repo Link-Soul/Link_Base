@@ -33,6 +33,11 @@ public class SendEmailUtil {
         // 获取当前激活的邮箱配置
         EmailProperties.MailConfig currentConfig = emailProperties.getCurrentConfig();
 
+        if (currentConfig == null) {
+            log.warn("邮箱配置未初始化");
+            return;
+        }
+
         // 赋值给静态变量
         senderEmailAccount = currentConfig.getUsername();
         senderEmailPassword = currentConfig.getPassword();

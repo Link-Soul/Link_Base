@@ -1,9 +1,11 @@
 server:
   port: 8096
+#  servlet:
+#    context-path: /ark
 
 spring:
   auto:
-    openurl: true
+    open-ark-url: false
   mvc:
     view:
       suffix: .jsp
@@ -57,6 +59,10 @@ rb:
       # 基础组织关系编码
       baseOrganRelation: 'user'
 
+# 开发工具配置：热交换关闭
+devtools:
+  restart:
+    enabled: false
 
 ark:
   userId:

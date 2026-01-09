@@ -7,15 +7,36 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 桌面设置实体类
+ */
 @Data
 @TableName("desktop_settings")
 public class DesktopSettings {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    
+    /**
+     * 设置键
+     */
+    @TableId
     private String settingKey;
+    
+    /**
+     * 设置值
+     */
     private String settingValue;
-    private String settingType;
+    
+    /**
+     * 描述
+     */
     private String description;
+    
+    /**
+     * 创建时间
+     */
     private Date createTime;
+    
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 }

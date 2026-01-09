@@ -5,13 +5,7 @@ export const useDesktopStore = defineStore("desktop", {
   state: () => ({
     // 桌面壁纸设置
     wallpaper: {
-      type: "image", // 'color' | 'image' | 'gradient'
-      value: "#f0f2f5",
       image: "/img/paper.jpg", // 默认图片壁纸
-      gradient: {
-        start: "#667eea",
-        end: "#764ba2",
-      },
     },
     // 窗口管理
     windows: [],
@@ -130,25 +124,9 @@ export const useDesktopStore = defineStore("desktop", {
       }
     },
 
-    // 更改壁纸
-    changeWallpaper(type, value) {
-      this.wallpaper.type = type;
-      this.wallpaper.value = value;
-    },
-
     // 更改图片壁纸
     changeImageWallpaper(imagePath) {
-      this.wallpaper.type = "image";
       this.wallpaper.image = imagePath;
-    },
-
-    // 更改渐变壁纸
-    changeGradientWallpaper(start, end) {
-      this.wallpaper.type = "gradient";
-      this.wallpaper.gradient = {
-        start,
-        end,
-      };
     },
 
     // 切换Dock应用状态

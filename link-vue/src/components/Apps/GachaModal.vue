@@ -482,7 +482,7 @@ const cardMsgByPoolListTable = (res) => {
 const onLoad = async () => {
   try {
     // 调用后端API获取抽卡信息
-    const cardResponse = await fetch("/api/getCardMessageById?uid=86670999", {
+    const cardResponse = await fetch("/ark/getCardMessageById?uid=86670999", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

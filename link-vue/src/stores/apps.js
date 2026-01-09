@@ -33,20 +33,7 @@ export const useAppsStore = defineStore("apps", {
           minHeight: 480,
         },
       },
-      {
-        id: "wallpaper",
-        name: "壁纸设置",
-        icon: "🖼️",
-        category: "utility",
-        component: "WallpaperApp",
-        windowConfig: {
-          width: 600,
-          height: 500,
-          resizable: false,
-          minWidth: 600,
-          minHeight: 500,
-        },
-      },
+
       {
         id: "notes",
         name: "备忘录",
@@ -69,11 +56,11 @@ export const useAppsStore = defineStore("apps", {
         category: "system",
         component: "SettingsApp",
         windowConfig: {
-          width: 700,
-          height: 500,
+          width: 800,
+          height: 600,
           resizable: false,
-          minWidth: 700,
-          minHeight: 500,
+          minWidth: 800,
+          minHeight: 600,
         },
       },
       {
@@ -165,7 +152,7 @@ export const useAppsStore = defineStore("apps", {
     // 应用使用统计
     usageStats: {},
 
-    // 收藏的应用
+    // 桌面的应用
     favoriteApps: ["calculator", "notes", "files", "gacha"],
   }),
 

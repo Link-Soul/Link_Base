@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div v-if="show" class="context-menu" :style="menuStyle" @click.stop>
+    <div ref="menuRef" v-if="show" class="context-menu" :style="menuStyle" @click.stop>
       <div
         v-for="(item, index) in items"
         :key="index"

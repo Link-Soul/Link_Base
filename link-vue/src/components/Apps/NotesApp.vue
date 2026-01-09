@@ -29,8 +29,8 @@
           @click="selectNote(note.id)"
         >
           <div class="note-title">{{ note.title || "无标题" }}</div>
-          <div class="note-preview">{{ note.content.substring(0, 50) }}...</div>
-          <div class="note-date">{{ formatDate(note.updatedAt) }}</div>
+          <div class="note-preview">{{ (note.content || "").substring(0, 50) }}...</div>
+          <div class="note-date">{{ formatDate(note.updateTime) }}</div>
         </div>
       </div>
 
@@ -70,7 +70,8 @@ const currentNote = computed(() => {
 const loadNotes = async () => {
   try {
     const response = await notesApi.getAllNotes();
-    notes.value = response;
+    // 确保 response 是数组
+    notes.value = Array.isArray(response) ? response : [];
     if (notes.value.length > 0) {
       selectNote(notes.value[0].id);
     } else {
@@ -90,7 +91,6 @@ const loadNotes = async () => {
     };
     notes.value = [newNote];
     selectNote(newNote.id);
-    await saveNote();
   }
 };
 
@@ -102,9 +102,11 @@ const newNote = async () => {
       status: 0,
     };
 
-    const savedNote = await notesApi.addNote(newNote);
-    notes.value.unshift(savedNote);
-    selectNote(savedNote.id);
+    const success = await notesApi.addNote(newNote);
+    if (success) {
+      // 重新加载笔记列表以获取新创建的笔记
+      await loadNotes();
+    }
   } catch (error) {
     console.error("Failed to create new note:", error);
   }
@@ -132,13 +134,19 @@ const saveNote = async () => {
         status: note.status || 0,
       };
 
-      await notesApi.updateNote(updatedNote);
+      const success = await notesApi.updateNote(updatedNote);
       // 更新本地列表
-      const noteIndex = notes.value.findIndex(
-        (n) => n.id === currentNoteId.value
-      );
-      if (noteIndex !== -1) {
-        notes.value[noteIndex] = updatedNote;
+      if (success) {
+        const noteIndex = notes.value.findIndex(
+          (n) => n.id === currentNoteId.value
+        );
+        if (noteIndex !== -1) {
+          // 创建一个新对象以触发响应式更新
+          notes.value[noteIndex] = {
+            ...updatedNote,
+            updateTime: new Date(), // 手动更新时间戳
+          };
+        }
       }
     }
   } catch (error) {
@@ -150,20 +158,10 @@ const deleteNote = async () => {
   if (!currentNoteId.value) return;
 
   try {
-    await notesApi.deleteNote(currentNoteId.value);
-    // 从本地列表中移除
-    const noteIndex = notes.value.findIndex(
-      (n) => n.id === currentNoteId.value
-    );
-    if (noteIndex !== -1) {
-      notes.value.splice(noteIndex, 1);
-      currentNoteId.value = notes.value.length > 0 ? notes.value[0].id : null;
-      if (currentNoteId.value) {
-        selectNote(currentNoteId.value);
-      } else {
-        currentTitle.value = "";
-        currentContent.value = "";
-      }
+    const success = await notesApi.deleteNote(currentNoteId.value);
+    if (success) {
+      // 重新加载笔记列表以反映删除操作
+      await loadNotes();
     }
   } catch (error) {
     console.error("Failed to delete note:", error);

@@ -115,7 +115,7 @@ const getComponent = (componentName) => {
     CalculatorApp: () => import("@/components/Apps/CalculatorApp.vue"),
     NotesApp: () => import("@/components/Apps/NotesApp.vue"),
     SettingsApp: () => import("@/components/Apps/SettingsApp.vue"),
-    WallpaperApp: () => import("@/components/Apps/WallpaperApp.vue"),
+
     TerminalApp: () => import("@/components/Apps/PlaceholderApp.vue"),
     BrowserApp: () => import("@/components/Apps/PlaceholderApp.vue"),
     MusicApp: () => import("@/components/Apps/PlaceholderApp.vue"),

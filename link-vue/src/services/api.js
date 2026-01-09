@@ -1,6 +1,6 @@
 // API服务层，处理与后端的通信
 
-const API_BASE_URL = "http://localhost:8083/desktop/api";
+const API_BASE_URL = "/desktop";
 
 // 通用请求函数
 async function request(endpoint, options = {}) {
@@ -22,10 +22,19 @@ async function request(endpoint, options = {}) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    
+    // 检查响应是否为空
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      // 对于空响应或非 JSON 响应，返回 null
+      return null;
+    }
   } catch (error) {
     console.error("API request failed:", error);
-    throw error;
+    // 不抛出错误，返回 null 以便前端可以继续执行
+    return null;
   }
 }
 
@@ -47,17 +56,30 @@ async function uploadFileRequest(endpoint, file, options = {}) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    
+    // 检查响应是否为空
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      // 对于字符串响应（如直接返回URL），返回包含fileUrl字段的对象
+      const text = await response.text();
+      if (text) {
+        return { fileUrl: text };
+      }
+      return null;
+    }
   } catch (error) {
     console.error("File upload failed:", error);
-    throw error;
+    // 不抛出错误，返回 null 以便前端可以继续执行
+    return null;
   }
 }
 
 // 备忘录API
 export const notesApi = {
   // 获取所有备忘录
-  getAllNotes: () => request("/notes"),
+  getAllNotes: () => request("/api/notes"),
 
   // 获取指定状态的备忘录
   getNotesByStatus: (status) => request(`/notes/status/${status}`),
@@ -86,44 +108,6 @@ export const notesApi = {
     }),
 };
 
-// 壁纸API
-export const wallpaperApi = {
-  // 获取所有壁纸
-  getAllWallpapers: () => request("/wallpaper"),
-
-  // 获取当前壁纸
-  getCurrentWallpaper: () => request("/wallpaper/current"),
-
-  // 根据ID获取壁纸
-  getWallpaperById: (id) => request(`/wallpaper/${id}`),
-
-  // 添加壁纸
-  addWallpaper: (wallpaper) =>
-    request("/wallpaper", {
-      method: "POST",
-      body: JSON.stringify(wallpaper),
-    }),
-
-  // 更新壁纸
-  updateWallpaper: (wallpaper) =>
-    request("/wallpaper", {
-      method: "PUT",
-      body: JSON.stringify(wallpaper),
-    }),
-
-  // 删除壁纸
-  deleteWallpaper: (id) =>
-    request(`/wallpaper/${id}`, {
-      method: "DELETE",
-    }),
-
-  // 设置当前壁纸
-  setCurrentWallpaper: (id) =>
-    request(`/wallpaper/current/${id}`, {
-      method: "PUT",
-    }),
-};
-
 // 个性化设置API
 export const settingsApi = {
   // 获取所有设置
@@ -137,14 +121,17 @@ export const settingsApi = {
 
   // 更新单个设置
   updateSetting: (key, value) =>
-    request(`/settings/${key}`, {
+    request(`/settings/updateSetting`, {
       method: "PUT",
-      body: JSON.stringify({ value }),
+      body: JSON.stringify({
+        settingKey: key,
+        settingValue: value,
+      }),
     }),
 
   // 批量更新设置
   updateSettings: (settingsMap) =>
-    request("/settings", {
+    request("/settings/updateSettings", {
       method: "PUT",
       body: JSON.stringify(settingsMap),
     }),
@@ -152,44 +139,44 @@ export const settingsApi = {
 
 // 文件上传API
 export const uploadApi = {
-  // 上传文件
-  uploadFile: (file) => uploadFileRequest("/upload/file", file),
+  // 上传系统文件
+  uploadSysFile: (file) => uploadFileRequest("/sysFiles", file),
 };
 
 // 桌面API
 export const desktopApi = {
   // 获取桌面设置
   getDesktopSettings: () => request("/desktop/settings"),
-  
+
   // 更新桌面设置
-  updateDesktopSettings: (settings) => 
+  updateDesktopSettings: (settings) =>
     request("/desktop/settings", {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
-  
+
   // 获取桌面图标
   getDesktopIcons: () => request("/desktop/icons"),
-  
+
   // 更新桌面图标
-  updateDesktopIcons: (icons) => 
+  updateDesktopIcons: (icons) =>
     request("/desktop/icons", {
       method: "PUT",
       body: JSON.stringify(icons),
     }),
-  
+
   // 获取应用列表
   getApps: () => request("/desktop/apps"),
-  
+
   // 启动应用
-  launchApp: (appId) => 
+  launchApp: (appId) =>
     request("/desktop/apps/launch", {
       method: "POST",
       body: JSON.stringify({ appId }),
     }),
-  
+
   // 卸载应用
-  uninstallApp: (appId) => 
+  uninstallApp: (appId) =>
     request(`/desktop/apps/${appId}`, {
       method: "DELETE",
     }),

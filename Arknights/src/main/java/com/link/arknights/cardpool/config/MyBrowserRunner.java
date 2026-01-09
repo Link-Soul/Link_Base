@@ -21,7 +21,7 @@ public class MyBrowserRunner implements CommandLineRunner {
     @Value("${spring.web.loginurl}")
     private String loginUrl;
 
-    @Value("${spring.auto.openurl}")
+    @Value("${spring.auto.open-ark-url}")
     private boolean isOpen;
 
     @Override

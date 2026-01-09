@@ -12,6 +12,7 @@ import com.link.arknights.cardpool.util.Admin;
 import com.link.arknights.cardpool.util.HttpClientExample;
 import com.link.core.utils.RespUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -122,6 +123,7 @@ public class CardStatController {
     @PostMapping("/insertFromXhhWeb")
     public Map<String, Object> insertFromXhhWeb(String fileUrl) {
         log.info("从小黑盒导入抽卡数据,输入url：{}", fileUrl);
+//        fileUrl = "https://imgheybox.max-c.com/ark_user_lottery/"+new Date().getTime()+"/86670999.json";
         StringBuilder content = new StringBuilder();
         HttpURLConnection connection = null;
         // 一、下载文件
