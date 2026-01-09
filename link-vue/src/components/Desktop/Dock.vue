@@ -121,10 +121,6 @@ const handleSystemAppClick = (systemApp) => {
       const launchpadEvent = new CustomEvent("open-launchpad");
       document.dispatchEvent(launchpadEvent);
       break;
-    case "finder":
-      // 打开计算器
-      appsStore.launchApp("calculator");
-      break;
     case "gacha":
       // 打开抽卡数据统计应用
       appsStore.launchApp("gacha");

@@ -22,10 +22,10 @@ async function request(endpoint, options = {}) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     // 检查响应是否为空
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       return await response.json();
     } else {
       // 对于空响应或非 JSON 响应，返回 null
@@ -56,10 +56,10 @@ async function uploadFileRequest(endpoint, file, options = {}) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     // 检查响应是否为空
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       return await response.json();
     } else {
       // 对于字符串响应（如直接返回URL），返回包含fileUrl字段的对象

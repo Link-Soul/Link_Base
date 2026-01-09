@@ -52,10 +52,7 @@
       </div>
 
       <!-- 最近使用 -->
-      <div
-        v-if="!searchQuery && selectedCategory === 'all'"
-        class="recent-section"
-      >
+      <div v-if="!searchQuery" class="recent-section">
         <h3 class="section-title">最近使用</h3>
         <div class="recent-apps">
           <div
@@ -68,18 +65,6 @@
             <span class="recent-app-name">{{ app.name }}</span>
           </div>
         </div>
-      </div>
-
-      <!-- 底部操作栏 -->
-      <div class="action-bar">
-        <button class="action-button" @click="openAppStore">
-          <span class="button-icon">🏪</span>
-          <span>App Store</span>
-        </button>
-        <button class="action-button" @click="openSettings">
-          <span class="button-icon">⚙️</span>
-          <span>设置</span>
-        </button>
       </div>
     </div>
   </div>

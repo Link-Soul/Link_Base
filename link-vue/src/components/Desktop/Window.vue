@@ -112,7 +112,6 @@ const props = defineProps({
 const getComponent = (componentName) => {
   const componentMap = {
     FilesApp: () => import("@/components/Apps/FilesApp.vue"),
-    CalculatorApp: () => import("@/components/Apps/CalculatorApp.vue"),
     NotesApp: () => import("@/components/Apps/NotesApp.vue"),
     SettingsApp: () => import("@/components/Apps/SettingsApp.vue"),
 

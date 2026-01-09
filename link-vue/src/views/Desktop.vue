@@ -113,6 +113,10 @@ const launchApp = (appId) => {
 };
 
 const showIconContextMenu = (event, app) => {
+  // 隐藏默认右键菜单
+  event.preventDefault();
+
+
   contextMenu.show = true;
   contextMenu.x = event.clientX;
   contextMenu.y = event.clientY;
@@ -279,7 +283,6 @@ const loadDesktopData = async () => {
   try {
     // 批量加载所有设置
     const settingsMap = await settingsApi.getSettingsMap();
-    debugger;
     if (settingsMap) {
       // 加载壁纸配置
       if (settingsMap.wallpaper) {

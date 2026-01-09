@@ -447,7 +447,6 @@
             url: "getTotalTime",
             dataType: "text",
             success: function (response) {
-                debugger
                 let res = JSON.parse(response)
                 $doc("totalTime").innerText = res
             },

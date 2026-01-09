@@ -193,7 +193,6 @@ const setTheme = async (theme) => {
 };
 
 const updateWallpaper = async () => {
-  debugger
 
   // 更新本地状态
   if (selectedImage.value) {
@@ -227,7 +226,6 @@ const handleImageUpload = async (event) => {
   try {
     // 上传文件到系统文件接口
     const response = await uploadApi.uploadSysFile(file);
-    debugger;
 
     if (response && (response.fileUrl || response.url)) {
       selectedImage.value = response.fileUrl || response.url;

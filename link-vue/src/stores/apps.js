@@ -19,20 +19,6 @@ export const useAppsStore = defineStore("apps", {
           minHeight: 400,
         },
       },
-      {
-        id: "calculator",
-        name: "计算器",
-        icon: "🧮",
-        category: "utility",
-        component: "CalculatorApp",
-        windowConfig: {
-          width: 320,
-          height: 480,
-          resizable: false,
-          minWidth: 320,
-          minHeight: 480,
-        },
-      },
 
       {
         id: "notes",
@@ -61,48 +47,6 @@ export const useAppsStore = defineStore("apps", {
           resizable: false,
           minWidth: 800,
           minHeight: 600,
-        },
-      },
-      {
-        id: "terminal",
-        name: "终端",
-        icon: "💻",
-        category: "development",
-        component: "TerminalApp",
-        windowConfig: {
-          width: 800,
-          height: 500,
-          resizable: true,
-          minWidth: 400,
-          minHeight: 300,
-        },
-      },
-      {
-        id: "browser",
-        name: "浏览器",
-        icon: "🌐",
-        category: "internet",
-        component: "BrowserApp",
-        windowConfig: {
-          width: 1024,
-          height: 768,
-          resizable: true,
-          minWidth: 600,
-          minHeight: 400,
-        },
-      },
-      {
-        id: "music",
-        name: "音乐",
-        icon: "🎵",
-        category: "entertainment",
-        component: "MusicApp",
-        windowConfig: {
-          width: 350,
-          height: 500,
-          resizable: false,
-          minWidth: 350,
-          minHeight: 500,
         },
       },
       {
@@ -140,9 +84,6 @@ export const useAppsStore = defineStore("apps", {
       { id: "all", name: "全部", icon: "📱" },
       { id: "system", name: "系统", icon: "⚙️" },
       { id: "productivity", name: "效率", icon: "💼" },
-      { id: "utility", name: "工具", icon: "🔧" },
-      { id: "development", name: "开发", icon: "💻" },
-      { id: "internet", name: "网络", icon: "🌐" },
       { id: "entertainment", name: "娱乐", icon: "🎮" },
     ],
 
@@ -153,7 +94,7 @@ export const useAppsStore = defineStore("apps", {
     usageStats: {},
 
     // 桌面的应用
-    favoriteApps: ["calculator", "notes", "files", "gacha"],
+    favoriteApps: ["notes", "files", "gacha"],
   }),
 
   getters: {
@@ -219,27 +160,6 @@ export const useAppsStore = defineStore("apps", {
     getAppComponent(componentName) {
       // 直接返回组件名称，由Window组件使用动态导入
       return componentName;
-    },
-
-    // 安装应用
-    installApp(appData) {
-      if (!this.getAppById(appData.id)) {
-        this.installedApps.push({
-          id: appData.id,
-          name: appData.name,
-          icon: appData.icon || "📱",
-          category: appData.category || "utility",
-          component: appData.component,
-          windowConfig: {
-            width: 600,
-            height: 400,
-            resizable: true,
-            minWidth: 400,
-            minHeight: 300,
-            ...appData.windowConfig,
-          },
-        });
-      }
     },
 
     // 卸载应用
