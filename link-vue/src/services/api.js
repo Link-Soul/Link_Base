@@ -79,17 +79,14 @@ async function uploadFileRequest(endpoint, file, options = {}) {
 // 备忘录API
 export const notesApi = {
   // 获取所有备忘录
-  getAllNotes: () => request("/api/notes"),
-
-  // 获取指定状态的备忘录
-  getNotesByStatus: (status) => request(`/notes/status/${status}`),
-
-  // 根据ID获取备忘录
-  getNoteById: (id) => request(`/notes/${id}`),
+  getAllNotes: () =>
+    request("/notes/list", {
+      method: "GET",
+    }),
 
   // 添加备忘录
   addNote: (note) =>
-    request("/notes", {
+    request("/notes/add", {
       method: "POST",
       body: JSON.stringify(note),
     }),

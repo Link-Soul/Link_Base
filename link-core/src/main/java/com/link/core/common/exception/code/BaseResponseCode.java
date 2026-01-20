@@ -25,6 +25,7 @@ public enum BaseResponseCode implements ResponseCodeInterface {
     UPLOAD_SUCCESS(100008, "上传成功"),
     UPLOAD_FAIL(100009, "上传失败"),
     ILLEGAL_DATA(100010, "非法的数据格式"),
+    PARAM_NULL(100011, "请填写请求数据"),
 
     /**
      * 流水号已超长
@@ -60,7 +61,12 @@ public enum BaseResponseCode implements ResponseCodeInterface {
     USER_TYPE_ERROR(102013, "仅个人用户和公司用户注册"),
     COMPANY_LICENSE_EMPTY(102014, "公司用户必须上传营业执照"),
 
-    
+    /**
+     * 前三位区分业务功能，后三位区分具体错误   103为笔记相关功能
+     */
+    NOTES_EXISTS(103001, "笔记已存在!"),
+    NOTES_NOT_EXISTS(103002, "笔记不存在!"),
+
 
     /**
      * 前三位区分业务功能，后三位区分具体错误   113为通知相关功能

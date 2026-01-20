@@ -2,6 +2,8 @@ package com.link.desktop.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.link.core.common.exception.code.BaseResponseCode;
+import com.link.core.utils.ValidatorUtils;
 import com.link.desktop.entity.DesktopNotes;
 import com.link.desktop.mapper.DesktopNotesMapper;
 import com.link.desktop.service.DesktopNotesService;
@@ -31,6 +33,7 @@ public class DesktopNotesServiceImpl extends ServiceImpl<DesktopNotesMapper, Des
 
     @Override
     public boolean addNote(DesktopNotes note) {
+        ValidatorUtils.isTrue(note != null, BaseResponseCode.PARAM_NULL);
         return save(note);
     }
 

@@ -29,7 +29,7 @@
           @click="selectNote(note.id)"
         >
           <div class="note-title">{{ note.title || "无标题" }}</div>
-          <div class="note-preview">{{ (note.content || "").substring(0, 50) }}...</div>
+          <div class="note-preview">{{ (note.content || "").substring(0, 20) }}...</div>
           <div class="note-date">{{ formatDate(note.updateTime) }}</div>
         </div>
       </div>
@@ -74,9 +74,6 @@ const loadNotes = async () => {
     notes.value = Array.isArray(response) ? response : [];
     if (notes.value.length > 0) {
       selectNote(notes.value[0].id);
-    } else {
-      // 如果没有笔记，创建一条默认笔记
-      await newNote();
     }
   } catch (error) {
     console.error("Failed to load notes:", error);
@@ -96,17 +93,21 @@ const loadNotes = async () => {
 
 const newNote = async () => {
   try {
-    const newNote = {
+    // 先创建一个本地笔记对象
+    const tempNote = {
+      id: `temp_${Date.now()}`, // 临时ID
       title: "",
       content: "",
       status: 0,
+      createTime: new Date(),
+      updateTime: new Date()
     };
-
-    const success = await notesApi.addNote(newNote);
-    if (success) {
-      // 重新加载笔记列表以获取新创建的笔记
-      await loadNotes();
-    }
+    
+    // 添加到本地笔记列表
+    notes.value.unshift(tempNote);
+    
+    // 选中新创建的笔记
+    selectNote(tempNote.id);
   } catch (error) {
     console.error("Failed to create new note:", error);
   }
@@ -127,26 +128,30 @@ const saveNote = async () => {
   try {
     const note = notes.value.find((n) => n.id === currentNoteId.value);
     if (note) {
-      const updatedNote = {
-        ...note,
+      const noteData = {
         title: currentTitle.value,
         content: currentContent.value,
-        status: note.status || 0,
+        status: note.status || 0
       };
 
-      const success = await notesApi.updateNote(updatedNote);
-      // 更新本地列表
+      let success = false;
+      
+      // 检查是否是临时ID（新创建的笔记）
+      if (note.id.startsWith('temp_')) {
+        // 调用添加笔记接口
+        success = await notesApi.addNote(noteData);
+      } else {
+        // 调用更新笔记接口
+        const updatedNote = {
+          ...note,
+          ...noteData
+        };
+        success = await notesApi.updateNote(updatedNote);
+      }
+      
+      // 如果保存成功，重新加载笔记列表
       if (success) {
-        const noteIndex = notes.value.findIndex(
-          (n) => n.id === currentNoteId.value
-        );
-        if (noteIndex !== -1) {
-          // 创建一个新对象以触发响应式更新
-          notes.value[noteIndex] = {
-            ...updatedNote,
-            updateTime: new Date(), // 手动更新时间戳
-          };
-        }
+        await loadNotes();
       }
     }
   } catch (error) {
@@ -158,10 +163,23 @@ const deleteNote = async () => {
   if (!currentNoteId.value) return;
 
   try {
-    const success = await notesApi.deleteNote(currentNoteId.value);
-    if (success) {
-      // 重新加载笔记列表以反映删除操作
-      await loadNotes();
+    const note = notes.value.find((n) => n.id === currentNoteId.value);
+    if (note) {
+      // 检查是否是临时ID
+      if (note.id.startsWith('temp_')) {
+        // 直接从本地列表中删除
+        const noteIndex = notes.value.findIndex((n) => n.id === currentNoteId.value);
+        if (noteIndex !== -1) {
+          notes.value.splice(noteIndex, 1);
+        }
+      } else {
+        // 调用后端删除接口
+        const success = await notesApi.deleteNote(currentNoteId.value);
+        if (success) {
+          // 重新加载笔记列表
+          await loadNotes();
+        }
+      }
     }
   } catch (error) {
     console.error("Failed to delete note:", error);

@@ -27,11 +27,11 @@ export const useAppsStore = defineStore("apps", {
         category: "productivity",
         component: "NotesApp",
         windowConfig: {
-          width: 600,
-          height: 400,
+          width: 900,
+          height: 700,
           resizable: true,
-          minWidth: 400,
-          minHeight: 300,
+          minWidth: 900,
+          minHeight: 700,
         },
       },
 
