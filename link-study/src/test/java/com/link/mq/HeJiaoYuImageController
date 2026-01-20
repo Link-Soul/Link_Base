@@ -1,0 +1,515 @@
+package com.link.mq;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.ImmutableMap;
+import com.kaer.image.util.AesUtilForAll;
+import okhttp3.*;
+import okhttp3.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PreDestroy;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * 山西和教育人脸考勤机接口协议用接口
+ * 这个接口只放在 ks-3 中。1和2是特征值1和特征值2。节点3用的少，不去和那两个抢资源。
+ * @Author zhoubinbin
+ * @Date 2025/4/14 16:23
+ */
+@RestController
+@RequestMapping("/imageProcess")
+public class HeJiaoYuImageController {
+    private static final Logger error_log = LoggerFactory.getLogger("hejiaoyu");
+    @Value("${heJiaoYu.secret_key_in}")
+    private String keyIn;
+
+    @Value("${heJiaoYu.secret_key_out}")
+    private String keyOut;
+
+    @Value("${heJiaoYu.NotifyValidResultUrl}")
+    private String URL;
+
+    @Autowired
+    private FaceImageController faceImageController;
+    @Value("${heJiaoYu.platformId}")
+    private String platformId;
+    //单线程线程池，用于异步处理图片数据，防止阻塞主线程
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    // 用于限流，时间
+    private static AtomicLong time = new AtomicLong(0);
+    @PreDestroy
+    public void destroy() {
+        // 结束时关闭线程池
+        executorService.shutdown();
+    }
+    //
+
+    /**
+     * 做接口封装，后面的数据处理扔到队列里：checkFaceImage方法
+     * 方法传参是图片数据Base64转码后，再加密
+     * @param paramstr
+     * @return
+     */
+    @PostMapping("/validPic")
+    public String input(String paramstr) {
+        // todo限流
+        long timeNow = System.currentTimeMillis();
+        if (timeNow - time.get() < 1000) {
+            JSONObject json = new JSONObject();
+            json.put("msg", "接口限流");
+            json.put("ret", 4025);
+            error_log.info("山西和教育validPic接口限流");
+            return answer(json.toString());
+        }
+        // 重新赋值
+        time.set(timeNow);
+        if (paramstr == null|| paramstr.isEmpty()){
+            JSONObject json = new JSONObject();
+            json.put("msg","参数异常");
+            json.put("ret",4029);
+            error_log.error("参数异常");
+            return answer(json.toString());
+        }
+//        error_log.info("paramstr：{}",paramstr);
+        String base64String;
+        try {
+            // 解密
+            base64String = AesUtilForAll.decryptFilterChar(paramstr, keyIn);
+//            error_log.info("base64String：{}",base64String);
+        } catch (Exception e) {
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","Aes解密失败");
+            aesAns.put("ret",4031);
+            error_log.error("Aes解密失败input");
+            return answer(aesAns.toString());
+        }
+        // Base64转为文件流
+        // 去除Base64字符串中的前缀（如果有）
+        String base64Image = null;
+        if (base64String == null) {
+            error_log.error("文件流为空");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","文件流为空");
+            aesAns.put("ret",4029);
+            return answer(aesAns.toString());
+        }
+        if (base64String.startsWith("data:")) {
+            int commaIndex = base64String.indexOf(',');
+            if (commaIndex != -1) {
+                base64Image = base64String.substring(commaIndex + 1);
+            }
+        }else {
+            // 若无前缀则直接赋值给base64Image
+            base64Image = base64String;
+            // 一定要调用base64Image，不然会出问题，让base64Image为空
+            error_log.info("base64Image长度:{}",base64Image.length());
+        }
+        if (base64Image == null) {
+            error_log.error("文件流为空");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","文件流为空");
+            aesAns.put("ret",4029);
+            return answer(aesAns.toString());
+        }
+        // 限制大小为10mb
+        int maxBase64Length = 10 * 1024 * 1024; // 10MB
+        if (base64Image.length() > maxBase64Length) {
+            error_log.error("文件过大");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","文件过大");
+            aesAns.put("ret",4029);
+            return answer(aesAns.toString());
+        }
+
+//        base64Image = extractBase64Data(base64String);
+
+        // 存入文件流、和教育的对接参数
+        JSONObject param = new JSONObject();
+        JSONObject head = new JSONObject();
+        head.put("appid","kaere10ad3aa5f80");
+        head.put("timestamp","1625222461920");
+        head.put("noncestr","gzhtjy");
+        head.put("sign","D04F5E5862078975566C3728565F1CC7971CF3AC");
+        param.put("head", head);
+        param.put("image", base64Image);
+
+        // 放入队列 TODO 修改：checkFaceImage的入参中若存在文件则获取文件流，否则获取图片路径
+//        FaceImageController faceImage = new FaceImageController();
+        CompletableFuture<Map<String, Object>> future;
+        try {
+            future = faceImageController.checkFaceImage(param);
+        } catch (Exception e) {
+            error_log.error("人脸识别失败");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","人脸识别失败");
+            aesAns.put("ret",4031);
+            error_log.info("input-人脸识别失败:{}",e.getMessage());
+            return answer(aesAns.toString());
+        }
+        try {
+            JSONObject jsonObject = new JSONObject();
+            Map<String, Object> ansMap = future.get();
+            // 成功返回0
+            jsonObject.put("ret",null ==ansMap.get("errorCode")?0:Integer.parseInt(ansMap.get("errorCode").toString()));
+            jsonObject.put("msg",ansMap.get("message"));
+            JSONObject data = new JSONObject();
+            data.put("state",ansMap.get("success").equals("true")?1:0);
+            jsonObject.put("data",data);
+//            error_log.info("answer123:{}",jsonObject);
+            return answer(jsonObject.toString());
+        } catch (InterruptedException | ExecutionException e) {
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","Aes加密失败");
+            aesAns.put("ret",4031);
+            error_log.error("Aes加密失败");
+//            error_log.info("Aes加密失败");
+            return answer(aesAns.toString());
+        }
+    }
+
+    /**
+     * base64合规验证，
+     * @param input
+     * @return
+     */
+    String extractBase64Data(String input) {
+        if (input == null) return null;
+        // TODO 检测图片大小
+
+        String trimmed = input.trim();
+        if (trimmed.startsWith("data:")) {
+            int commaIndex = trimmed.indexOf(',');
+            if (commaIndex != -1) {
+                return trimmed.substring(commaIndex + 1);
+            }
+            return null; // 非法格式：有"data:"但无逗号
+        }
+        return trimmed; // 无前缀，直接返回原字符串（需确保已是纯Base64）
+    }
+
+    /**
+     * 批量照片人脸合规验证
+     */
+    @PostMapping("/batchValidPic")
+    public String batchValidPic(@RequestParam("paramstr") String paramstr,@RequestParam("platformId") String platformId) {
+        String paramStr;
+        try {
+            // 解密
+            paramStr = AesUtilForAll.decryptFilterChar(paramstr, keyIn);
+        } catch (Exception e) {
+            error_log.error("Aes解密失败");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","Aes解密失败");
+            aesAns.put("ret",4031);
+            return answer(aesAns.toString());
+        }
+        JSONObject jsonObject;
+        try {
+            jsonObject = JSONObject.parseObject(paramStr);
+            if (null == jsonObject || jsonObject.isEmpty()){
+                JSONObject json = new JSONObject();
+                json.put("msg","参数异常");
+                json.put("ret",4029);
+                error_log.info("参数异常");
+                return answer(json.toString());
+            }
+        } catch (Exception e) {
+            error_log.error("转为JSONArray失败");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","参数异常-转为JSONArray失败");
+            aesAns.put("ret",4029);
+            return answer(aesAns.toString());
+        }
+
+        JSONArray imageList;
+        String timestamp;
+        Integer imgSize;
+        // 拆分参数
+        try {
+            imageList = JSONObject.parseArray(jsonObject.getString("imgList"));
+            if (jsonObject.getString("timestamp") == null || jsonObject.getString("timestamp").isEmpty() ||
+                jsonObject.getString("imgSize") == null || jsonObject.getString("imgSize").isEmpty()){
+                JSONObject json = new JSONObject();
+                json.put("msg","传入图片数量为空");
+                json.put("ret",4029);
+                error_log.info("传入图片数量为空");
+                return answer(json.toString());
+            }
+            // 限制图片数量
+            if (imageList.size()>100){
+                JSONObject json = new JSONObject();
+                json.put("msg","传入图片数量超过100张上限");
+                json.put("ret",4029);
+                error_log.info("传入图片数量超过100张上限");
+                return answer(json.toString());
+            }
+            timestamp=jsonObject.getString("timestamp");
+            imgSize=jsonObject.getInteger("imgSize");
+            if (null == imageList || imageList.isEmpty()){
+                JSONObject json = new JSONObject();
+                json.put("msg","传入图片数量为空");
+                json.put("ret",4029);
+                error_log.info("传入图片数量为空");
+                return answer(json.toString());
+            }
+        } catch (Exception e) {
+            error_log.error("转为JSONArray失败");
+            JSONObject aesAns = new JSONObject();
+            aesAns.put("msg","参数异常-转为JSONArray失败");
+            aesAns.put("ret",4029);
+            return answer(aesAns.toString());
+        }
+
+        if(imageList.size()!=imgSize){
+            JSONObject json = new JSONObject();
+            json.put("msg","参数异常，imgList中图片数量与传入的不符");
+            json.put("ret",4029);
+            error_log.info("参数异常，imgList中图片数量与传入的不符");
+            return answer(json.toString());
+        }
+        // 异步处理
+        processMessageAsync(imageList,platformId);
+        // 返回值
+        JSONObject json = new JSONObject();
+        json.put("ret",0);
+        json.put("msg","已开始处理");
+        return answer(String.valueOf(json));
+    }
+
+    // 异步处理消息的方法
+    public void processMessageAsync(JSONArray objectList,String platformId) {
+        CompletableFuture.runAsync(() -> {
+            // 实际执行异步处理消息
+            dobatchValidPic(objectList,platformId);
+        }, executorService);
+    }
+
+    /**
+     * 异步批量处理并返回消息
+     * @param imgList 存放图片url与流水号
+     * @param platformId 厂商编号
+     */
+    private String dobatchValidPic(JSONArray imgList,String platformId) {
+        // 组装参数，此处用的是模拟的参数
+//        String url = "http://IP:PORT/XXX/notifyValidResult";
+        String url = URL;
+        // 装填和教育的参数
+        JSONObject param = new JSONObject();
+        JSONObject head = new JSONObject();
+        head.put("appid","kaere10ad3aa5f80");
+        head.put("timestamp","1625222461920");
+        head.put("noncestr","gzhtjy");
+        head.put("sign","D04F5E5862078975566C3728565F1CC7971CF3AC");
+        param.put("head", head);
+        // 拿出参数
+        JSONObject ansObject = new JSONObject();
+        JSONArray ansArray = new JSONArray();
+        for (int i = 0; i < imgList.size(); i++) {
+            JSONObject jsonObject = imgList.getJSONObject(i);
+            String syncId = (String) jsonObject.get("syncId");
+            String imageUrl = (String) jsonObject.get("imageUrl");
+            JSONObject imgListObject = new JSONObject();
+
+            CompletableFuture<Map<String, Object>> future;
+            error_log.info("开始处理图片，流水号：{},第{}张照片", syncId,i+1);
+//            error_log.info("开始处理图片，流水号：{},图片url：{},第{}张照片", syncId,imageUrl,i);
+            try {
+                // 放入队列处理文件
+                param.put("url", imageUrl);
+
+                future = faceImageController.checkFaceImage(param);
+                // 若是异步返回则可能全都压进去，那么就需要sleep一下，防止频率过高
+//                Thread.sleep(3000);
+                //装填单条请求结果
+                imgListObject.put("syncId", syncId);
+                // 成功返回1，其他返回0
+                imgListObject.put("state", future.get().get("success").equals("true")?1:0);
+                ansArray.add(imgListObject);
+            } catch (Exception e) {
+                error_log.error("人脸识别失败，图片信息：{},流水号：{},图片url：{}", imageUrl,syncId,imageUrl);
+            }
+        }
+
+        // 装填总的结果，准备异步通知
+        ansObject.put("imgList", ansArray);
+        ansObject.put("timestep", String.valueOf(System.currentTimeMillis()));
+        ansObject.put("imgSize", ansArray.size());
+
+        // 加密
+//        String answer = answer(ansObject.toString());
+        String answer="";
+        try {
+            answer = AesUtilForAll.encryptFilterChar(ansObject.toString(), keyIn);
+        } catch (Exception e) {
+            error_log.error("Aes加密失败");
+        }
+
+        // 加入platformId参数
+        JSONObject ans = new JSONObject();
+        ans.put("platformId",platformId);
+        ans.put("paramstr",answer);
+        try {
+            // 进行http请求，异步通知
+            notifyValidResult(answer,platformId,url);
+        } catch (IOException e) {
+            error_log.error("异步通知请求异常,错误信息：{}",e.getMessage());
+        }
+        JSONObject json = new JSONObject();
+        json.put("msg","正在处理中");
+        json.put("ret",0);
+        return answer(json.toString());
+    }
+
+    /**
+     * 和教育平台用，异步通知返回
+     * @param paramstr
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public void notifyValidResult(String paramstr,String platformId, String url) throws IOException {
+        // 创建 OkHttpClient 实例
+        OkHttpClient client = new OkHttpClient();
+        // 指定请求体的媒体类型为 JSON
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        // 创建请求体，将 JSONObject 转换为字符串
+//        RequestBody body = RequestBody.create(paramstr, JSON);
+
+        RequestBody body = new FormBody.Builder()
+                .add("platformId", platformId)
+                .add("paramstr", paramstr)
+                .build();
+
+        // 创建一个 POST 请求
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .build();
+
+        // 执行请求
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                error_log.error("请求失败，状态码：{}, 响应：{}",
+                        response.code(),
+                        response.body() != null ? response.body().string() : "无响应体");
+                throw new IOException("山西和教育异步处理发送请求出现IO异常，请求失败，状态码: " + response.code());
+            }
+
+            if (response.body() != null) {
+                String responseData = response.body().string();
+                try {
+                    String ans = AesUtilForAll.decryptFilterChar(responseData, keyIn);
+                    JSONObject jsonObject = JSONObject.parseObject(ans);
+                    // 结果出现问题则记录
+                    if (!Objects.equals(jsonObject.get("ret"), 0)) {
+                        error_log.error("异步通知返回失败,返回消息：{}", jsonObject.getString("msg"));
+                    }
+//                    error_log.info("处理异步返回值：{}", ans);
+                } catch (NullPointerException ne) {
+                    error_log.error("解密响应失败-返回值为空");
+                }catch (Exception e) {
+                    error_log.error("解密响应失败:{}", e.getMessage());
+                }
+            }
+        }
+    }
+
+    @PostMapping("/getNotifyValidResult")
+    public void notifyValidResult(@RequestParam("paramstr")String paramstr, @RequestParam("platformId")String platformId) {
+        error_log.info("platformId：{};paramstr：{}", platformId,paramstr);
+        if (paramstr==null||platformId==null){
+            error_log.info("接收参数为空");
+        }
+        error_log.info("platformId：{}", platformId);
+        // 模拟接收参数
+        try {
+            String jsonstr = AesUtilForAll.decryptFilterChar(paramstr, keyIn);
+            error_log.info("paramstr：{}",jsonstr);
+        } catch (Exception e) {
+            error_log.error("异步通知请求异常",e);
+        }
+    }
+    @PostMapping("/jiamiOut")
+    public String jiami(@org.springframework.web.bind.annotation.RequestBody String paramstr) {
+        // 模拟接收参数
+        String jsonstr = "";
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(paramstr);
+            jsonstr = AesUtilForAll.encryptFilterChar(jsonObject.getString("paramstr"), keyOut);
+//            error_log.error("模拟接收参数：解密前：{}，解密后：{}",paramstr,jsonstr);
+        } catch (Exception e) {
+            error_log.error("加密方法异常",e.getMessage());
+        }
+        return jsonstr;
+    }
+    @PostMapping("/jiamiIn")
+    public String jiamiIn(@org.springframework.web.bind.annotation.RequestBody String paramstr) {
+        // 模拟接收参数
+        String jsonstr = "";
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(paramstr);
+            jsonstr = AesUtilForAll.encryptFilterChar(jsonObject.getString("paramstr"), keyIn);
+//            error_log.error("模拟接收参数：解密前：{}，解密后：{}",paramstr,jsonstr);
+        } catch (Exception e) {
+            error_log.error("加密方法异常",e.getMessage());
+        }
+        return jsonstr;
+    }
+    @PostMapping("/jiemiOut")
+    public String jiemiOut(@org.springframework.web.bind.annotation.RequestBody String paramstr) {
+        // 模拟接收参数
+        String jsonstr = "";
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(paramstr);
+            jsonstr = AesUtilForAll.decryptFilterChar(jsonObject.getString("paramstr"), keyOut);
+//            error_log.error("模拟接收参数：解密前：{}，解密后：{}",paramstr,jsonstr);
+        } catch (Exception e) {
+            error_log.error("解密Out异常:{}",e.getMessage());
+        }
+        return jsonstr;
+    }
+    @PostMapping("/jiemiIn")
+    public String jiemiIn(@org.springframework.web.bind.annotation.RequestBody String paramstr) {
+        // 模拟接收参数
+        String jsonstr = "";
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(paramstr);
+            jsonstr = AesUtilForAll.decryptFilterChar(jsonObject.getString("paramstr"), keyIn);
+//            error_log.error("模拟接收参数：解密前：{}，解密后：{}",paramstr,jsonstr);
+        } catch (Exception e) {
+            error_log.error("解密In异常:{}",e.getMessage());
+        }
+        return jsonstr;
+    }
+
+
+    @GetMapping("/validPic")
+    public void inputGet(String paramstr) {
+         ImmutableMap.of(
+                "success", "true",
+                "message", "接口正常，请使用 POST 方法开始调试"
+        );
+    }
+    private String answer(String msg) {
+        //加密返回
+        String ans = null;
+        try {
+            ans = AesUtilForAll.encryptFilterChar(msg, keyOut);
+        } catch (Exception e) {
+            error_log.error("Aes加密失败");
+        }
+        return ans;
+    }
+}

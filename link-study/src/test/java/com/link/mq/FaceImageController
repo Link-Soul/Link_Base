@@ -1,0 +1,828 @@
+package com.link.mq;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.ImmutableMap;
+import com.kaer.image.entity.RequestTask;
+import com.kaer.image.entity.ResponseEnum;
+import com.kaer.image.service.ImageService;
+import com.kaer.image.service.SignService;
+import com.kaer.image.util.*;
+import okhttp3.Response;
+import okio.BufferedSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PreDestroy;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+
+/**
+ * @author zzy
+ * @ClassName: FaceImageController
+ * @Description: 人脸图像控制器
+ * @created 2021年11月4日 下午2:19:37
+ */
+@RestController
+@RequestMapping("/image")
+public class FaceImageController {
+
+    private static final Logger error_log = LoggerFactory.getLogger("faceimage");
+
+    @Value("${signKey}")
+    private String KEY;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private SignService signService;
+
+    // 并发量控制，限制并发数
+    private Semaphore createOrderSemaphore = new Semaphore(100);
+    // 排队机制的最大排队数量，实际控制并发数。
+    private final Integer maxLinedUp = 5;
+
+    // 定义队列，用于存储请求任务
+    private final LinkedBlockingQueue<RequestTask> requestQueue = new LinkedBlockingQueue<>(maxLinedUp);
+    private final AtomicBoolean workerStarted = new AtomicBoolean(false);
+    private final LinkedBlockingQueue<RequestTask> requestQueueBase = new LinkedBlockingQueue<>(maxLinedUp);
+    private final AtomicBoolean baseWorkerStarted = new AtomicBoolean(false);
+    private final ExecutorService workerThread = Executors.newFixedThreadPool(2);
+
+
+    @PreDestroy
+    public void cleanup() {
+        // 结束时关闭线程池，防止内存泄漏
+        workerThread.shutdownNow();
+    }
+
+    /**
+     * 对外接口初始化消费者线程，懒加载启动。
+     */
+    private void init() {
+        workerThread.submit(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    RequestTask currentTask = requestQueue.take();
+                    Map<String, Object> result = doCheckFaceImage(currentTask.param);
+                    currentTask.future.complete(result);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    error_log.error("启动消费者线程异常 = {}", e.getMessage());
+                } catch (Exception e) {
+                    Thread.currentThread().interrupt();
+                    error_log.error("处理任务时发生异常 = {}", e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * 提取特征值初始化消费者线程，懒加载启动。
+     */
+    private void initBase() {
+        // 自用接口第一次进入方法懒加载启动消费者线程。后续可以添加消费者线程的逻辑，此处只有一个消费者
+        workerThread.submit(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    RequestTask currentTask = requestQueueBase.take();
+                    Map<String, Object> result = faceImageCheckBase(currentTask.param);
+                    currentTask.future.complete(result);
+                } catch (InterruptedException e) {
+                    // 中断异常需要恢复中断状态
+                    Thread.currentThread().interrupt();
+                    error_log.error("消费者线程被中断: {}", e.getMessage());
+                    break; // 中断时退出循环
+                } catch (Exception e) {
+                    error_log.error("处理任务时发生异常: {}", e.getMessage());
+                    // 发生异常时,向 future 返回错误结果
+                    try {
+                        RequestTask currentTask = requestQueueBase.peek();
+                        if (currentTask != null && !currentTask.future.isDone()) {
+                            currentTask.future.complete(ImmutableMap.of(
+                                "success", "false",
+                                "message", "服务器内部错误",
+                                "errorCode", "5000"
+                            ));
+                        }
+                    } catch (Exception ex) {
+                        error_log.error("处理异常结果时发生错误: {}", ex.getMessage());
+                    }
+                    // 继续处理下一个任务,不中断线程
+                }
+            }
+            error_log.error("消费者线程已退出");
+            // 线程退出后，重新启动一个新的消费者（除非是主动中断）
+//            if (!Thread.currentThread().isInterrupted()) {
+//                init(); // 递归调用重启
+//            }
+        });
+    }
+
+    /**
+     * 为特征值服务也优化，设计队列消费，可以有效避免负载过大导致并发最后崩溃
+     * @param param
+     * @return
+     */
+    @PostMapping("/faceImageCheck")
+    public CompletableFuture<Map<String, Object>> faceImageCheck(@RequestBody JSONObject param) {
+        if (baseWorkerStarted.compareAndSet(false, true)) {
+            initBase(); // 仅第一次调用时执行
+        }
+        CompletableFuture<Map<String, Object>> resultFuture = new CompletableFuture<>();
+        try {
+            // 将请求和Future存入队列（需封装对象）
+            RequestTask task = new RequestTask(param, resultFuture);
+            if (requestQueueBase.size() >= maxLinedUp) {
+                // 队列过长则直接返回服务器繁忙，不进入队列等待
+                resultFuture.complete(ImmutableMap.of(
+                        "success", "false",
+                        "message", "并发量过大，请稍后再试",
+                        "errorCode", "4026"));
+                return resultFuture;
+            }
+            requestQueueBase.put(task);
+            return resultFuture;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
+            future.complete(ImmutableMap.of(
+                    "success", "false",
+                    "message", "服务器异常",
+                    "errorCode", "4031"));
+            error_log.error("checkFaceImage 队列出现异常. 异常 = {}", e);
+            return future;
+        } catch (Exception e) {
+            error_log.error("checkFaceImage 队列出现异常. 异常 = {}", e);
+            return null;
+        }
+    }
+
+    /**
+     * 内部使用接口主方法
+     * @param param
+     * @return
+     */
+//    @PostMapping("/faceImageCheck")
+    public Map<String, Object> faceImageCheckBase(@RequestBody JSONObject param) {
+        long startTime = System.currentTimeMillis();
+        String url = param.getString("url");
+        if (error_log.isInfoEnabled()) {
+            error_log.info("faceImageCheck reqParam:{}", param);
+        }
+        String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+        long receiveDataTime = System.currentTimeMillis();
+        //zhangzhiyang 20220625 请求照片时增加签名
+        String sign = getSign(url);
+        url = url + "?sign=" + sign;
+        //下载照片
+        error_log.info("faceImageCheck url:{}", url);
+        String physicalPath = OkhttpUtil.downFile(url, savePath);
+        if (StringUtils.isEmpty(physicalPath)) {
+            JSONObject result = new JSONObject();
+            result.put("success", "false");
+            result.put("message", "oss下载失败");
+            result.put("errorCode", "4016");
+            return result;
+        }
+        long downFileSuccessTime = System.currentTimeMillis();
+        error_log.info("faceImageCheck downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+        Map<String, Object> faceQualityService = imageService.faceQualityService(physicalPath, 0);
+        long faceCheckCompleteTime = System.currentTimeMillis();
+        error_log.info("faceImageCheck faceQualityService:{}", (faceCheckCompleteTime - downFileSuccessTime));
+        error_log.info("faceImageCheck totalTime:{}", (faceCheckCompleteTime - startTime));
+        return faceQualityService;
+    }
+
+
+
+    /**
+     * 优化为流式传输，原基础上优化掉io操作。自用的还没来得及加，等优化的时候加一下
+     *
+     * @param param
+     * @return
+     */
+//    @PostMapping("/faceImageCheckStream")
+    public Map<String, Object> faceImageCheckStream(@RequestBody JSONObject param) {
+        long startTime = System.currentTimeMillis();
+        String url = param.getString("url");
+        if (error_log.isInfoEnabled()) {
+            error_log.info("faceImageCheckStream reqParam:{}", param);
+        }
+        long receiveDataTime = System.currentTimeMillis();
+        //zhangzhiyang 20220625 请求照片时增加签名
+        String sign = getSign(url);
+        url = url + "?sign=" + sign;
+        //下载照片
+        error_log.info("faceImageCheckStream url:{}", url);
+
+        try (Response response = OkhttpUtil.downFileStream(url,null)) {
+            if (response == null || response.body() == null) {
+                return ImmutableMap.of("4016", "oss下载失败");
+            }
+            long downFileSuccessTime = System.currentTimeMillis();
+            error_log.info("faceImageCheckStream downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+
+            try (BufferedSource source = response.body().source()) {
+                Map<String, Object> faceQualityService = imageService.faceQualityServiceStreamNew(source, 0);
+                long faceCheckCompleteTime = System.currentTimeMillis();
+                error_log.info("faceImageCheckStream faceQualityServiceStream:{}", (faceCheckCompleteTime - downFileSuccessTime));
+                error_log.info("faceImageCheckStream totalTime:{}", (faceCheckCompleteTime - startTime));
+                return faceQualityService;
+            }
+        } catch (IOException e) {
+            error_log.error("faceImageCheckStream 发生 IO 异常: {}", e.getMessage(), e);
+            return ImmutableMap.of("success", "false", "errorCode", "4017", "message", "下载或人脸检测过程中发生 IO 异常: " + e.getMessage());
+        } catch (Exception e) {
+            error_log.error("faceImageCheckStream 发生未知异常: {}", e.getMessage(), e);
+            return ImmutableMap.of("9999", "下载或人脸检测过程中发生未知异常: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 人脸照片特征值检验是否符合要求,对外接口
+     * {
+     * "head": {
+     * "appid": "qqq43424",
+     * "timestamp": "1615963380224",
+     * "noncestr": "eeeegrgregregeee",
+     * "sign": "8537990EB37C0B0B9D582656F13F0F1FA168D2AE"
+     * },
+     * "url":"图片地址"
+     * }
+     *
+     * @param param 需检验图片url
+     * @return true or false 人脸照片特征值检验是否符合要求
+     */
+    @PostMapping("/checkFaceImage")
+    public CompletableFuture<Map<String, Object>> checkFaceImage(@RequestBody JSONObject param) {
+        if (workerStarted.compareAndSet(false, true)) {
+            init(); // 仅第一次调用时执行，初始化doCheckFaceImage主方法为消费者
+        }
+        CompletableFuture<Map<String, Object>> resultFuture = new CompletableFuture<>();
+        try {
+            // 将请求和Future存入队列（需封装对象）
+            RequestTask task = new RequestTask(param, resultFuture);
+            if (requestQueue.size() >= maxLinedUp) {
+                // 队列过长则直接返回服务器繁忙，不进入队列等待
+                resultFuture.complete(ImmutableMap.of(
+                        "success", "false",
+                        "message", "并发量过大，请稍后再试",
+                        "errorCode", "4026"));
+                return resultFuture;
+            }
+            requestQueue.put(task);
+            return resultFuture;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
+            future.complete(ImmutableMap.of(
+                    "success", "false",
+                    "message", "服务器异常",
+                    "errorCode", "4031"));
+            error_log.error("checkFaceImage 队列出现异常. 异常 = {}", e);
+            return future;
+        } catch (Exception e) {
+            error_log.error("checkFaceImage 队列出现异常. 异常 = {}", e);
+            return null;
+        }
+    }
+
+
+    // 测试环境用，别忘记关了。测试环境不进行签名校验、不进行图片识别、不进行调用量统计
+    public Map<String, Object> doCheckFaceImageTest(@RequestBody JSONObject param) {
+        long startTime = System.currentTimeMillis();
+        // 为山西和教育适配，若存在文件流则url为空也行
+        if (null == param || param.isEmpty() || (null == param.getString("url") && null == param.getString("image")) || null == param.get("head")) {
+            return ImmutableMap.of("success", "false", "message", "参数为空", "errorCode", "4029");
+        }
+        // 进行签名校验           测试环境不进行签名校验
+//        Map<String, Object> signResult = signService.checkHead(param);
+//        if (signResult != null) {
+//            // 对签名校验的返回值进行处理，还得看看有没有别的情况
+//            // 为空或者appid不存在，直接返回非法访问
+//            if (signResult.containsKey(ResponseEnum.NULL_APPID.getCode()) || signResult.containsKey(ResponseEnum.NULL.getCode())) {
+//                error_log.info("checkFaceImage 应用appid不存在");
+//                return ImmutableMap.of("success", "false", "message", "非法访问", "errorCode", "4028");
+//            }// 签名验证失败，直接返回签名校验失败
+//            if (signResult.containsKey(ResponseEnum.SIGN_FAIL.getCode())) {
+//                error_log.info("checkFaceImage 签名校验失败，传入签名,hear:{}", param.getJSONObject("head").toString());
+//                return ImmutableMap.of("success", "false", "message", "签名校验失败", "errorCode", "4027");
+//            }
+//        }
+        String appId = param.getJSONObject("head").getString("appid");
+        // 若单appid请求QPS超出限制，则返回服务器繁忙
+        if (!CounterRateLimiter.allowRequest(appId)) {
+            error_log.info("checkFaceImage appid={}，请求QPS超出限制。", appId);
+            return ImmutableMap.of("success", "false", "message", "服务器繁忙，请稍后再试", "errorCode", "4025");
+        }
+        // 调用量统计
+        // catch抛出的redis异常
+        // TODO 测试关闭redis的调用
+//        try {
+//            if (!signService.reqStatistics(appId)) {
+//                return ImmutableMap.of("success", "false", "message", "当日请求已达上限", "errorCode", "4030");
+//            }
+//        } catch (NullPointerException e) {
+//            error_log.error("checkFaceImage appid:{}，redis空指针异常，大概率为未设置每日的访问限额", e.getMessage());
+//            // 对外接口
+//            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+//        } catch (Exception e) {
+//            error_log.error("checkFaceImage redis error:{}", e.getMessage());
+//            // 对外接口
+////            return ImmutableMap.of("success", "false", "message", "服务器异常","errorCode", "4031");
+//            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+//            // 对内接口
+////            return ImmutableMap.of("success", "false", "message", "Redis服务异常","errorCode", "4031");
+//        }
+        // 并发控制，防止并发过大导致服务器崩溃
+        int availablePermits = createOrderSemaphore.availablePermits();
+        if (availablePermits <= 0) {
+            return ImmutableMap.of("success", "false", "message", "并发量过大，请稍后再试", "errorCode", "4026");
+        }
+        boolean acquired = false;
+        String physicalPath = "";
+        String url = "";
+        try {
+            // 并发控制-请求资源
+//            createOrderSemaphore.acquire(1);
+            // 确保正确获取到资源
+//            acquired = true;
+            // 业务逻辑
+            if (null != param.getString("url")) {
+                url = param.getString("url");
+                String sign = getSign(url);
+                url = url + "?sign=" + sign;
+//                error_log.info("checkFaceImage url:{}", url);
+            }
+//            if (error_log.isInfoEnabled()) {
+//                error_log.info("checkFaceImage reqParam:{}", param);
+//            }
+//            String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+            long receiveDataTime = System.currentTimeMillis();
+            //下载照片
+
+//            physicalPath = OkhttpUtil.downFile(url, savePath);
+            String image = param.getString("image");
+            try (Response response = OkhttpUtil.downFileStream(url,image)) {
+                try (BufferedSource source = response.body().source()) {
+//                    if (StringUtils.isEmpty(physicalPath)) {
+//                        error_log.info("checkFaceImage oss下载失败");
+//                        JSONObject result = new JSONObject();
+//                        result.put("success", "false");
+//                        result.put("message", "oss下载失败");
+//                        result.put("errorCode", "4016");
+//                        return result;
+//                    }
+                    long downFileSuccessTime = System.currentTimeMillis();
+                    error_log.info("checkFaceImage downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+                    // 进入主方法
+                    //            Map<String, Object> faceQualityService = imageService.faceQualityServiceLow(physicalPath,0);
+                    // 流式接口，传入流对象和模型文件名，可拓展线程池
+
+//                    Map<String, Object> faceQualityService = imageService.faceQualityServiceStreamNew(source, 0);
+                    Thread.sleep(3000);
+                    Map<String, Object> faceQualityService = ImmutableMap.of("success", "true", "message", "测试环境成功");
+                    long faceCheckCompleteTime = System.currentTimeMillis();
+                    error_log.info("checkFaceImage faceCheckPeriod:{}", (faceCheckCompleteTime - downFileSuccessTime));
+                    long totalTime = faceCheckCompleteTime - startTime;
+                    // 耗时超过5秒就显示信息
+                    if (totalTime > 5000) {
+                        error_log.info("faceImageCheckStream totalTime:{}", (faceCheckCompleteTime - startTime));
+                        error_log.info("faceImageCheckStream url:{}", param.getString("url"));
+                        error_log.info("faceImageCheckStream appId:{}", param.getJSONObject("head").getString("appId"));
+                    }
+//                    error_log.info("faceImageCheckStream1 使用模型1结果：{},{}", faceQualityService.get("success"), faceQualityService.get("message"));
+//                    error_log.info("faceImageCheckStream1 使用模型1，url：{}", param.getString("url"));
+                    return faceQualityService;
+                }
+            }
+        } catch (IOException e) {
+            error_log.error("faceImageCheckStream 发生 IO 异常: {}", e.getMessage(), e);
+            JSONObject result = new JSONObject();
+            result.put("success", "false");
+            result.put("message", "oss下载失败");
+            result.put("errorCode", "4016");
+            return result;
+        } catch (IllegalArgumentException e) {
+            // 捕获异常，并记录错误信息
+            error_log.error("faceImageCheckStream url格式错误或base64解码错误:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+            // 可以根据需要进行其他处理，比如给用户返回错误提示等
+        } catch (NullPointerException e) {
+            error_log.error("faceImageCheckStream 空指针异常:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } catch (Exception e) {
+            error_log.error("faceImageCheckStream 服务器异常:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } finally {
+            // 确保正确获取到资源就释放资源
+//            if (acquired) {
+//                createOrderSemaphore.release(1);//释放一个资源
+//            }
+        }
+    }
+
+    /**
+     * 照片检测服务对外主方法
+     * @param param
+     * @return
+     */
+    public Map<String, Object> doCheckFaceImage(@RequestBody JSONObject param) {
+        long startTime = System.currentTimeMillis();
+        // 为山西和教育适配，若存在文件流则url为空也行
+        if (null == param || param.isEmpty() || (null == param.getString("url") && null == param.getString("image")) || null == param.get("head")) {
+            error_log.info("参数为空:{}", param);
+            return ImmutableMap.of("success", "false", "message", "参数为空", "errorCode", "4029");
+        }
+        // 进行签名校验           测试环境不进行签名校验
+        Map<String, Object> signResult = signService.checkHead(param);
+        if (signResult != null) {
+            // 对签名校验的返回值进行处理，还得看看有没有别的情况
+            // 为空或者appid不存在，直接返回非法访问
+            if (signResult.containsKey(ResponseEnum.NULL_APPID.getCode()) || signResult.containsKey(ResponseEnum.NULL.getCode())) {
+                error_log.info("checkFaceImage 应用appid不存在");
+                return ImmutableMap.of("success", "false", "message", "非法访问", "errorCode", "4028");
+            }// 签名验证失败，直接返回签名校验失败
+            if (signResult.containsKey(ResponseEnum.SIGN_FAIL.getCode())) {
+                error_log.info("checkFaceImage 签名校验失败，传入签名,hear:{}", param.getJSONObject("head").toString());
+                return ImmutableMap.of("success", "false", "message", "签名校验失败", "errorCode", "4027");
+            }
+        }
+        String appId = param.getJSONObject("head").getString("appid");
+        // 若单appid请求QPS超出限制，则返回服务器繁忙
+        if (!CounterRateLimiter.allowRequest(appId)) {
+            error_log.info("checkFaceImage appid={}，请求QPS超出限制。", appId);
+            return ImmutableMap.of("success", "false", "message", "服务器繁忙，请稍后再试", "errorCode", "4025");
+        }
+        // 调用量统计
+        // catch抛出的redis异常
+        try {
+            if (!signService.reqStatistics(appId)) {
+                return ImmutableMap.of("success", "false", "message", "当日请求已达上限", "errorCode", "4030");
+            }
+        } catch (NullPointerException e) {
+            error_log.error("checkFaceImage appid:{}，redis空指针异常，大概率为未设置每日的访问限额", e.getMessage());
+            // 对外接口
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } catch (Exception e) {
+            error_log.error("checkFaceImage redis error:{}", e.getMessage());
+            // 对外接口
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+            // 对内接口
+        }
+        // 并发控制，防止并发过大导致服务器崩溃
+        int availablePermits = createOrderSemaphore.availablePermits();
+        if (availablePermits <= 0) {
+            return ImmutableMap.of("success", "false", "message", "并发量过大，请稍后再试", "errorCode", "4026");
+        }
+        boolean acquired = false;
+        String physicalPath = "";
+        String url = "";
+        try {
+            // 并发控制-请求资源
+            createOrderSemaphore.acquire(1);
+            // 确保正确获取到资源
+            acquired = true;
+            // 业务逻辑
+            if (null != param.getString("url")) {
+                url = param.getString("url");
+                String sign = getSign(url);
+                url = url + "?sign=" + sign;
+//                error_log.info("checkFaceImage url:{}", url);
+            }
+//            if (error_log.isInfoEnabled()) {
+//                error_log.info("checkFaceImage reqParam:{}", param);
+//            }
+            String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+            long receiveDataTime = System.currentTimeMillis();
+            //下载照片
+//            physicalPath = OkhttpUtil.downFile(url, savePath);
+            String image = param.getString("image");
+            try (Response response = OkhttpUtil.downFileStream(url,image)) {
+                try (BufferedSource source = response.body().source()) {
+                    if (source == null) {
+                        error_log.info("checkFaceImage oss下载失败");
+                        JSONObject result = new JSONObject();
+                        result.put("success", "false");
+                        result.put("message", "oss下载失败");
+                        result.put("errorCode", "4016");
+                        return result;
+                    }
+                    long downFileSuccessTime = System.currentTimeMillis();
+                    error_log.info("checkFaceImage downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+                    // 进入主方法
+                    //            Map<String, Object> faceQualityService = imageService.faceQualityServiceLow(physicalPath,0);
+                    // 流式接口，传入流对象和模型文件名，可拓展线程池
+                    Map<String, Object> faceQualityService = imageService.faceQualityServiceStreamNew(source, 0);
+//                    Map<String, Object> faceQualityService = ImmutableMap.of("success", "true", "message", "测试环境成功");
+                    long faceCheckCompleteTime = System.currentTimeMillis();
+                    error_log.info("checkFaceImage faceCheckPeriod:{}", (faceCheckCompleteTime - downFileSuccessTime));
+                    long totalTime = faceCheckCompleteTime - startTime;
+                    // 耗时超过5秒就显示信息
+                    if (totalTime > 5000) {
+                        error_log.info("faceImageCheckStream totalTime:{}", (faceCheckCompleteTime - startTime));
+                        error_log.info("faceImageCheckStream url:{}", param.getString("url"));
+                        error_log.info("faceImageCheckStream appId:{}", param.getJSONObject("head").getString("appId"));
+                    }
+                    return faceQualityService;
+                }
+            }
+        } catch (IOException e) {
+            error_log.error("faceImageCheckStream 发生 IO 异常: {}", e.getMessage(), e);
+            JSONObject result = new JSONObject();
+            result.put("success", "false");
+            result.put("message", "oss下载失败");
+            result.put("errorCode", "4016");
+            return result;
+        } catch (IllegalArgumentException e) {
+            // 捕获异常，并记录错误信息
+            error_log.error("faceImageCheckStream url格式错误或base64解码错误:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+            // 可以根据需要进行其他处理，比如给用户返回错误提示等
+        } catch (NullPointerException e) {
+            error_log.error("faceImageCheckStream 空指针异常:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } catch (Exception e) {
+            error_log.error("faceImageCheckStream 服务器异常:{}", e.getMessage());
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } finally {
+            // 确保正确获取到资源就释放资源
+            if (acquired) {
+                createOrderSemaphore.release(1);//释放一个资源
+            }
+        }
+    }
+
+
+    /**
+     * GET 请求：返回提示信息
+     */
+    @GetMapping("/checkFaceImage")
+    public Map<String, Object> handleGetRequest() {
+        return ImmutableMap.of(
+                "success", "true",
+                "message", "接口正常，请使用 POST 方法开始调试"
+        );
+    }
+
+    /**
+     * 基础对外接口，只需要url，作为备份。
+     *
+     * @param param
+     * @return * @Author zhoubinbin
+     * * @Date 2025/4/11 16:49
+     */
+//    @PostMapping("/checkFaceImage3")
+    public Map<String, Object> CheckFaceImage(@RequestBody JSONObject param) {
+        long startTime = System.currentTimeMillis();
+//        if (null == param|| param.isEmpty()|| null == param.getString("url") || null == param.get("head")) {
+//            return ImmutableMap.of("success", "false", "message", "参数为空","errorCode", "4025");
+//        }
+//        // 进行签名校验
+//        Map<String, Object> signResult = signService.checkHead(param);
+//        if (signResult != null){
+//            // 对签名校验的返回值进行处理，还得看看有没有别的情况
+//            if(signResult.containsKey(ResponseEnum.SIGN_FAIL.getCode())||signResult.containsKey(ResponseEnum.NULL_APPID.getCode())){
+//                return ImmutableMap.of("success", "false", "message", "非法访问","errorCode", "4028");
+//            }
+//            return ImmutableMap.of("success", "false", "message", "签名校验失败","errorCode", "4027");
+//        }
+//        String appId = param.getJSONObject("head").getString("appid");
+//        // 若单appid请求QPS超出限制，则返回服务器繁忙
+//        if(!CounterRateLimiter.allowRequest(appId)){
+//            return ImmutableMap.of("success", "false", "message", "服务器繁忙，请稍后再试","errorCode", "4025");
+//        }
+//        // 调用量统计
+//        // catch抛出的redis异常
+//        try {
+//            if (!signService.reqStatistics(appId)){
+//                return ImmutableMap.of("success", "false", "message", "当日请求已达上限","errorCode", "4030");
+//            }
+//        } catch (Exception e) {
+//            return ImmutableMap.of("success", "false", "message", "Redis服务请求失败","errorCode", "4031");
+//        }
+//        // 并发控制，防止并发过大导致服务器崩溃
+//        int availablePermits = createOrderSemaphore.availablePermits();
+//        if (availablePermits <=0) {
+//            return ImmutableMap.of("success", "false", "message", "并发量过大，请稍后再试","errorCode", "4026");
+//        }
+//        boolean acquired = false;
+        String physicalPath = "";
+        String url = "";
+        try {
+            // 并发控制-请求资源
+//            createOrderSemaphore.acquire(1);
+//            // 确保正确获取到资源
+//            acquired = true;
+            // 业务逻辑
+            url = param.getString("url");
+            String sign = getSign(url);
+            url = url + "?sign=" + sign;
+            if (error_log.isInfoEnabled()) {
+                error_log.info("checkFaceImage reqParam:{}", param);
+            }
+            String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+            long receiveDataTime = System.currentTimeMillis();
+            //下载照片
+//            error_log.info("checkFaceImage url:{}", url);
+            physicalPath = OkhttpUtil.downFile(url, savePath);
+            if (StringUtils.isEmpty(physicalPath)) {
+                JSONObject result = new JSONObject();
+                result.put("success", "false");
+                result.put("message", "oss下载失败");
+                result.put("errorCode", "4016");
+                return result;
+            }
+            long downFileSuccessTime = System.currentTimeMillis();
+            error_log.info("checkFaceImage downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+            Map<String, Object> faceQualityService = imageService.faceQualityServiceLow(physicalPath, 0);
+            long faceCheckCompleteTime = System.currentTimeMillis();
+            error_log.info("checkFaceImage faceCheckPeriod:{}", (faceCheckCompleteTime - downFileSuccessTime));
+            long totalTime = faceCheckCompleteTime - startTime;
+            // 耗时超过5秒就显示信息
+            if (totalTime > 5000) {
+                error_log.info("faceImageCheckStream totalTime:{}", (faceCheckCompleteTime - startTime));
+                error_log.info("faceImageCheckStream url:{}", param.getString("url"));
+                error_log.info("faceImageCheckStream appId:{}", param.getJSONObject("head").getString("appId"));
+            }
+            return faceQualityService;
+        } catch (Exception e) {
+            return ImmutableMap.of("success", "false", "message", "服务器异常", "errorCode", "4031");
+        } finally {
+            // 确保正确获取到资源就释放资源
+//            if (acquired) {
+//                createOrderSemaphore.release(1);//释放一个资源
+//            }
+        }
+
+    }
+
+    /**
+     * 人脸高质量检查
+     *
+     * @param param
+     * @return
+     */
+    @PostMapping("/faceHighQualityCheck")
+    public Map<String, Object> faceHighQualityCheck(@RequestBody JSONObject param) {
+        String url = param.getString("url");
+        error_log.info("[FaceImageController-faceImageCheck] reqParam:{}", param.toString());
+        String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+        long receiveDataTime = System.currentTimeMillis();
+        //zhangzhiyang 20220625 请求照片时增加签名
+        String sign = getSign(url);
+        url = url + "?sign=" + sign;
+        //下载照片
+        String physicalPath = OkhttpUtil.downFile(url, savePath);
+        if (StringUtils.isEmpty(physicalPath)) {
+            JSONObject result = new JSONObject();
+            result.put("success", "false");
+            result.put("message", "oss下载失败");
+            result.put("errorCode", "4016");
+            return result;
+        }
+        long downFileSuccessTime = System.currentTimeMillis();
+        error_log.info("[FaceImageController-faceImageCheck] downFilePeriod:{}", (downFileSuccessTime - receiveDataTime));
+        Map<String, Object> faceQualityService = imageService.faceQualityService(physicalPath, 1);
+        long faceCheckCompleteTime = System.currentTimeMillis();
+        error_log.info("[FaceImageController-faceImageCheck] faceCheckPeriod:{}", (faceCheckCompleteTime - downFileSuccessTime));
+        return faceQualityService;
+    }
+
+
+    @PostMapping("/batchFaceImageCheck")
+    public Map<String, Object> batchFaceImageCheck(@RequestBody JSONObject param) {
+        error_log.info("[FaceImageController-batchFaceImageCheck] reqParam:{}", param.toString());
+        String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+        JSONArray data = param.getJSONArray("data");
+        List<String> failImgList = new ArrayList<String>();
+        StringBuilder error = new StringBuilder();
+        for (int i = 0; i < data.size(); i++) {
+            JSONObject info = data.getJSONObject(i);
+            String code = info.getString("code");
+            long downFileStartTime = System.currentTimeMillis();
+            String url = info.getString("url");
+            //zhangzhiyang 20220625 请求照片时增加签名
+            String sign = getSign(url);
+            url = url + "?sign=" + sign;
+            //下载照片
+            String physicalPath = OkhttpUtil.downFile(url, savePath);
+            if (StringUtils.isEmpty(physicalPath)) {
+                error.append("学号:").append(code).append("文件下载失败");
+                if (error.length() > 0) {
+                    error.append(";");
+                }
+                continue;
+            }
+            long downFileSuccessTime = System.currentTimeMillis();
+            error_log.info("[FaceImageController-batchFaceImageCheck] downFilePeriod:{}", (downFileSuccessTime - downFileStartTime));
+            Map<String, Object> faceQualityService = imageService.faceQualityService(physicalPath, 0);
+            long faceCheckCompleteTime = System.currentTimeMillis();
+            error_log.info("[FaceImageController-batchFaceImageCheck] faceCheckPeriod:{}", (faceCheckCompleteTime - downFileSuccessTime));
+            if ("false".equals(faceQualityService.get("success").toString())) {
+                error.append("学号:").append(code).append("校验结果:").append(faceQualityService.get("message"));
+                if (error.length() > 0) {
+                    error.append(";");
+                }
+            }
+        }
+        if (error.length() > 0) {
+            Map<String, Object> responseMap = StringUtils.responseMap("false", error.toString());
+            responseMap.put("failImgList", failImgList);
+            return responseMap;
+        }
+        return StringUtils.responseMap("true", "全部满足");
+    }
+
+    @PostMapping("/setFaceCheckParam")
+    public Map<String, Object> setFaceCheckParam(@RequestBody JSONObject param) {
+        ExternalPropertiesUtil.setProperties("facemin", param.getString("facemin"));
+        ExternalPropertiesUtil.setProperties("blur", param.getString("blur"));
+        ExternalPropertiesUtil.setProperties("roll", param.getString("roll"));
+        ExternalPropertiesUtil.setProperties("yaw", param.getString("yaw"));
+        ExternalPropertiesUtil.setProperties("pitch", param.getString("pitch"));
+        ExternalPropertiesUtil.setProperties("brightnessLow", param.getString("brightnessLow"));
+        ExternalPropertiesUtil.setProperties("brightnessUpper", param.getString("brightnessUpper"));
+        ExternalPropertiesUtil.setProperties("brightnessDeviation", param.getString("brightnessDeviation"));
+        Map<String, Object> detectConfig = ImageService.detectConfig;
+        detectConfig.put("facemin", param.getString("facemin"));
+        detectConfig.put("blur", param.getString("blur"));
+        detectConfig.put("roll", param.getString("roll"));
+        detectConfig.put("yaw", param.getString("yaw"));
+        detectConfig.put("pitch", param.getString("pitch"));
+        detectConfig.put("brightnessLow", param.getString("brightnessLow"));
+        detectConfig.put("brightnessUpper", param.getString("brightnessUpper"));
+        detectConfig.put("brightnessDeviation", param.getString("brightnessDeviation"));
+        return StringUtils.responseMap("true", "设置成功");
+    }
+
+    @PostMapping("/getFeature")
+    public Map<String, Object> getFeature(String base64) {
+        String savePath = File.separator + "uploadFile" + File.separator + "temp" + File.separator;
+        String fileName = UUIDUtil.generateLongUuid() + ".jpg";
+        String filePhysicalPath = FileOperationUtil.appRootPath + savePath + fileName;
+        boolean downFileResult = FileOperationUtil.Base64ToFile(base64, filePhysicalPath);
+        if (!downFileResult) {
+            return StringUtils.responseMap("false", "图片转换失败");
+        }
+        Map<String, Object> faceQualityService = imageService.faceQualityService(filePhysicalPath, 0);
+        return faceQualityService;
+    }
+
+    public String getSign(String filePath) {
+        filePath.lastIndexOf("/");
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        JSONObject sign = new JSONObject();
+        sign.put("fileName", fileName);
+        sign.put("time", System.currentTimeMillis());
+        String signStr = null;
+        try {
+            signStr = AESUtil.encrypt_CFB(sign.toString(), KEY);
+        } catch (NullPointerException e) {
+            throw new RuntimeException(e);
+        }
+        return signStr;
+    }
+
+    @PostMapping("/featureCompare")
+    public Map<String, Object> featureCompare(@RequestParam("file1") MultipartFile file1, String termSDKFeature) {
+        String rootPath = FaceImageController.class.getClassLoader().getResource("").getPath().replaceAll("/WEB-INF/classes/", "");
+        try {
+            String file1Path = rootPath + "/uploadFile/temp/" + file1.getOriginalFilename();
+            upload(file1, file1Path);
+            float featureCompare = imageService.featureCompare(file1Path, termSDKFeature);
+            Map<String, Object> responseMap = StringUtils.responseMap("true", "成功");
+            responseMap.put("compare", featureCompare);
+            return responseMap;
+        } catch (Exception e) {
+            return StringUtils.responseMap("false", "异常");
+        }
+    }
+
+
+    private File upload(MultipartFile file, String filePath) throws Exception {
+        File f = null;
+        if (!file.isEmpty()) {
+            f = new File(filePath);
+            //此处在没有文件夹的情况下报错找不到指定路径，新增判断父级文件夹是否存在
+            File fileParent = f.getParentFile();  //
+            if (!fileParent.exists()) {
+                fileParent.mkdirs();
+            }
+            file.transferTo(f);
+        }
+        return f;
+    }
+}
