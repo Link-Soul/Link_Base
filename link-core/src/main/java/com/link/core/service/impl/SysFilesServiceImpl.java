@@ -29,8 +29,7 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
 
     @Value("${file.path}")
     private String filePath;
-    @Value("${rb.default.saas.baseOrganRelation:0001}")
-    private String baseOrganRelation;
+    private String baseOrganRelation = "user";
 
     @Override
     public String saveFile(MultipartFile file, HttpServletRequest request) {

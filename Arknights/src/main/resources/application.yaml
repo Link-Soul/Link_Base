@@ -51,13 +51,6 @@ file:
   #文件上传目录 绝对路径 末尾不需要加 /
   path: D:/files #windows
   #path: /data/files #linux
-rb:
-  default:
-    password: '123456'
-    saas:
-      # saas模式下，这些数据应该取对应租户的数据，角色这里暂时没想法，或许是在角色表加个标识，区分个人用户和公司用户的角色？
-      # 基础组织关系编码
-      baseOrganRelation: 'user'
 
 # 开发工具配置：热交换关闭
 devtools:
