@@ -581,7 +581,7 @@ public class FaceImageController {
      * 基础对外接口，只需要url，作为备份。
      *
      * @param param
-     * @return * @Author zhoubinbin
+     * @return * @Author Link
      * * @Date 2025/4/11 16:49
      */
 //    @PostMapping("/checkFaceImage3")

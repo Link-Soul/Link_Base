@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * 山西和教育人脸考勤机接口协议用接口
  * 这个接口只放在 ks-3 中。1和2是特征值1和特征值2。节点3用的少，不去和那两个抢资源。
- * @Author zhoubinbin
+ * @Author Link
  * @Date 2025/4/14 16:23
  */
 @RestController

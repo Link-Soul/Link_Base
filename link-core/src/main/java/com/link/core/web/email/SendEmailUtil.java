@@ -1,5 +1,6 @@
 package com.link.core.web.email;
 
+import com.link.core.common.properties.EmailProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

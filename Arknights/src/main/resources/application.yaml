@@ -79,5 +79,12 @@ email:
     username:
     password:
 
+#百度翻译的配置文件
+baidu-translation:
+  url:
+  app-id:
+  api-key:
+  secret-key:
+
 
 

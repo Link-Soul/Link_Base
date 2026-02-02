@@ -138,6 +138,11 @@
 <!--            <artifactId>fastjson2-extension</artifactId>-->
 <!--            <version>${fastjson2.version}</version>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>com.github.pemistahl</groupId>
+            <artifactId>lingua</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 

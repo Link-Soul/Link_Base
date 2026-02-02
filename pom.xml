@@ -53,6 +53,7 @@
         <hutools.version>5.8.15</hutools.version>
         <commons.io.version>2.5</commons.io.version>
         <satoken.version>1.38.0</satoken.version>
+        <lingua.version>1.2.2</lingua.version>
     </properties>
 
     <!-- 仅做版本管理，不实际引入依赖 -->
@@ -237,6 +238,12 @@
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-dialect-thymeleaf</artifactId>
                 <version>${satoken.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pemistahl</groupId>
+                <artifactId>lingua</artifactId>
+                <version>${lingua.version}</version>
+                <scope>compile</scope>
             </dependency>
 
         </dependencies>
